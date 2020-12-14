@@ -3,13 +3,13 @@ package android.bignerdranch.photounit.utilits
 import android.graphics.Bitmap
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.github.kittinunf.fuel.core.extensions.authentication
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.json.FuelJson
 import com.github.kittinunf.result.Result
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
-import java.util.*
 
 class SharedViewModel : ViewModel() {
     var photoLiveData = MutableLiveData<Bitmap>()
@@ -17,13 +17,19 @@ class SharedViewModel : ViewModel() {
     lateinit var currentPhotoPath: File
 
     val idCurrentFragment = MutableLiveData<Int>()
+    var textFullAddress: String = ""
 
     val listStreet = MutableLiveData<ArrayList<String>>() // Получает данные из createListStreet()
     val mapStreet = MutableLiveData<Map<String, String>>() // Сюда данные придут из Get запроса
-    val mapHome = MutableLiveData<Map<String, Any>>()
+    val listHome = MutableLiveData<ArrayList<String>>()
+    val mapHome = MutableLiveData<Map<String, String>>()
 
-    var idDistrict =
-        MutableLiveData<Int>() // Сюда id помещается при выборе на экране-фрагменте района
+    var idDistrict = MutableLiveData<Int>() // Сюда id помещается при выборе на экране-фрагменте района
+    var idStreet = MutableLiveData<String>()
+    var idHome = MutableLiveData<String>()
+
+    var tempIdStreet: String = "" //Костыль чтоб экран автоматически не менялся
+    var tempIdHome: String = "" //Костыль чтоб экран автоматически не менялся
 
 
     // Bitmap LiveData для хранения и установки полученого изображения в ImageView
@@ -52,6 +58,8 @@ class SharedViewModel : ViewModel() {
 
         val httpAsync = "$SERVER_ADDRESS/$whoGet/$id"
             .httpGet()
+            .authentication()
+            .basic(AUTH_USER, AUTH_PASS)
             .responseJson { _, _, result ->
                 when (result) {
                     is Result.Failure -> {
@@ -73,14 +81,61 @@ class SharedViewModel : ViewModel() {
         httpAsync.join()
     }
 
+    fun httpGetJson(whoGet: String, idDistrict: String, idStreet: String) {
+        /** Функция принимает whoGet - является продолжением ссылки и названием вызываемой
+         * функции со стороны сервера, idDistrict - это id района в базе CRM, idStreet это id улицы
+         * после запроса возвращается Json объект с номерами и id домов,
+         * который десериализуется в Map масив и заносится в LiveData переменную*/
+
+        val httpAsync = "$SERVER_ADDRESS/$whoGet/$idDistrict/$idStreet"
+            .httpGet()
+            .authentication()
+            .basic(AUTH_USER, AUTH_PASS)
+            .responseJson { _, _, result ->
+                when (result) {
+                    is Result.Failure -> {
+                        val ex = result.getException()
+                        println(ex)
+                    }
+                    is Result.Success -> {
+                        val data = result.get() // Получаем ответ в виде строки
+                        val jsonData = FuelJson(data.content) // Конвектируем в JsonObject
+                        val mGson = Gson()
+                        val tutorialMap: Map<String, String> = mGson.fromJson(
+                            jsonData.obj().toString(), // Конвектируем в kotlin Map<String, String>
+                            object : TypeToken<Map<String, String>>() {}.type
+                        )
+                        mapHome.postValue(tutorialMap) // Помещаем результат в LiveData переменную
+                    }
+                }
+            }
+        httpAsync.join()
+    }
+
     fun getIdDistrictFromMap(nameDistrict: String) {
         idDistrict.value =
             districtMap.getValue(nameDistrict) // Извлекаем id района по его имени и помещаем в LiveData
+    }
+
+    fun getIdStreetFromMap(nameStreet: String) {
+        idStreet.value =
+            mapStreet.value?.getValue(nameStreet)// Извлекаем id улицы из словаря по его имени и помещаем в LiveData
+        tempIdStreet = idStreet.value.toString() // Костыль
+    }
+
+    fun getIdHomeFromMap(nameHome: String) {
+        idHome.value =
+            mapHome.value?.getValue(nameHome)// Извлекаем id дома из словаря по его имени и помещаем в LiveData
+        tempIdHome = idHome.value.toString()
     }
 
     fun createListStreet(_mapStreet: Map<String, String>) {
     /**Функция из словаря делает список с названиями улиц для ListView*/
 
        listStreet.value = ArrayList(_mapStreet.keys.toList())
+    }
+
+    fun createListHome(_mapHome: Map<String, String>) {
+        listHome.value = ArrayList(_mapHome.keys.toList())
     }
 }

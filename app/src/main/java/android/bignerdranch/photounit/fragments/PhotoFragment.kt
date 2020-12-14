@@ -3,6 +3,7 @@ package android.bignerdranch.photounit.fragments
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.bignerdranch.photounit.MainActivity
 import android.bignerdranch.photounit.R
 import android.bignerdranch.photounit.REQUEST_IMAGE_CAPTURE
 import android.bignerdranch.photounit.utilits.SharedViewModel
@@ -18,6 +19,8 @@ import android.provider.MediaStore
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import kotlinx.android.synthetic.main.fragment_photo.*
@@ -35,8 +38,10 @@ class PhotoFragment : Fragment(R.layout.fragment_photo) {
     override fun onStart() {
         super.onStart()
         setLiveDataObserve()
-        bindButton()
+        bindAllView()
         requestPermissions()
+        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        (activity as MainActivity).supportActionBar?.setDisplayShowHomeEnabled(false)
     }
 
     private fun dispatchTakePictureIntent() {
@@ -107,21 +112,31 @@ class PhotoFragment : Fragment(R.layout.fragment_photo) {
         return Bitmap.createBitmap(image, 0, 0, image.width, image.height, mMatrix, true)
     }
 
-    private fun bindButton() {
+    private fun bindAllView() {
         // Биндим кнопки
         btn_get_photo.setOnClickListener { (dispatchTakePictureIntent()) } // Сделать фото
+
         btn_load_photo.setOnClickListener { uploadImageToServer() } // Отправить на сервер
+        if (sharedModel.textFullAddress != "") { // Пока нет полного аддреса кнопку не видно
+            btn_load_photo.isVisible = true
+        } else btn_load_photo.isInvisible = true
+
         btn_add_address.setOnClickListener {
             sharedModel.idCurrentFragment.value = R.layout.fragment_list_distric
         }
-        //btn_add_address.setOnClickListener { mViewModel.httpGetJson(GET_STREET, "12") }
+        if (sharedModel.photoLiveData.value != null) { // Пока нет фото кнопку не видно
+            btn_add_address.isVisible = true
+        } else btn_add_address.isInvisible = true
+
+        textViewFullAddress.text = sharedModel.textFullAddress
     }
 
     private fun uploadImageToServer() {
         val photo: ByteArray? = sharedModel.getFilePhotoByteArr()
         if (photo != null) {
             File(sharedModel.currentPhotoPath.absolutePath).writeBytes(photo) // Создаем фаил фото из ByteArray
-            UploadUtility(requireActivity()).uploadFile(sharedModel.currentPhotoPath.absolutePath) // Отправляем фото в POST
+            UploadUtility(requireActivity(), sharedModel.idHome.value.toString()) // Указываем Id дома
+                .uploadFile(sharedModel.currentPhotoPath.absolutePath) // Отправляем фото в POST
         } else {
             Toast.makeText(requireContext(), "Сделай фото", Toast.LENGTH_SHORT).show()
         }
@@ -142,6 +157,11 @@ class PhotoFragment : Fragment(R.layout.fragment_photo) {
         ) {
             permissions.add(Manifest.permission.CAMERA)
         }
+    }
+
+    override fun onStop() {
+        sharedModel.photoLiveData.removeObservers(this)
+        super.onStop()
     }
 }
 

@@ -1,6 +1,7 @@
 package android.bignerdranch.photounit
 
 import android.bignerdranch.photounit.fragments.DistrictListFragment
+import android.bignerdranch.photounit.fragments.HomeListFragment
 import android.bignerdranch.photounit.fragments.PhotoFragment
 import android.bignerdranch.photounit.fragments.StreetListFragment
 import android.bignerdranch.photounit.utilits.MyViewModel
@@ -75,6 +76,10 @@ class MainActivity : AppCompatActivity() {
             }
             R.layout.fragment_street_list -> {
                 fragment = StreetListFragment()
+                backStack = true
+            }
+            R.layout.fragment_home_list -> {
+                fragment = HomeListFragment()
                 backStack = true
             }
         }

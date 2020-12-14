@@ -10,13 +10,15 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 
-class UploadUtility(activity: Activity) {
+class UploadUtility(_activity: Activity, homeId: String) {
 
-    var activity = activity;
+    var activity = _activity
     var dialog: ProgressDialog? = null
-    var serverURL: String = "http://87.76.32.43:5000/uploadImg"
+    var serverURL: String = "http://87.76.32.43:5000/uploadImg/$homeId"
     var serverUploadDirectoryPath: String = "http://87.76.32.43:5000/uploadImg/"
     private val client = OkHttpClient()
+
+
 
     fun uploadFile(sourceFilePath: String, uploadedFileName: String? = null) {
         uploadFile(File(sourceFilePath), uploadedFileName)
@@ -37,13 +39,18 @@ class UploadUtility(activity: Activity) {
                         .addFormDataPart("uploaded_file", fileName,sourceFile.asRequestBody(mimeType.toMediaTypeOrNull()))
                         .build()
 
-                val request: Request = Request.Builder().url(serverURL).post(requestBody).build()
+                val request: Request = Request.Builder()
+                    .url(serverURL)
+                    .addHeader("Authorization", Credentials.basic("ilya", "vtufnhjY-124")) ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    .post(requestBody)
+                    .build()
 
                 val response: Response = client.newCall(request).execute()
 
                 if (response.isSuccessful) {
                     Log.d("File upload","success, path: $serverUploadDirectoryPath$fileName")
-                    showToast("File uploaded successfully at $serverUploadDirectoryPath$fileName")
+                    //showToast("File uploaded successfully at $serverUploadDirectoryPath$fileName")
+                    showToast("Фаил успешно загружен!")
                 } else {
                     Log.e("File upload", "failed")
                     showToast("File uploading failed")

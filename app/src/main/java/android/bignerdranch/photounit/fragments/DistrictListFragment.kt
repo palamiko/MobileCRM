@@ -1,6 +1,7 @@
 package android.bignerdranch.photounit.fragments
 
 import android.bignerdranch.photounit.R
+import android.bignerdranch.photounit.utilits.GET_STREET
 import android.bignerdranch.photounit.utilits.SharedViewModel
 import android.bignerdranch.photounit.utilits.districtArray
 import android.os.Bundle
@@ -25,6 +26,7 @@ class DistrictListFragment : Fragment( R.layout.fragment_list_distric) {
          * отслеживаем через слушатель и после выбра района меняем фрагмент путем изменения
          * liveData idCurrentFragment, activity это отслеживает и меняет фрагмент*/
         sharedModel.idDistrict.observe(this, Observer {
+            sharedModel.httpGetJson(GET_STREET, sharedModel.idDistrict.value.toString()) // Отправляем get запрос с id района. Получим Map с улицей и ее id
             sharedModel.idCurrentFragment.value = R.layout.fragment_street_list
         })
     }
@@ -39,6 +41,8 @@ class DistrictListFragment : Fragment( R.layout.fragment_list_distric) {
         adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, districtArray)
         list_district.adapter = adapter // напоняем view данными из адаптера
         list_district.setOnItemClickListener { _: AdapterView<*>, _: View, i: Int, _: Long ->
+            println(districtArray[i])
+            sharedModel.textFullAddress += districtArray[i] + " "// Формируем строку полного адреса для TextView
             sharedModel.getIdDistrictFromMap(districtArray[i]) // id выбраного микрорайона помещаем в LiveData
         }
     }

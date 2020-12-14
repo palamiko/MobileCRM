@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_btn_get_photo">Сделать снимок</string>
+    <string name="text_btn_get_photo">Сделать фото</string>
+    <string name="text_btn_post_photo">Отправить</string>
+    <string name="text_btn_add_address">Добавить адресс</string>
 </resources>
