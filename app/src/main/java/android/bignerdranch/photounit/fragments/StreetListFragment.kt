@@ -23,7 +23,6 @@ class StreetListFragment : BaseFragment(R.layout.fragment_street_list) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         createLiveDataObserver()
-
     }
 
     override fun onStart() {

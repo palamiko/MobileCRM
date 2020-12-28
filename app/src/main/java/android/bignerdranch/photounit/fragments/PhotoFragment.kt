@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.bignerdranch.photounit.R
-import android.bignerdranch.photounit.REQUEST_IMAGE_CAPTURE
 import android.bignerdranch.photounit.utilits.SharedViewModel
 import android.bignerdranch.photounit.utilits.UploadUtility
 import android.content.Intent
@@ -28,26 +27,23 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
+const val REQUEST_IMAGE_CAPTURE = 1
 
 class PhotoFragment : BaseFragment(R.layout.fragment_photo) {
 
     private val sharedModel: SharedViewModel by activityViewModels()
 
-
     override fun onStart() {
         super.onStart()
         setLiveDataObserve()
         requestPermissions()
-        mainActivity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        mainActivity.supportActionBar?.setDisplayShowHomeEnabled(false)
+
     }
 
     override fun onResume() {
         super.onResume()
         bindAllView()
     }
-
-
 
     private fun dispatchTakePictureIntent() {
         // Открываем камеру для фото и создаем фаил с именем даты сегодня.
@@ -149,7 +145,7 @@ class PhotoFragment : BaseFragment(R.layout.fragment_photo) {
     }
 
     private fun setLiveDataObserve() {
-        sharedModel.photoLiveData.observe(this, androidx.lifecycle.Observer {
+        sharedModel.photoLiveData.observe(this, {
             imageView.setImageBitmap(it) // Выставляет фотку в imageView
         })
     }

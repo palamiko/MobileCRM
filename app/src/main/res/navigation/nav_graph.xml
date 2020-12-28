@@ -8,17 +8,18 @@
     <fragment
         android:id="@+id/photoFragment"
         android:name="android.bignerdranch.photounit.fragments.PhotoFragment"
-        android:label="fragment_photo"
-        tools:layout="@layout/fragment_photo" >
+        android:label="@string/fragment_title_photo_unit"
+        tools:layout="@layout/fragment_photo">
         <action
             android:id="@+id/action_photoFragment_to_districtListFragment"
             app:destination="@id/districtListFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/districtListFragment"
         android:name="android.bignerdranch.photounit.fragments.DistrictListFragment"
-        android:label="fragment_list_distric"
-        tools:layout="@layout/fragment_distric_list" >
+        android:label="@string/fragment_title_district"
+        tools:layout="@layout/fragment_distric_list">
         <action
             android:id="@+id/action_districtListFragment_to_streetListFragment"
             app:destination="@id/streetListFragment" />
@@ -26,10 +27,11 @@
             android:id="@+id/action_districtListFragment_to_photoFragment"
             app:destination="@id/photoFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/streetListFragment"
         android:name="android.bignerdranch.photounit.fragments.StreetListFragment"
-        android:label="fragment_street_list"
+        android:label="@string/fragment_title_street"
         tools:layout="@layout/fragment_street_list" >
         <action
             android:id="@+id/action_streetListFragment_to_homeListFragment"
@@ -38,10 +40,11 @@
             android:id="@+id/action_streetListFragment_to_districtListFragment"
             app:destination="@id/districtListFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/homeListFragment"
         android:name="android.bignerdranch.photounit.fragments.HomeListFragment"
-        android:label="fragment_home_list"
+        android:label="@string/fragment_title_home"
         tools:layout="@layout/fragment_home_list" >
         <action
             android:id="@+id/action_homeListFragment_to_photoFragment"

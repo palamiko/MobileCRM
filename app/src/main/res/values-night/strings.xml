@@ -3,4 +3,8 @@
     <string name="text_btn_get_photo">Сделать фото</string>
     <string name="text_btn_post_photo">Отправить</string>
     <string name="text_btn_add_address">Добавить адрес</string>
+    <string name="fragment_title_street">Улица</string>
+    <string name="fragment_title_home">Дом</string>
+    <string name="fragment_title_district">Район</string>
+    <string name="fragment_title_photo_unit">Фото узла</string>
 </resources>
