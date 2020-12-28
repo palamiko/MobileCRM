@@ -3,7 +3,6 @@ package android.bignerdranch.photounit.fragments
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.bignerdranch.photounit.MainActivity
 import android.bignerdranch.photounit.R
 import android.bignerdranch.photounit.REQUEST_IMAGE_CAPTURE
 import android.bignerdranch.photounit.utilits.SharedViewModel
@@ -21,7 +20,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import kotlinx.android.synthetic.main.fragment_photo.*
 import java.io.ByteArrayOutputStream
@@ -31,18 +29,25 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class PhotoFragment : Fragment(R.layout.fragment_photo) {
+class PhotoFragment : BaseFragment(R.layout.fragment_photo) {
 
     private val sharedModel: SharedViewModel by activityViewModels()
+
 
     override fun onStart() {
         super.onStart()
         setLiveDataObserve()
-        bindAllView()
         requestPermissions()
-        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        (activity as MainActivity).supportActionBar?.setDisplayShowHomeEnabled(false)
+        mainActivity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        mainActivity.supportActionBar?.setDisplayShowHomeEnabled(false)
     }
+
+    override fun onResume() {
+        super.onResume()
+        bindAllView()
+    }
+
+
 
     private fun dispatchTakePictureIntent() {
         // Открываем камеру для фото и создаем фаил с именем даты сегодня.
@@ -122,7 +127,8 @@ class PhotoFragment : Fragment(R.layout.fragment_photo) {
         } else btn_load_photo.isInvisible = true
 
         btn_add_address.setOnClickListener {
-            sharedModel.idCurrentFragment.value = R.layout.fragment_list_distric
+            navController.navigate(R.id.action_photoFragment_to_districtListFragment)
+
         }
         if (sharedModel.photoLiveData.value != null) { // Пока нет фото кнопку не видно
             btn_add_address.isVisible = true

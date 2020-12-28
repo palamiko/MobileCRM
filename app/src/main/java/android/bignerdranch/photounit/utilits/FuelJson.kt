@@ -5,7 +5,7 @@ import com.github.kittinunf.result.Result
 import org.json.JSONArray
 import org.json.JSONObject
 
-
+/**Класс для приема и десериализации Json сообщений*/
 class FuelJson(val content: String) {
     fun obj(): JSONObject = JSONObject(content)
     fun array(): JSONArray = JSONArray(content)

@@ -4,14 +4,16 @@ import android.bignerdranch.photounit.fragments.DistrictListFragment
 import android.bignerdranch.photounit.fragments.HomeListFragment
 import android.bignerdranch.photounit.fragments.PhotoFragment
 import android.bignerdranch.photounit.fragments.StreetListFragment
-import android.bignerdranch.photounit.utilits.MyViewModel
 import android.bignerdranch.photounit.utilits.SharedViewModel
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 
 
 const val REQUEST_IMAGE_CAPTURE = 1
@@ -19,7 +21,8 @@ const val REQUEST_IMAGE_CAPTURE = 1
 class MainActivity : AppCompatActivity() {
 
     lateinit var managerFragment: FragmentManager
-    val viewModelMainActivity: MyViewModel by viewModels()
+    lateinit var navController: NavController
+    lateinit var actionBar: ActionBar
     private val sharedModel: SharedViewModel by viewModels()
 
     private lateinit var fragment: Fragment
@@ -28,19 +31,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        initFragmentManager()
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment_container)
+        actionBar = supportActionBar as ActionBar
+        actionBar.title = "Фото узла"
     }
 
     override fun onSupportNavigateUp(): Boolean {
-
         onBackPressed()
         return true
-    }
-
-    private fun initFragmentManager(){
-        managerFragment = supportFragmentManager
-        setObserverCurrentFragment()
-        openFragment()
     }
 
     private fun setObserverCurrentFragment() {
@@ -70,7 +68,7 @@ class MainActivity : AppCompatActivity() {
                 visibleBtnBack = false
             }
 
-            R.layout.fragment_list_distric -> {
+            R.layout.fragment_distric_list -> {
                 fragment = DistrictListFragment()
                 backStack = true
             }
@@ -87,13 +85,7 @@ class MainActivity : AppCompatActivity() {
         transaction.replace(R.id.container, fragment)
         if (backStack) transaction.addToBackStack(null)
         transaction.commit()
-        setVisibleBtnBackToolbar(visibleBtnBack)
     }
 
-    private fun setVisibleBtnBackToolbar(visible: Boolean) {
-    /** Функция показывает или убирает кнопку назат в туллбаре*/
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(visible)
-        supportActionBar?.setDisplayShowHomeEnabled(visible)
-    }
 }

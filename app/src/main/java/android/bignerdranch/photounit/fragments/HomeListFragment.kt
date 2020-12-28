@@ -7,20 +7,18 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_home_list.*
 
 
-class HomeListFragment : Fragment(R.layout.fragment_home_list) {
+class HomeListFragment : BaseFragment(R.layout.fragment_home_list) {
 
     private val sharedModel: SharedViewModel by activityViewModels()
     lateinit var adapter: ArrayAdapter<String>
 
     lateinit var observerMapHome: Observer<Map<String, String>>
     lateinit var observerListHome: Observer<ArrayList<String>>
-    lateinit var observerIdHome: Observer<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,8 +46,10 @@ class HomeListFragment : Fragment(R.layout.fragment_home_list) {
         adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, dataArray)
         list_homes.adapter = adapter
         list_homes.setOnItemClickListener { _: AdapterView<*>, _: View, i: Int, _: Long ->
-            sharedModel.textFullAddress += dataArray[i] + " " // Формируем строку полного адреса для TextView
+            sharedModel.tempSelectNameHome = dataArray[i] // Формируем строку полного адреса для TextView
             sharedModel.getIdHomeFromMap(dataArray[i]) // id выбраного дома помещаем в LiveData путем извлечения из словаря который пришел через get, по его имени.
+            sharedModel.setCurrentTextFullAddress()
+            navController.navigate(R.id.action_homeListFragment_to_photoFragment)
         }
     }
 
@@ -57,7 +57,6 @@ class HomeListFragment : Fragment(R.layout.fragment_home_list) {
         /** Подключаем слушатели к LiveData*/
         sharedModel.mapHome.observe(this, observerMapHome)
         sharedModel.listHome.observe(this, observerListHome)
-        sharedModel.idHome.observe(this, observerIdHome)
     }
 
     private fun createLiveDataObserver() {
@@ -69,18 +68,11 @@ class HomeListFragment : Fragment(R.layout.fragment_home_list) {
         observerListHome = Observer {
             createList(it) // Создаем ListView как только получили массив с названиями улиц
         }
-        observerIdHome = Observer {
-            println(it)
-            if (it != sharedModel.tempIdHome) {
-                sharedModel.idCurrentFragment.value = R.layout.fragment_photo
-            } // Меняем на фрагмент фото как только был выбран дом
-        }
     }
 
     private fun removeLiveDataObserver() {
         /** Отключаем слушатели*/
         sharedModel.mapHome.removeObserver(observerMapHome)
         sharedModel.listHome.removeObserver(observerListHome)
-        sharedModel.idHome.removeObserver(observerIdHome)
     }
 }

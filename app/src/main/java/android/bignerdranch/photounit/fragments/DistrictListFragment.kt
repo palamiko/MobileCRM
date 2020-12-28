@@ -8,13 +8,12 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import kotlinx.android.synthetic.main.fragment_list_distric.*
+import kotlinx.android.synthetic.main.fragment_distric_list.*
 
 
-class DistrictListFragment : Fragment( R.layout.fragment_list_distric) {
+class DistrictListFragment : BaseFragment( R.layout.fragment_distric_list) {
 
     private val sharedModel: SharedViewModel by activityViewModels()
     lateinit var adapter: ArrayAdapter<String>
@@ -27,7 +26,7 @@ class DistrictListFragment : Fragment( R.layout.fragment_list_distric) {
          * liveData idCurrentFragment, activity это отслеживает и меняет фрагмент*/
         sharedModel.idDistrict.observe(this, Observer {
             sharedModel.httpGetJson(GET_STREET, sharedModel.idDistrict.value.toString()) // Отправляем get запрос с id района. Получим Map с улицей и ее id
-            sharedModel.idCurrentFragment.value = R.layout.fragment_street_list
+            navController.navigate(R.id.action_districtListFragment_to_streetListFragment)
         })
     }
 
@@ -42,7 +41,7 @@ class DistrictListFragment : Fragment( R.layout.fragment_list_distric) {
         list_district.adapter = adapter // напоняем view данными из адаптера
         list_district.setOnItemClickListener { _: AdapterView<*>, _: View, i: Int, _: Long ->
             println(districtArray[i])
-            sharedModel.textFullAddress += districtArray[i] + " "// Формируем строку полного адреса для TextView
+            sharedModel.tempSelectNameDistrict = districtArray[i] + " "// Формируем строку полного адреса для TextView
             sharedModel.getIdDistrictFromMap(districtArray[i]) // id выбраного микрорайона помещаем в LiveData
         }
     }

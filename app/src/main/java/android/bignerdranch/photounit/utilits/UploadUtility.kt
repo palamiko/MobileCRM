@@ -14,8 +14,8 @@ class UploadUtility(_activity: Activity, homeId: String) {
 
     var activity = _activity
     var dialog: ProgressDialog? = null
-    var serverURL: String = "http://87.76.32.43:5000/uploadImg/$homeId"
-    var serverUploadDirectoryPath: String = "http://87.76.32.43:5000/uploadImg/"
+    var serverURL: String = "$SERVER_ADDRESS/$POST_LOAD_PHOTO/$homeId"
+    var serverUploadDirectoryPath: String = "$SERVER_ADDRESS/uploadImg/"
     private val client = OkHttpClient()
 
 
@@ -41,7 +41,7 @@ class UploadUtility(_activity: Activity, homeId: String) {
 
                 val request: Request = Request.Builder()
                     .url(serverURL)
-                    .addHeader("Authorization", Credentials.basic("ilya", "vtufnhjY-124")) ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    .addHeader("Authorization", Credentials.basic(AUTH_USER, AUTH_PASS)) ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     .post(requestBody)
                     .build()
 

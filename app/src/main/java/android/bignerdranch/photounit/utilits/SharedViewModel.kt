@@ -12,11 +12,11 @@ import com.google.gson.reflect.TypeToken
 import java.io.File
 
 class SharedViewModel : ViewModel() {
-    var photoLiveData = MutableLiveData<Bitmap>()
-    var filePhoto = MutableLiveData<ByteArray>()
-    lateinit var currentPhotoPath: File
+    var photoLiveData = MutableLiveData<Bitmap>() // Содержит сфотографироанное изображение .bmp
+    var filePhoto = MutableLiveData<ByteArray>() // Содержит фотку в ByteArray для передачи в POST
+    lateinit var currentPhotoPath: File // Содержит полный путь до файла фотографии
 
-    val idCurrentFragment = MutableLiveData<Int>()
+    val idCurrentFragment = MutableLiveData<Int>() // layout id активного фрагмента
     var textFullAddress: String = ""
 
     val listStreet = MutableLiveData<ArrayList<String>>() // Получает данные из createListStreet()
@@ -28,8 +28,11 @@ class SharedViewModel : ViewModel() {
     var idStreet = MutableLiveData<String>()
     var idHome = MutableLiveData<String>()
 
-    var tempIdStreet: String = "" //Костыль чтоб экран автоматически не менялся
-    var tempIdHome: String = "" //Костыль чтоб экран автоматически не менялся
+    /**Вспомогательные временные переменные*/
+
+    var tempSelectNameDistrict: String = "" // Здесь содержится строковое имя выбранного района
+    var tempSelectNameStreet: String = "" // Здесь содержится строковое имя выбранной улицы
+    var tempSelectNameHome: String = "" // Здесь содержится строковый номер дома
 
 
     // Bitmap LiveData для хранения и установки полученого изображения в ImageView
@@ -120,13 +123,11 @@ class SharedViewModel : ViewModel() {
     fun getIdStreetFromMap(nameStreet: String) {
         idStreet.value =
             mapStreet.value?.getValue(nameStreet)// Извлекаем id улицы из словаря по его имени и помещаем в LiveData
-        tempIdStreet = idStreet.value.toString() // Костыль
     }
 
     fun getIdHomeFromMap(nameHome: String) {
         idHome.value =
             mapHome.value?.getValue(nameHome)// Извлекаем id дома из словаря по его имени и помещаем в LiveData
-        tempIdHome = idHome.value.toString()
     }
 
     fun createListStreet(_mapStreet: Map<String, String>) {
@@ -137,5 +138,9 @@ class SharedViewModel : ViewModel() {
 
     fun createListHome(_mapHome: Map<String, String>) {
         listHome.value = ArrayList(_mapHome.keys.toList())
+    }
+
+    fun setCurrentTextFullAddress() {
+        textFullAddress = tempSelectNameDistrict + tempSelectNameStreet + tempSelectNameHome
     }
 }
