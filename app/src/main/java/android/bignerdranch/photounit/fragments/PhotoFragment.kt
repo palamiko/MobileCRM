@@ -4,8 +4,10 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.bignerdranch.photounit.R
-import android.bignerdranch.photounit.utilits.SharedViewModel
+import android.bignerdranch.photounit.utilits.DataBaseCommunication
+import android.bignerdranch.photounit.utilits.TODAY
 import android.bignerdranch.photounit.utilits.UploadUtility
+import android.bignerdranch.photounit.viewModels.SharedViewModel
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -37,7 +39,6 @@ class PhotoFragment : BaseFragment(R.layout.fragment_photo) {
         super.onStart()
         setLiveDataObserve()
         requestPermissions()
-
     }
 
     override fun onResume() {
@@ -124,6 +125,7 @@ class PhotoFragment : BaseFragment(R.layout.fragment_photo) {
 
         btn_add_address.setOnClickListener {
             navController.navigate(R.id.action_photoFragment_to_districtListFragment)
+            println(object : DataBaseCommunication{}.getDateTime(TODAY))
 
         }
         if (sharedModel.photoLiveData.value != null) { // Пока нет фото кнопку не видно
@@ -131,6 +133,8 @@ class PhotoFragment : BaseFragment(R.layout.fragment_photo) {
         } else btn_add_address.isInvisible = true
 
         textViewFullAddress.text = sharedModel.textFullAddress
+
+
     }
 
     private fun uploadImageToServer() {
@@ -166,5 +170,6 @@ class PhotoFragment : BaseFragment(R.layout.fragment_photo) {
         super.onStop()
     }
 }
+
 
 

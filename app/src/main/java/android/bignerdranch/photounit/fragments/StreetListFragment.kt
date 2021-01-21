@@ -1,7 +1,7 @@
 package android.bignerdranch.photounit.fragments
 
 import android.bignerdranch.photounit.R
-import android.bignerdranch.photounit.utilits.SharedViewModel
+import android.bignerdranch.photounit.viewModels.SharedViewModel
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView

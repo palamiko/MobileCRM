@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="drawer_layout">
+        <group>
+
+            <item
+                android:id="@+id/navigationTask"
+                android:icon="@drawable/ic_drawer_task_fragment"
+                android:title="@string/title_drawer_my_task" />
+
+            <item
+                android:id="@+id/navigationPhoto"
+                android:icon="@drawable/ic_drawer_photo_unit_frafment"
+                android:title="@string/fragment_title_photo_unit" />
+
+            <item
+                android:id="@+id/authorizationFragment"
+                android:icon="@drawable/ic_exit_login"
+                android:title="@string/text_exit_login" />
+
+        </group>
+
+</menu>

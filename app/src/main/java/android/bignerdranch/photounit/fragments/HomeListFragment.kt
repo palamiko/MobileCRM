@@ -1,8 +1,7 @@
 package android.bignerdranch.photounit.fragments
 
 import android.bignerdranch.photounit.R
-import android.bignerdranch.photounit.utilits.GET_HOME
-import android.bignerdranch.photounit.utilits.SharedViewModel
+import android.bignerdranch.photounit.viewModels.SharedViewModel
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -25,9 +24,10 @@ class HomeListFragment : BaseFragment(R.layout.fragment_home_list) {
         createLiveDataObserver()
 
         // Отправляем get запрос с id района, id улицы. Получим Map с номерами домов
-        sharedModel.httpGetJson(
-            GET_HOME, sharedModel.idDistrict.value.toString(),
-            sharedModel.idStreet.value.toString()
+        sharedModel.httpGetListHome(
+            sharedModel.idDistrict.value.toString(),
+            sharedModel.idStreet.value.toString(),
+            sharedModel.mapHome
         )
     }
 

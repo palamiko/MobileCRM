@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.CountMaterialFragment" >
+
+    <TextView
+        android:id="@+id/tv_count_used_material_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/text_count_used_material_text"
+        app:layout_constraintStart_toStartOf="@+id/tv_name_used_material"
+        app:layout_constraintTop_toBottomOf="@+id/tv_name_used_material" />
+
+    <TextView
+        android:id="@+id/tv_name_used_material"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/text_name_material"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/te_count_material"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:ems="3"
+        android:hint="@string/hint_count_material"
+        android:autofillHints="@string/hint_count_material"
+        android:inputType="number"
+        app:layout_constraintStart_toEndOf="@+id/tv_count_used_material_text"
+        app:layout_constraintTop_toBottomOf="@+id/tv_name_used_material" />
+
+    <Button
+        android:id="@+id/btn_save_used_material"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:text="@string/text_btn_save_used_material"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

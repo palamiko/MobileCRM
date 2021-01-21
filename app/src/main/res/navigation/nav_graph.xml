@@ -3,54 +3,135 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/photoFragment">
+    app:startDestination="@id/navigationTask">
+
 
     <fragment
-        android:id="@+id/photoFragment"
-        android:name="android.bignerdranch.photounit.fragments.PhotoFragment"
-        android:label="@string/fragment_title_photo_unit"
-        tools:layout="@layout/fragment_photo">
+        android:id="@+id/authorizationFragment"
+        android:name="android.bignerdranch.photounit.fragments.AuthorizationFragment"
+        android:label="@string/fragment_title_authorization"
+        tools:layout="@layout/fragment_authorization">
         <action
-            android:id="@+id/action_photoFragment_to_districtListFragment"
-            app:destination="@id/districtListFragment" />
+            android:id="@+id/authorizationFragment_to_navigationTask"
+            app:destination="@id/navigationTask"
+            app:popUpTo="@id/authorizationFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
-    <fragment
-        android:id="@+id/districtListFragment"
-        android:name="android.bignerdranch.photounit.fragments.DistrictListFragment"
-        android:label="@string/fragment_title_district"
-        tools:layout="@layout/fragment_distric_list">
-        <action
-            android:id="@+id/action_districtListFragment_to_streetListFragment"
-            app:destination="@id/streetListFragment" />
-        <action
-            android:id="@+id/action_districtListFragment_to_photoFragment"
-            app:destination="@id/photoFragment" />
-    </fragment>
 
-    <fragment
-        android:id="@+id/streetListFragment"
-        android:name="android.bignerdranch.photounit.fragments.StreetListFragment"
-        android:label="@string/fragment_title_street"
-        tools:layout="@layout/fragment_street_list" >
-        <action
-            android:id="@+id/action_streetListFragment_to_homeListFragment"
-            app:destination="@id/homeListFragment" />
-        <action
-            android:id="@+id/action_streetListFragment_to_districtListFragment"
-            app:destination="@id/districtListFragment" />
-    </fragment>
+    <navigation
+        android:id="@+id/navigationPhoto"
+        app:startDestination="@id/photoFragment">
+        <fragment
+            android:id="@+id/streetListFragment"
+            android:name="android.bignerdranch.photounit.fragments.StreetListFragment"
+            android:label="@string/fragment_title_street"
+            tools:layout="@layout/fragment_street_list">
+            <action
+                android:id="@+id/action_streetListFragment_to_homeListFragment"
+                app:destination="@id/homeListFragment" />
+            <action
+                android:id="@+id/action_streetListFragment_to_districtListFragment"
+                app:destination="@id/districtListFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/homeListFragment"
+            android:name="android.bignerdranch.photounit.fragments.HomeListFragment"
+            android:label="@string/fragment_title_home"
+            tools:layout="@layout/fragment_home_list">
+            <action
+                android:id="@+id/action_homeListFragment_to_photoFragment"
+                app:destination="@id/photoFragment" />
+            <action
+                android:id="@+id/action_homeListFragment_to_streetListFragment"
+                app:destination="@id/streetListFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/districtListFragment"
+            android:name="android.bignerdranch.photounit.fragments.DistrictListFragment"
+            android:label="@string/fragment_title_district"
+            tools:layout="@layout/fragment_distric_list">
+            <action
+                android:id="@+id/action_districtListFragment_to_streetListFragment"
+                app:destination="@id/streetListFragment" />
+            <action
+                android:id="@+id/action_districtListFragment_to_photoFragment"
+                app:destination="@id/photoFragment" />
+        </fragment>
 
-    <fragment
-        android:id="@+id/homeListFragment"
-        android:name="android.bignerdranch.photounit.fragments.HomeListFragment"
-        android:label="@string/fragment_title_home"
-        tools:layout="@layout/fragment_home_list" >
+        <fragment
+            android:id="@+id/photoFragment"
+            android:name="android.bignerdranch.photounit.fragments.PhotoFragment"
+            android:label="@string/fragment_title_photo_unit"
+            tools:layout="@layout/fragment_photo">
+            <action
+                android:id="@+id/action_photoFragment_to_districtListFragment"
+                app:destination="@id/districtListFragment" />
+        </fragment>
+    </navigation>
+
+    <navigation
+        android:id="@+id/navigationTask"
+        app:startDestination="@id/taskFragment">
+
+        <fragment
+            android:id="@+id/closeTaskFragment"
+            android:name="android.bignerdranch.photounit.fragments.CloseTaskFragment"
+            android:label="@string/fragment_title_close_task"
+            tools:layout="@layout/fragment_close_task">
+            <action
+                android:id="@+id/action_closeTaskFragment_to_taskFragment"
+                app:destination="@id/taskFragment" />
+            <action
+                android:id="@+id/action_closeTaskFragment_to_selectMaterialFragment"
+                app:destination="@id/selectMaterialFragment" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/taskFragment"
+            android:name="android.bignerdranch.photounit.fragments.TaskFragment"
+            android:label="@string/fragment_title_task"
+            tools:layout="@layout/fragment_task">
+            <action
+                android:id="@+id/action_taskFragment_to_closeTaskFragment"
+                app:destination="@id/closeTaskFragment"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim"
+                app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        </fragment>
+
         <action
-            android:id="@+id/action_homeListFragment_to_photoFragment"
-            app:destination="@id/photoFragment" />
+            android:id="@+id/action_global_navigationPhoto"
+            app:destination="@id/navigationPhoto"
+            app:popUpTo="@id/navigationPhoto"
+            app:popUpToInclusive="true" />
         <action
-            android:id="@+id/action_homeListFragment_to_streetListFragment"
-            app:destination="@id/streetListFragment" />
-    </fragment>
+            android:id="@+id/action_global_authorizationFragment"
+            app:destination="@id/authorizationFragment" />
+        <fragment
+            android:id="@+id/selectMaterialFragment"
+            android:name="android.bignerdranch.photounit.fragments.SelectMaterialFragment"
+            android:label="@string/fragment_title_select_material"
+            tools:layout="@layout/fragment_select_material" >
+            <action
+                android:id="@+id/action_selectMaterialFragment_to_countMaterialFragment"
+                app:destination="@id/countMaterialFragment" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/countMaterialFragment"
+            android:name="android.bignerdranch.photounit.fragments.CountMaterialFragment"
+            android:label="@string/fragment_title_count_material"
+            tools:layout="@layout/fragment_count_material" >
+            <action
+                android:id="@+id/action_countMaterialFragment_to_closeTaskFragment"
+                app:destination="@id/closeTaskFragment"
+                app:enterAnim="@anim/fragment_fade_enter"
+                app:popUpTo="@id/closeTaskFragment"
+                app:popUpToInclusive="true" />
+        </fragment>
+
+    </navigation>
+
 </navigation>
