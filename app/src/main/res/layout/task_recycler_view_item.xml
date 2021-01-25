@@ -6,6 +6,7 @@
     android:layout_margin="2dp">
 
     <TextView
+
         android:id="@+id/tv_type_service"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -13,10 +14,11 @@
         android:layout_marginTop="4dp"
         android:text="@string/text_tv_type_service"
         android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="@color/teal_200"
+
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        style="@style/Theme.PhotoUnit.AccentTitle"
+        />
 
     <TextView
         android:id="@+id/tv_address_task_text"
@@ -24,9 +26,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="@string/text_tv_address_task"
-        android:textStyle="bold"
+
         app:layout_constraintStart_toStartOf="@+id/tv_type_service"
-        app:layout_constraintTop_toBottomOf="@+id/tv_type_service" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_type_service"
+        style="@style/Theme.PhotoUnit.AccentText"/>
 
     <TextView
         android:id="@+id/tv_comment_text"
@@ -34,9 +37,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="@string/text_tv_comment_text"
-        android:textStyle="bold"
+
         app:layout_constraintStart_toStartOf="@+id/tv_address_task_text"
-        app:layout_constraintTop_toBottomOf="@+id/tv_address_task_text" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_address_task_text"
+        style="@style/Theme.PhotoUnit.AccentText"/>
 
     <TextView
         android:id="@+id/date_of_completion_text"
@@ -44,9 +48,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="@string/text_tv_date_of_completion"
-        android:textStyle="bold"
+
         app:layout_constraintStart_toStartOf="@+id/tv_comment_text"
-        app:layout_constraintTop_toBottomOf="@+id/tv_comment" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_comment"
+        style="@style/Theme.PhotoUnit.AccentText"/>
 
     <TextView
         android:id="@+id/tv_time_completion_text"
@@ -54,9 +59,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="@string/text_tv_time_completion"
-        android:textStyle="bold"
+
         app:layout_constraintStart_toStartOf="@+id/date_of_completion_text"
-        app:layout_constraintTop_toBottomOf="@+id/date_of_completion_text" />
+        app:layout_constraintTop_toBottomOf="@+id/date_of_completion_text"
+        style="@style/Theme.PhotoUnit.AccentText"/>
 
     <TextView
         android:id="@+id/tv_phone_text"
@@ -64,18 +70,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="@string/text_tv_phone_text"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/tv_time_completion_text"
-        app:layout_constraintTop_toBottomOf="@+id/tv_time_completion" />
 
-    <TextView
-        android:id="@+id/tv_is_money"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:text="@string/text_tv_is_money"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_type_service" />
+        app:layout_constraintStart_toStartOf="@+id/tv_time_completion_text"
+        app:layout_constraintTop_toBottomOf="@+id/tv_time_completion"
+        style="@style/Theme.PhotoUnit.AccentText"
+        />
 
     <TextView
         android:id="@+id/tv_phone"
@@ -128,7 +127,7 @@
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
-        android:layout_height="3dp"
+        android:layout_height="1dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -138,5 +137,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_phone_text" />
+
+    <ImageView
+        android:id="@+id/iv_is_money"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_money_true" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

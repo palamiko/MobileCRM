@@ -1,11 +1,16 @@
 package android.bignerdranch.photounit.activity
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.bignerdranch.photounit.R
+import android.bignerdranch.photounit.fragments.PhotoFragment
 import android.bignerdranch.photounit.utilits.DataBaseCommunication
 import android.bignerdranch.photounit.utilits.SHARED_PREF_NAME
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
@@ -26,6 +31,10 @@ class MainActivity : AppCompatActivity(), DataBaseCommunication {
     private lateinit var mAuth: FirebaseAuth
     lateinit var myBackStackEntry: Array<NavBackStackEntry>
     lateinit var sharedPref: SharedPreferences
+    var test = 0
+    lateinit var resultLauncher: ActivityResultLauncher<Intent>
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +42,16 @@ class MainActivity : AppCompatActivity(), DataBaseCommunication {
 
         sharedPref = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE)
         mAuth = FirebaseAuth.getInstance()
+
+        println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+        var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode === Activity.RESULT_OK) {
+                // There are no request codes
+                //val data: Intent? = result.data
+                //doSomeOperations()
+                test = 1
+            }
+        }
     }
 
     override fun onStart() {
@@ -40,11 +59,16 @@ class MainActivity : AppCompatActivity(), DataBaseCommunication {
         initNavigationComponent()
     }
 
+    fun openSomeActivityForResult() {
+        val intent = Intent(this, PhotoFragment::class.java)
+        resultLauncher.launch(intent)
+    }
+
     private fun initNavigationComponent() {
 
         navController = (supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment).navController  // Инициализируем NavController
 
-        if (mAuth.currentUser != null) navController.graph = detectStartFragment()  // Определяем какой фрагмент запустить первым
+        navController.graph = detectStartFragment()  // Определяем какой фрагмент запустить первым
 
         appBarConfiguration = AppBarConfiguration(navController.graph, drawer_layout)
         appBarConfiguration.topLevelDestinations.addAll(
@@ -67,8 +91,14 @@ class MainActivity : AppCompatActivity(), DataBaseCommunication {
         val navInflater = navController.navInflater
         val graph = navInflater.inflate(R.navigation.nav_graph)
 
+
         if (mAuth.currentUser != null) {
-            graph.startDestination = R.id.navigationTask
+            if (test == 0) {
+                graph.startDestination = R.id.navigationTask
+            } else {
+                graph.startDestination = R.id.photoFragment
+            }
+
         } else {
             graph.startDestination = R.id.authorizationFragment
         }

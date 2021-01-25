@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import smartadapter.viewevent.model.ViewEvent
@@ -21,10 +22,11 @@ open class ItemViewHolder (parentView: ViewGroup) :
     private val tvDateCompletionTask: TextView = itemView.findViewById(R.id.date_of_completion)
     private val tvTimeCompletionTask: TextView = itemView.findViewById(R.id.tv_time_completion)
     private val tvPhoneTask: TextView = itemView.findViewById(R.id.tv_phone)
-    private val tvIsMoneyTask: TextView = itemView.findViewById(R.id.tv_is_money)
+    private val tvIsMoneyTask: ImageView = itemView.findViewById(R.id.iv_is_money)
     private val tvTypeServiceTask: TextView = itemView.findViewById(R.id.tv_type_service)
 
     override fun bind(item: TaskList) {
+
 
         fun detectAddress(): String {
             /**Эта ф-ия проверяет приходит ли заявка с полным адресом или адрес забит от руки
@@ -39,7 +41,7 @@ open class ItemViewHolder (parentView: ViewGroup) :
         tvDateCompletionTask.text = item.dateofmaking.substringBeforeLast("T")
         tvTimeCompletionTask.text = item.comments2
         tvPhoneTask.text = item.phones
-        tvIsMoneyTask.text = detectPayable(item.ispayable)
+        tvIsMoneyTask.visibility = detectPayable(item.ispayable)
         tvTypeServiceTask.text = detectService(
             mapOf (
                 "Интернет" to item.isinternet,
@@ -61,16 +63,9 @@ open class ItemViewHolder (parentView: ViewGroup) :
         return i
     }
 
-    private fun detectPayable(pay: String): String {
-        val i: String
-        if (pay == "true") {
-            i = "Платная"
-            tvIsMoneyTask.setTextColor(Color.parseColor("#ffcc0000"))
-        } else {
-            i = "Бесплатная"
-            tvIsMoneyTask.setTextColor(Color.parseColor("#ff99cc00"))
-        }
-        return i
+    private fun detectPayable(pay: String): Int {
+        return if (pay == "false") View.INVISIBLE
+        else View.VISIBLE
     }
 }
 
@@ -136,7 +131,6 @@ class SimpleExpandableItemViewHolder(parentView: ViewGroup) :
         }
         return i
     }
-
 
     override fun onItemSelect(event: ViewEvent.OnItemSelected) {
         when (event.isSelected) {

@@ -26,7 +26,7 @@ class TaskViewModel : ViewModel(), DataBaseCommunication {
     val arrayMaterialList = MutableLiveData<ArrayList<MaterialUsed>>()  // Сюда загружается список доступных материалов с сервера
 
     val textEditComment = MutableLiveData<String>()
-    val textEditSumma = MutableLiveData<String>()
+    val textEditSumm = MutableLiveData<String>()
 
     val ldUserData = MutableLiveData<User>()  // Данные пользователя из Firebase
 

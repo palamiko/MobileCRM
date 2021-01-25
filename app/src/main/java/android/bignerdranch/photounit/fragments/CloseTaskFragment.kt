@@ -37,14 +37,14 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
         }
         // Воссанавливает значения полей
         te_input_comment_close.setText(taskViewModel.textEditComment.value)
-        te_input_summ.setText(taskViewModel.textEditSumma.value)
+        te_input_summ.setText(taskViewModel.textEditSumm.value)
     }
 
     override fun onPause() {
 
         // Сохраняет значения полей
         taskViewModel.textEditComment.value = te_input_comment_close.text.toString()
-        taskViewModel.textEditSumma.value = te_input_summ.text.toString()
+        taskViewModel.textEditSumm.value = te_input_summ.text.toString()
         super.onPause()
 
     }

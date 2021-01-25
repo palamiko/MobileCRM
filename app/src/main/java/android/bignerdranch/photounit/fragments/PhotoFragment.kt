@@ -22,6 +22,7 @@ import androidx.core.content.FileProvider
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import com.github.drjacky.imagepicker.ImagePicker
 import kotlinx.android.synthetic.main.fragment_photo.*
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -45,6 +46,9 @@ class PhotoFragment : BaseFragment(R.layout.fragment_photo) {
         super.onResume()
         bindAllView()
     }
+
+
+
 
     private fun dispatchTakePictureIntent() {
         // Открываем камеру для фото и создаем фаил с именем даты сегодня.
@@ -107,6 +111,34 @@ class PhotoFragment : BaseFragment(R.layout.fragment_photo) {
         }
     }
 
+    private fun getPhoto() {
+        ImagePicker.with(this)
+            .compress(1024)         //Final image size will be less than 1 MB(Optional)
+            .maxResultSize(1080, 1080)  //Final image resolution will be less than 1080 x 1080(Optional)
+            .start { resultCode, data ->
+                if (resultCode == Activity.RESULT_OK) {
+                    //Image Uri will not be null for RESULT_OK
+                    val fileUri = data?.data
+                    //You can get File object from intent
+                    val file: File? = ImagePicker.getFile(data)
+                    //You can also get File Path from intent
+                    val filePath: String? = ImagePicker.getFilePath(data)
+                    val takenImage = BitmapFactory.decodeFile(filePath) // Само фото
+                    //val rotateImage: Bitmap = rotateImageFun(takenImage) // Переворачиваем фото в функции
+                    val stream = ByteArrayOutputStream()
+                    takenImage.compress(Bitmap.CompressFormat.JPEG, 100, stream) // Компрессия до JPEG
+                    val byteArray: ByteArray = stream.toByteArray() // Конвертация в ByteArray для передачи в POST
+                    // Помещаем JPEG и ByteArray каждый в свой LiveData во ViewModel
+                    sharedModel.setFilePhotoByteArr(byteArray) // Нужно для передачи в POST
+                    sharedModel.setPhoto(takenImage) // Нужно для отображения на экране в ImageView
+                } else if (resultCode == ImagePicker.RESULT_ERROR) {
+                    Toast.makeText(context, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "Task Cancelled", Toast.LENGTH_SHORT).show()
+                }
+            }
+    }
+
     private fun rotateImageFun(image: Bitmap): Bitmap {
         // Переворачивает фотографию и возвращает нормальный вариант
         val mMatrix = Matrix()
@@ -116,7 +148,7 @@ class PhotoFragment : BaseFragment(R.layout.fragment_photo) {
 
     private fun bindAllView() {
         // Биндим кнопки
-        btn_get_photo.setOnClickListener { (dispatchTakePictureIntent()) } // Сделать фото
+        btn_get_photo.setOnClickListener { getPhoto() } // Сделать фото
 
         btn_load_photo.setOnClickListener { uploadImageToServer() } // Отправить на сервер
         if (sharedModel.textFullAddress != "") { // Пока нет полного аддреса кнопку не видно

@@ -4,22 +4,26 @@ import android.bignerdranch.photounit.R
 import android.bignerdranch.photounit.model.User
 import android.bignerdranch.photounit.model.modelsDB.TaskList
 import android.bignerdranch.photounit.utilits.*
-import android.bignerdranch.photounit.utilits.viewHolder.ItemViewHolder
-import android.bignerdranch.photounit.utilits.viewHolder.SimpleExpandableItemViewHolder
+import android.bignerdranch.photounit.utilits.viewHolder.MainAdapter
+import android.bignerdranch.photounit.utilits.viewHolder.TouchHelper
 import android.bignerdranch.photounit.viewModels.MultiItemSelectViewModel
 import android.bignerdranch.photounit.viewModels.TaskViewModel
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
-import kotlinx.android.synthetic.main.activity_main.*
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_task.*
 import kotlinx.serialization.json.Json
 import smartadapter.SmartRecyclerAdapter
-import smartadapter.viewevent.listener.OnClickEventListener
 
 
 class TaskFragment : BaseFragment(R.layout.fragment_task) {
@@ -30,8 +34,16 @@ class TaskFragment : BaseFragment(R.layout.fragment_task) {
     private lateinit var twoSmartRecyclerAdapter: SmartRecyclerAdapter
     private lateinit var sharedPreferences: SharedPreferences
 
+
+    private lateinit var viewAdapter: RecyclerView.Adapter<*>
+    private lateinit var viewManager: RecyclerView.LayoutManager
+    private lateinit var colorDrawableBackground: ColorDrawable
+    private lateinit var deleteIcon: Drawable
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        println("@###############################")
         detectFirstInput()
     }
 
@@ -106,7 +118,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task) {
     private fun createListenerReceivedTask() {
         // Показываем RecyclerView как только получили заявки с сервера
         taskViewModel.mapTask.observe(viewLifecycleOwner, { arrayTask ->
-            createRecyclerViewAdapter(arrayTask)
+            createRecyclerView(arrayTask)
         })
     }
 
@@ -119,39 +131,6 @@ class TaskFragment : BaseFragment(R.layout.fragment_task) {
         } else Toast.makeText(requireContext(), "Ошибка чтения данных пользователя", Toast.LENGTH_SHORT).show()
     }
 
-    private fun createRecyclerViewAdapter(arrayTask: ArrayList<TaskList>) {
-        if (taskViewModel.selectorState.value == TASK_APPOINTED) {
-
-            smartRecyclerAdapter = SmartRecyclerAdapter
-                .items(arrayTask)
-                .map(TaskList::class, ItemViewHolder::class)
-                .add(OnClickEventListener {
-                    Toast.makeText(requireContext(), "onClick ${it.position}", Toast.LENGTH_SHORT)
-                        .show()
-                })
-                .add(SwipeRemoveItemBinder(ItemTouchHelper.LEFT) {
-                    // Remove item from SmartRecyclerAdapter data set
-                    if (taskViewModel.selectorState.value == TASK_APPOINTED) {
-                        taskViewModel.singleTask.value =
-                            arrayTask[it.position] // Помещаем данные выбраной заявки в VM
-                        navController.navigate(R.id.action_taskFragment_to_closeTaskFragment)
-                        //smartRecyclerAdapter.removeItem(it.viewHolder.adapterPosition)
-                    }
-                })
-                .into(recyclerView)
-
-        } else {
-
-            twoSmartRecyclerAdapter = SmartRecyclerAdapter
-                .items(arrayTask)
-                .map(TaskList::class, SimpleExpandableItemViewHolder::class)
-                .add(multiItemSelectViewModel.observe(this) {
-                    mainActivity.toolbar.subtitle =
-                        "${multiItemSelectViewModel.viewEventListener.selectedItemsCount} / ${arrayTask.size} всего"
-                })
-                .into(recyclerView)
-        }
-    }
 
     private fun saveStateRadioButton() {
         /**Сохраняем положение RadioButton перед onPause*/
@@ -177,7 +156,6 @@ class TaskFragment : BaseFragment(R.layout.fragment_task) {
 
     private fun detectFirstInput() {
         if ( taskViewModel.selectorState.value == null) taskViewModel.selectorState.value = TASK_APPOINTED
-
         //  Если первое включение то выставляем заначения по умолчанию
         if (taskViewModel.selectorDay.value == null)  taskViewModel.selectorDay.value = taskViewModel.getDateTime(TODAY)
         //  Если первый вход и нет данных пользователя получаем их из хранилища
@@ -185,5 +163,27 @@ class TaskFragment : BaseFragment(R.layout.fragment_task) {
             getUserDataFromSharedPref()
             taskViewModel.httpGetListTask(taskViewModel.mapTask, taskViewModel.ldUserData.value?.id.toString(), TASK_APPOINTED)
         }
+    }
+
+    private fun createRecyclerView(dataSet: ArrayList<TaskList>) {
+        /**RecyclerView для назначеных заявок*/
+
+        viewAdapter = MainAdapter(dataSet, navController, taskViewModel)
+        viewManager = LinearLayoutManager(requireContext())
+
+        colorDrawableBackground = ColorDrawable(Color.parseColor("#ff0000"))
+        deleteIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_compited_task)!!
+
+        recyclerView.apply {
+            setHasFixedSize(true)
+            adapter = viewAdapter
+            layoutManager = viewManager
+            //addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
+        }
+
+        val itemTouchHelperCallback = TouchHelper(viewAdapter, deleteIcon, colorDrawableBackground)
+        val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
+
+        itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 }
