@@ -4,6 +4,8 @@ import android.bignerdranch.photounit.R
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import smartadapter.extension.SmartViewHolderBinder
@@ -12,6 +14,22 @@ import smartadapter.viewevent.swipe.BasicSwipeEventBinder
 import smartadapter.viewevent.swipe.SwipeFlags
 
 
+fun AppCompatActivity.detectUserStatus(status: String): String =
+    when (status) {
+        "adm" -> "Администратор"
+        "mnt" -> "Мастер"
+        "disp" -> "Диспетчер"
+        else -> "Пользователь"
+    }
+
+fun AppCompatActivity.detectUserIcon(status: String): Drawable? =
+    when (status) {
+        "adm" -> ContextCompat.getDrawable(this, R.drawable.ic_admin_2)
+        "mnt" -> ContextCompat.getDrawable(this, R.drawable.ic_master)
+        "disp" -> ContextCompat.getDrawable(this, R.drawable.ic_operator)
+        else -> ContextCompat.getDrawable(this, R.drawable.ic_master)
+
+}
 class SwipeRemoveItemBinder(
     override var swipeFlags: SwipeFlags,
     override var eventListener: (ViewEvent.OnItemSwiped) -> Unit,

@@ -2,18 +2,25 @@ package android.bignerdranch.photounit.fragments
 
 import android.annotation.SuppressLint
 import android.bignerdranch.photounit.R
+import android.bignerdranch.photounit.fragments.TaskFragment.Companion.FIRST
 import android.bignerdranch.photounit.utilits.DataBaseCommunication
 import android.bignerdranch.photounit.utilits.KEY_USER_DATA
 import android.bignerdranch.photounit.utilits.SHARED_PREF_NAME
 import android.bignerdranch.photounit.utilits.USERS
+import android.bignerdranch.photounit.viewModels.UserViewModel
 import android.content.ContentValues
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
-import com.google.firebase.auth.FirebaseAuth
+import androidx.lifecycle.SavedStateHandle
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_authorization.*
@@ -24,22 +31,29 @@ import kotlinx.coroutines.launch
 
 class AuthorizationFragment : BaseFragment(R.layout.fragment_authorization), DataBaseCommunication {
 
+    private val userViewModel: UserViewModel by activityViewModels()
+    private lateinit var savedStateHandle: SavedStateHandle
+
     private val dataUser = MutableLiveData<String>()  // Информация из Firebase
-    private val ldToken = MutableLiveData<String>()  // Токен авторизации приходящий с срм
-    private lateinit var mAuth: FirebaseAuth
+
     // SharedPreference
-    lateinit var sharedPref: SharedPreferences
-    lateinit var editorSharedPref: SharedPreferences.Editor
+    private lateinit var sharedPref: SharedPreferences
+    private lateinit var editorSharedPref: SharedPreferences.Editor
 
 
     @SuppressLint("CommitPrefEdits")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        sharedPref = requireActivity().getSharedPreferences(
-            SHARED_PREF_NAME,
-            MODE_PRIVATE)
+        sharedPref = requireActivity().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE)
         editorSharedPref = sharedPref.edit()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        if (userViewModel.mAuthLiveData.value != null) userViewModel.logOut()
+        savedStateHandle = findNavController().previousBackStackEntry!!.savedStateHandle
+        savedStateHandle.set(LOGIN_SUCCESSFUL, false)
+        savedStateHandle.set(FIRST, false)
     }
 
     override fun onStart() {
@@ -47,39 +61,44 @@ class AuthorizationFragment : BaseFragment(R.layout.fragment_authorization), Dat
         init()
     }
 
-    @SuppressLint("RestrictedApi")
     private fun init() {
-        mAuth =FirebaseAuth.getInstance()
-
         sign_in.setOnClickListener {
-            sendPostForAuth(te_user_login, te_password, ldToken) // Отправляем POST в корутине.
+            load_input.isVisible = true
+            userViewModel.login(getText(te_user_login), getText(te_password))  // Отправляем POST в корутине.
         }
 
-        // Подключаем слушатель
-        ldToken.observe(this, {
-            navController.backStack.addAll(mainActivity.myBackStackEntry)  // Добавляем бэестек после удаления назад для нормальной работы navgraph
+        userViewModel.ldToken.observe(this, {
             authWithCustomToken(it)  // Если изменилась лайвдата то пришел токен и авторизуемся
         })
 
         dataUser.observe(this, {
-            if (it != null) {
+            if (it != null) { // Если пришли данные пользователя из FB то переходим к TaskFragment
                 writeUserDataInSharedPref(it)
-                navController.navigate(R.id.authorizationFragment_to_navigationTask)
+                savedStateHandle.set(LOGIN_SUCCESSFUL, true)
+                savedStateHandle.set(FIRST, true)
+                clearData()
+                findNavController().popBackStack()
             }
         })
+    }
+
+    private fun clearData() {
+        dataUser.value = null
+        userViewModel.clearToken()
+        load_input.isInvisible = true
     }
 
     // Функция аутентифицирует в FireBase используя токен
     private fun authWithCustomToken(token: String) {
         if (token != "") {
             token.let {
-                mAuth.signInWithCustomToken(it)
-                    .addOnCompleteListener(requireActivity()) { task ->
+                userViewModel.mAuthLiveData.value?.signInWithCustomToken(it)
+                    ?.addOnCompleteListener(requireActivity()) { task ->
                         if (task.isSuccessful) {
                             Log.d(ContentValues.TAG, "signInWithCustomToken:success")
-                            val user = mAuth.currentUser
+                            val user = userViewModel.mAuthLiveData.value?.currentUser
                             val database = Firebase.database
-                            val userRef = database.getReference("$USERS/${mAuth.currentUser?.uid}") // Ссылка на данные пользователя
+                            val userRef = database.getReference("$USERS/${userViewModel.mAuthLiveData.value?.currentUser?.uid}") // Ссылка на данные пользователя
                             if (user != null) {
                                 Log.w("MyLOG", user.uid)
                                 CoroutineScope(Dispatchers.IO).launch {
@@ -87,12 +106,14 @@ class AuthorizationFragment : BaseFragment(R.layout.fragment_authorization), Dat
                                 }
                             }
                         } else {
+                            load_input.isInvisible = true
                             Log.w(ContentValues.TAG, "signInWithCustomToken:failure", task.exception)
                             Toast.makeText(requireContext(), "Ошибка авторизации", Toast.LENGTH_SHORT).show()
                         }
                     }
             }
         } else {
+            load_input.isInvisible = true
             Toast.makeText(requireContext(), "Ошибка авторизации. Token не получен.", Toast.LENGTH_SHORT).show()
         }
     }
@@ -100,6 +121,9 @@ class AuthorizationFragment : BaseFragment(R.layout.fragment_authorization), Dat
     private fun writeUserDataInSharedPref(userData: String) {
         editorSharedPref.putString(KEY_USER_DATA, userData)
         editorSharedPref.apply()
+    }
+    companion object {
+        const val LOGIN_SUCCESSFUL: String = "LOGIN_SUCCESSFUL"
     }
 }
 

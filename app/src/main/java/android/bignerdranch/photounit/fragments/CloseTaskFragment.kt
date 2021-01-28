@@ -100,10 +100,10 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
             val dataCloseTask = DataCloseTask (
                 id_task = taskViewModel.singleTask.value!!.id,
                 state_task = TASK_COMPLETED,
-                id_user = taskViewModel.ldUserData.value!!.id.toString(),
-                comment = te_input_comment_close.text.toString(),
+                id_user = taskViewModel.getUserData(id=true),
+                comment = getText(te_input_comment_close),
                 finish = FINISH_OK,
-                summ = te_input_summ.text.toString(),
+                summ = getText(te_input_summ),
                 material = taskViewModel.selectMaterial.value!!
             )
 

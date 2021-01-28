@@ -49,4 +49,8 @@
     <string name="test_tv_summ">Сумма:</string>
     <string name="text_tv_hint_summ">тг</string>
     <string name="text_tv_btn_add_material">добавить</string>
+    <string name="text_status_user">Статус</string>
+    <string name="text_name_user">Имя пользователя</string>
+    <string name="text_auth_this">Авторизация</string>
+    <string name="desc_icon_user">Icon_user</string>
 </resources>

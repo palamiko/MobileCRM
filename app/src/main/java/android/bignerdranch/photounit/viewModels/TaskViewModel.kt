@@ -36,6 +36,25 @@ class TaskViewModel : ViewModel(), DataBaseCommunication {
     init {
         selectMaterial.value = arrayListOf()  // Инициализируем масив
     }
+
+    fun getTaskDef() {
+        httpGetListTask(mapTask, getUserData(id=true))
+    }
+
+    fun getTask() {
+        httpGetListTask(mapTask, getUserData(id=true), selectorState.value!!, selectorDay.value!!)
+    }
+
+    fun getUserData(): User = ldUserData.value ?: User()
+    fun getUserData(id: Boolean): String = ldUserData.value?.id.toString()
+
+    fun setSelectorDay(day: Int) {
+        selectorDay.value = getDateTime(day)
+    }
+
+    fun setSelectorState(state: Char) {
+        selectorState.value = state
+    }
 }
 
 class MultiItemSelectViewModel : ViewEventViewModel<ViewEvent, OnMultiItemSelectListener>(

@@ -5,7 +5,8 @@ import android.bignerdranch.photounit.model.DataCloseTask
 import android.bignerdranch.photounit.model.MaterialUsed
 import android.bignerdranch.photounit.model.User
 import android.bignerdranch.photounit.model.modelsDB.TaskList
-import android.widget.EditText
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.extensions.authentication
@@ -143,8 +144,8 @@ interface DataBaseCommunication {
 
     // Функция отправляет POST с login pass, при успешной аутентификации получает токен FireBase
     fun sendPostForAuth(
-        login: EditText,
-        password: EditText,
+        login: String,
+        password: String,
         liveDataToken: MutableLiveData<String>
     ) {
         val timeout = 10000 // 5000 milliseconds = 10 seconds.
@@ -156,8 +157,8 @@ interface DataBaseCommunication {
                 .basic(AUTH_USER, AUTH_PASS)
                 .jsonBody(
                     """
-  { "login" : "${login.text}",
-    "password" : "${password.text}"
+  { "login" : "$login",
+    "password" : "$password"
   }
   """
                 )
@@ -212,6 +213,7 @@ interface DataBaseCommunication {
         /** Функция получает из Firebase данные пользователя после загрузки TaskFragment*/
 
         userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+
             override fun onDataChange(snapshot: DataSnapshot) {
                 liveData.postValue(Json.encodeToString(snapshot.getValue(User::class.java) ?: User()))
             }
@@ -253,6 +255,7 @@ interface DataBaseCommunication {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun getDateTime(day: Int): String {
         val today: LocalDate = LocalDate.now()
         val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-M-dd 00:00:00")

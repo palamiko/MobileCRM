@@ -25,5 +25,9 @@
         <item name="android:textColor">@color/secondaryLightColor</item>
     </style>
 
+    <style name="Theme.PhotoUnit.AuthText" parent="Theme.PhotoUnit">
+        <item name="android:textColor">@color/primaryDarkColor</item>
+    </style>
+
 
 </resources>

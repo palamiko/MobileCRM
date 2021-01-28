@@ -16,8 +16,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 
 
-class MainAdapter(private val dataSet: ArrayList<TaskList>, val navController: NavController,
-                  private val taskViewModel: TaskViewModel) : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
+class MainAdapter( private val dataSet: ArrayList<TaskList>, val navController: NavController,
+                   private val taskViewModel: TaskViewModel) : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
 
     private var removedPosition: Int = 0
     private lateinit var removedItem: TaskList
@@ -32,6 +32,7 @@ class MainAdapter(private val dataSet: ArrayList<TaskList>, val navController: N
         private val tvTypeServiceTask: TextView = view.findViewById(R.id.tv_type_service)
 
         fun bind(task: TaskList) {
+
             tvAddressTask.text = detectAddress(task)
             tvCommentTask.text = task.comments
             tvDateCompletionTask.text = task.dateofmaking.substringBeforeLast("T")
@@ -83,7 +84,8 @@ class MainAdapter(private val dataSet: ArrayList<TaskList>, val navController: N
     }
 
     fun removeItem(position: Int, viewHolder: RecyclerView.ViewHolder) {
-        removedItem = dataSet[position]
+
+        removedItem =dataSet[position]
         removedPosition = position
 
         taskViewModel.singleTask.value = dataSet[position] // Помещаем данные выбраной заявки в VM
@@ -91,6 +93,7 @@ class MainAdapter(private val dataSet: ArrayList<TaskList>, val navController: N
 
         dataSet.removeAt(position)  // Удалить элемент
         notifyItemRemoved(position)  // Уведомить всех слушателей что элемент удален
+
 
         Snackbar.make(viewHolder.itemView, "$removedItem removed", Snackbar.LENGTH_LONG).setAction("UNDO") {
             dataSet.add(removedPosition, removedItem)

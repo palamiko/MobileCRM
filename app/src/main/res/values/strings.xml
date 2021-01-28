@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Мобильная CRM</string>
+    <string name="app_name">CRM</string>
 
     <string name="text_btn_get_photo">Сделать фото</string>
     <string name="text_desc_image_view">photo</string>
@@ -26,7 +26,7 @@
     <string name="text_comment_close_task">Комментарий</string>
     <string name="text_tv_comment_close_task">-------</string>
     <string name="fragment_title_close_task">Закрытие заявки</string>
-    <string name="fragment_title_authorization">Mobile CRM</string>
+    <string name="fragment_title_authorization">CRM</string>
     <string name="type_of_material_text">Потраченный материал:</string>
     <string name="text_count_used_material_text">Количество потраченого материала:</string>
     <string name="text_name_material">---------</string>
@@ -56,6 +56,10 @@
     <string name="test_tv_summ">Сумма:</string>
     <string name="text_tv_hint_summ">тг</string>
     <string name="text_tv_btn_add_material">добавить</string>
+    <string name="text_status_user">Статус</string>
+    <string name="text_name_user">Имя пользователя</string>
+    <string name="text_auth_this">Авторизация</string>
+    <string name="desc_icon_user">Icon_user</string>
 
 
 </resources>
