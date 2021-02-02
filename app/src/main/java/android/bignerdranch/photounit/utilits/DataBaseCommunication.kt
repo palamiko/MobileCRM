@@ -5,8 +5,6 @@ import android.bignerdranch.photounit.model.DataCloseTask
 import android.bignerdranch.photounit.model.MaterialUsed
 import android.bignerdranch.photounit.model.User
 import android.bignerdranch.photounit.model.modelsDB.TaskList
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.extensions.authentication
@@ -25,12 +23,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import org.threeten.bp.LocalDate
+import org.threeten.bp.format.DateTimeFormatter
 
 
 interface DataBaseCommunication {
-
 
     fun httpGetListStreet(id: String, savedObjects: MutableLiveData<Map<String, String>>) {
         /** Функция принимает whoGet - является продолжением ссылки и названием вызываемой
@@ -128,7 +125,6 @@ interface DataBaseCommunication {
                                 val jsonData = FuelJson(data.content) // Конвектируем в JsonObject
                                 val mGson = Gson()
 
-
                                 val tutorialMap: ArrayList<TaskList> = mGson.fromJson(
                                     jsonData.array()
                                         .toString(), // Конвектируем в kotlin Map<String, String>
@@ -171,43 +167,55 @@ interface DataBaseCommunication {
 
     }
 
+    // Функция отправляет POST с login pass, при успешной аутентификации получает токен FireBase
+    suspend fun sendPostForAuth(
+        login: String,
+        password: String
+    ): String {
+        val timeout = 10000 // 5000 milliseconds = 10 seconds.
+        val timeoutRead = 60000 // 60000 milliseconds = 1 minute.
+        var myResponse = ""
+
+
+            Fuel.post("$SERVER_ADDRESS/$AUTH_IN_APP").timeout(timeout).timeoutRead(timeoutRead)
+                .authentication()
+                .basic(AUTH_USER, AUTH_PASS)
+                .jsonBody (
+                    """
+  { "login" : "$login",
+    "password" : "$password"
+  }
+  """
+                )
+                .response { _, response, _ ->
+                       myResponse = response.body().asString("text/html")
+                }
+        return myResponse
+    }
+
     fun closeTask (
         /**Ф-ия закрывает заявку*/
-        dataCloseTask: DataCloseTask,
-        result: MutableLiveData<String>
+        dataCloseTask: DataCloseTask
     ) {
-        CoroutineScope(Dispatchers.IO).launch {
+        val timeout = 10000 // 5000 milliseconds = 10 seconds.
+        val timeoutRead = 60000 // 60000 milliseconds = 1 minute.
 
+        CoroutineScope(Dispatchers.IO).launch {
             //val serialazer: KSerializer<List<MaterialUsed>> = ListSerializer(MaterialUsed.serializer()) // Сериализатор для кастомного класса
 
             val jsonDataCloseTask = Json.encodeToString(dataCloseTask)
             println(jsonDataCloseTask)
-            Fuel.post("$SERVER_ADDRESS/$CLOSE_TASK")
+            Fuel.post("$SERVER_ADDRESS/$CLOSE_TASK").timeout(timeout).timeoutRead(timeoutRead)
                 .authentication()
                 .basic(AUTH_USER, AUTH_PASS)
                 .jsonBody(jsonDataCloseTask)
-                .response { request, response, _ ->
-                    println(request)
-                    result.postValue(
-                        response.body().asString("text/html")
-                    )  // Записывает полученый ответ в LiveData
+                .response { _, response, _ ->
+                    println(response.body().asString("text/html"))
                 }
         }
     }
 
-    fun getUserDataFromFirebase1(userRef: DatabaseReference, ldUserData: MutableLiveData<User>) {
-        /** Функция получает из Firebase данные пользователя после загрузки TaskFragment*/
-        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                ldUserData.value = snapshot.getValue(User::class.java) ?: User()
-            }
 
-            override fun onCancelled(error: DatabaseError) {
-                println("message: ${error.message} details: ${error.details}")
-            }
-        }
-        )
-    }
 
     fun getUserDataFromFirebase(userRef: DatabaseReference, liveData: MutableLiveData<String> ) {
         /** Функция получает из Firebase данные пользователя после загрузки TaskFragment*/
@@ -255,7 +263,6 @@ interface DataBaseCommunication {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun getDateTime(day: Int): String {
         val today: LocalDate = LocalDate.now()
         val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-M-dd 00:00:00")

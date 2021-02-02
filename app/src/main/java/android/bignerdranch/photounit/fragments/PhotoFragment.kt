@@ -3,8 +3,6 @@ package android.bignerdranch.photounit.fragments
 import android.Manifest
 import android.app.Activity
 import android.bignerdranch.photounit.R
-import android.bignerdranch.photounit.utilits.DataBaseCommunication
-import android.bignerdranch.photounit.utilits.TODAY
 import android.bignerdranch.photounit.utilits.UploadUtility
 import android.bignerdranch.photounit.viewModels.SharedViewModel
 import android.content.pm.PackageManager
@@ -15,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.github.drjacky.imagepicker.ImagePicker
 import kotlinx.android.synthetic.main.fragment_photo.*
 import java.io.ByteArrayOutputStream
@@ -46,9 +45,9 @@ class PhotoFragment : BaseFragment(R.layout.fragment_photo) {
             .start { resultCode, data ->
                 if (resultCode == Activity.RESULT_OK) {
                     //Image Uri will not be null for RESULT_OK
-                    val fileUri = data?.data
+                    //val fileUri = data?.data
                     //You can get File object from intent
-                    val file: File? = ImagePicker.getFile(data)
+                    //val file: File? = ImagePicker.getFile(data)
                     //You can also get File Path from intent
                     val filePath: String? = ImagePicker.getFilePath(data)
                     val takenImage = BitmapFactory.decodeFile(filePath) // Само фото
@@ -78,10 +77,9 @@ class PhotoFragment : BaseFragment(R.layout.fragment_photo) {
         } else btn_load_photo.isInvisible = true
 
         btn_add_address.setOnClickListener {
-            navController.navigate(R.id.action_photoFragment_to_districtListFragment)
-            println(object : DataBaseCommunication{}.getDateTime(TODAY))
-
+            findNavController().navigate(R.id.action_photoFragment_to_districtListFragment)
         }
+
         if (sharedModel.photoLiveData.value != null) { // Пока нет фото кнопку не видно
             btn_add_address.isVisible = true
         } else btn_add_address.isInvisible = true

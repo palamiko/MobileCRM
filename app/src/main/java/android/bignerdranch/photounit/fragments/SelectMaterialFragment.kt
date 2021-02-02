@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_select_material.*
 import smartadapter.SmartRecyclerAdapter
 import smartadapter.viewevent.listener.OnClickEventListener
@@ -35,7 +36,7 @@ class SelectMaterialFragment : BaseFragment(R.layout.fragment_select_material) {
             .add(OnClickEventListener {
 
                 taskViewModel.selectMaterial.value!!.add(arrayMaterial[it.position])  // Добавляем выбранный материал в массив
-                navController.navigate(R.id.action_selectMaterialFragment_to_countMaterialFragment)
+                findNavController().navigate(R.id.action_selectMaterialFragment_to_countMaterialFragment)
             })
             .into(list_material_select)
     }

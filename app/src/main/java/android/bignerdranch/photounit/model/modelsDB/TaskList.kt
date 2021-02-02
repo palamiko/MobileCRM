@@ -28,9 +28,9 @@ data class TaskList(
     var pol11: String = "",
     var pol12: String = "",
     var pol13: String = "",
-    var isinternet: String = "",
-    var istv: String = "",
-    var isdom: String = "",
+    var isinternet: Boolean = false,
+    var istv: Boolean = false,
+    var isdom: Boolean = false,
     var flat: String = "",  // Номер квартиры заявки
     var building_number: String = "",  // Номер дома заявки
     var name_ru: String = ""  // Название улицы заявки

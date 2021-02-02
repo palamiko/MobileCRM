@@ -17,17 +17,38 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="Theme.PhotoUnit.AccentTitle" parent="Theme.PhotoUnit">
+    <!--Стиль TextView которая отображает название сервиса -->
+    <style name="Theme.PhotoUnit.TaskRecyclerItem.AccentTitle" parent="Theme.PhotoUnit">
         <item name="android:textColor">@color/secondaryColor</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/margin_small</item>
     </style>
 
-    <style name="Theme.PhotoUnit.AccentText" parent="Theme.PhotoUnit">
+    <!-- Стиль имен полей одной заявки в списке заявок -->
+    <style name="Theme.PhotoUnit.TaskRecyclerItem.AccentText" parent="Theme.PhotoUnit">
         <item name="android:textColor">@color/secondaryLightColor</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/margin_small</item>
     </style>
 
     <style name="Theme.PhotoUnit.AuthText" parent="Theme.PhotoUnit">
         <item name="android:textColor">@color/primaryDarkColor</item>
     </style>
 
+    <!-- Цвет текста для надписей в HeaderLayout -->
+    <style name="Theme.PhotoUnit.HeaderText" parent="Theme.PhotoUnit">
+        <item name="android:textColor">@color/secondaryTextColor</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <!-- Стиль для заполняемых полей в Task RecyclerView -->
+    <style name="Theme.PhotoUnit.TaskRecyclerItem.DataTextView" parent="Theme.PhotoUnit">
+        <item name="android:text">@string/text_pass</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/margin_small</item>
+    </style>
 
 </resources>

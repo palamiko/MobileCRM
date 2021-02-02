@@ -48,11 +48,6 @@
     <string name="text_tv_time_completion">Рекомендуемое время:</string>
     <string name="text_tv_phone_text">Телефон:</string>
     <string name="text_tv_is_money">-------</string>
-    <string name="text_tv_phone">--------</string>
-    <string name="text_tv_time">-------</string>
-    <string name="text_tv_date_of_completion1">-------</string>
-    <string name="text_tv_address_task1">-------</string>
-    <string name="text_tv_comment1">------</string>
     <string name="test_tv_summ">Сумма:</string>
     <string name="text_tv_hint_summ">тг</string>
     <string name="text_tv_btn_add_material">добавить</string>
@@ -60,6 +55,10 @@
     <string name="text_name_user">Имя пользователя</string>
     <string name="text_auth_this">Авторизация</string>
     <string name="desc_icon_user">Icon_user</string>
+    <string name="text_tv_version_app">ver x.x.x</string>
+    <string name="text_problem_tv">Неполадки:</string>
+    <string name="text_cont_desc_pay_task">Pay Task</string>
+    <string name="text_pass">-----</string>
 
 
 </resources>

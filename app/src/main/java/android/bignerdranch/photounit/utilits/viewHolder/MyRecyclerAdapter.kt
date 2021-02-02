@@ -2,6 +2,7 @@ package android.bignerdranch.photounit.utilits.viewHolder
 
 import android.bignerdranch.photounit.R
 import android.bignerdranch.photounit.model.modelsDB.TaskList
+import android.bignerdranch.photounit.utilits.detectProblem
 import android.bignerdranch.photounit.viewModels.TaskViewModel
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -13,11 +14,11 @@ import android.widget.TextView
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
+import java.util.*
 
 
-class MainAdapter( private val dataSet: ArrayList<TaskList>, val navController: NavController,
-                   private val taskViewModel: TaskViewModel) : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
+class MainAdapter(private val dataSet: ArrayList<TaskList>, private val navController: NavController,
+                  private val taskViewModel: TaskViewModel) : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
 
     private var removedPosition: Int = 0
     private lateinit var removedItem: TaskList
@@ -30,6 +31,7 @@ class MainAdapter( private val dataSet: ArrayList<TaskList>, val navController: 
         private val tvPhoneTask: TextView = view.findViewById(R.id.tv_phone)
         private val tvIsMoneyTask: ImageView = view.findViewById(R.id.iv_is_money)
         private val tvTypeServiceTask: TextView = view.findViewById(R.id.tv_type_service)
+        private val tvProblem: TextView = view.findViewById(R.id.tv_problem)
 
         fun bind(task: TaskList) {
 
@@ -39,6 +41,7 @@ class MainAdapter( private val dataSet: ArrayList<TaskList>, val navController: 
             tvTimeCompletionTask.text = task.comments2
             tvPhoneTask.text = task.phones
             tvIsMoneyTask.visibility = detectPayable(task.ispayable)
+
             tvTypeServiceTask.text = detectService(
                 mapOf (
                     "Интернет" to task.isinternet,
@@ -46,7 +49,16 @@ class MainAdapter( private val dataSet: ArrayList<TaskList>, val navController: 
                     "Телевидение" to task.istv
                 )
             )
+            if (tvTypeServiceTask.text != "") {
+                tvProblem.text = detectProblem(
+                    task.pol11,
+                    task.pol12,
+                    task.pol13,
+                    tvTypeServiceTask.text.toString()
+                )
+            }
         }
+
 
         private fun detectAddress(task: TaskList): String {
             /**Эта ф-ия проверяет приходит ли заявка с полным адресом или адрес забит от руки
@@ -56,11 +68,11 @@ class MainAdapter( private val dataSet: ArrayList<TaskList>, val navController: 
             } else "${task.name_ru} ${task.building_number}-${task.flat}"
         }
 
-        private fun detectService(map: Map<String, String>): String {
+        private fun detectService(map: Map<String, Boolean>): String {
             /** Проверяет на какой услуге в базе стоит true и возвращает ее имя*/
             var i = ""
             map.forEach {
-                if (it.value == "true") {
+                if (it.value) {
                     i = it.key
                 }
             }
@@ -83,28 +95,26 @@ class MainAdapter( private val dataSet: ArrayList<TaskList>, val navController: 
         viewHolder.bind(dataSet[position])
     }
 
-    fun removeItem(position: Int, viewHolder: RecyclerView.ViewHolder) {
+    fun removeItem(position: Int) {  //, viewHolder: RecyclerView.ViewHolder было аргументом
+        println("В адаптере: $dataSet")
 
         removedItem =dataSet[position]
-        removedPosition = position
-
+        //removedPosition = position
         taskViewModel.singleTask.value = dataSet[position] // Помещаем данные выбраной заявки в VM
-        navController.navigate(R.id.action_taskFragment_to_closeTaskFragment)
 
         dataSet.removeAt(position)  // Удалить элемент
         notifyItemRemoved(position)  // Уведомить всех слушателей что элемент удален
+        navController.navigate(R.id.action_taskFragment_to_closeTaskFragment)
 
-
+/**
         Snackbar.make(viewHolder.itemView, "$removedItem removed", Snackbar.LENGTH_LONG).setAction("UNDO") {
             dataSet.add(removedPosition, removedItem)
             notifyItemInserted(removedPosition)
-        }.show()
+        }.show()*/
     }
 
     override fun getItemCount() = dataSet.size
 }
-
-
 
 class TouchHelper (var viewAdapter: RecyclerView.Adapter<*>,
                   var deleteIcon: Drawable,
@@ -116,7 +126,7 @@ class TouchHelper (var viewAdapter: RecyclerView.Adapter<*>,
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDirection: Int) {
-        (viewAdapter as MainAdapter).removeItem(viewHolder.adapterPosition, viewHolder)
+        (viewAdapter as MainAdapter).removeItem(viewHolder.adapterPosition)
     }
 
     override fun onChildDraw(

@@ -66,7 +66,6 @@ class AuthorizationFragment : BaseFragment(R.layout.fragment_authorization), Dat
             load_input.isVisible = true
             userViewModel.login(getText(te_user_login), getText(te_password))  // Отправляем POST в корутине.
         }
-
         userViewModel.ldToken.observe(this, {
             authWithCustomToken(it)  // Если изменилась лайвдата то пришел токен и авторизуемся
         })

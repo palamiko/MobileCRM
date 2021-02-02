@@ -52,11 +52,11 @@ open class ItemViewHolder (parentView: ViewGroup) :
         tvTypeServiceTask.paintFlags = tvTypeServiceTask.paintFlags or Paint.UNDERLINE_TEXT_FLAG
     }
 
-    private fun detectService(map: Map<String, String>): String {
+    private fun detectService(map: Map<String, Boolean>): String {
         /** Проверяет на какой услуге в базе стоит true и возвращает ее имя*/
         var i = ""
         map.forEach {
-            if (it.value == "true") {
+            if (it.value) {
                 i = it.key
             }
         }
@@ -109,11 +109,11 @@ class SimpleExpandableItemViewHolder(parentView: ViewGroup) :
         //tvTypeServiceTask.paintFlags = tvTypeServiceTask.paintFlags or Paint.UNDERLINE_TEXT_FLAG
     }
 
-    private fun detectService(map: Map<String, String>): String {
+    private fun detectService(map: Map<String, Boolean>): String {
         /** Проверяет на какой услуге в базе стоит true и возвращает ее имя*/
         var i = ""
         map.forEach {
-            if (it.value == "true") {
+            if (it.value) {
                 i = it.key
             }
         }

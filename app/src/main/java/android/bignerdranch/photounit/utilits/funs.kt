@@ -14,7 +14,7 @@ import smartadapter.viewevent.swipe.BasicSwipeEventBinder
 import smartadapter.viewevent.swipe.SwipeFlags
 
 
-fun AppCompatActivity.detectUserStatus(status: String): String =
+fun detectUserStatus(status: String): String =
     when (status) {
         "adm" -> "Администратор"
         "mnt" -> "Мастер"
@@ -30,6 +30,146 @@ fun AppCompatActivity.detectUserIcon(status: String): Drawable? =
         else -> ContextCompat.getDrawable(this, R.drawable.ic_master)
 
 }
+
+fun detectProblem(pool1: String, pool2: String, pool3: String, service: String): String {
+    /** Функция формирует дополнительное описание заявок. Поле "Неполадки" */
+    return when (service) {
+        "Интернет" -> forPoolInternet(pool1, pool2, pool3)
+        "Телевидение" -> forPoolTelevid(pool1, pool2, pool3)
+        "Домофон" -> forPoolDomofon(pool1, pool2)
+        else -> ""
+    }
+
+}
+
+fun forPoolDomofon(pool1: String, pool2: String): String {
+    var param1 = ""
+    var param2 = ""
+    val data1 = pool1.splitToSequence("*")
+    val data2 = pool2.splitToSequence("*")
+
+    data1.forEachIndexed {index, it ->
+        if (it == "1") {
+            param1 = when (index) {
+                0 -> "Новое подключение. "
+                1 -> "Подключение. "
+                2 -> "Отключение. "
+                else -> ""
+            }
+        }
+    }
+
+    data2.forEachIndexed { index, it ->
+        if (it == "1") {
+            param2 = when(index) {
+                0 -> "До квартиры не доходит сигнал"
+                1 -> "Доводчик"
+                2 -> "Магнит"
+                3 -> "Параллельный сигнал"
+                4 -> "Трубка (УКП)"
+                5 -> "Панель"
+                6 -> "Не работает домофон"
+                7 -> "Ключ"
+                8 -> "Поменять код"
+                else -> ""
+            }
+        }
+    }
+    return param1 + param2
+}
+
+fun forPoolTelevid(pool1: String, pool2: String, pool3: String): String {
+    var param1 = ""
+    var param2 = ""
+    var param3 = ""
+    val data1 = pool1.splitToSequence("*")
+    val data2 = pool2.splitToSequence("*")
+    val data3 = pool3.splitToSequence("*")
+    data1.forEachIndexed {index, it ->
+        if (it == "1") {
+            param1 = when (index) {
+                0 -> "Новое подключение. "
+                1 -> "Переподключение. "
+                2 -> "Повторное подключение. "
+                3 -> "Подключение доп.точки. "
+                4 -> "Отключение по заявлению. "
+                5 -> "Отключение за неуплату. "
+                6 -> "Приостановление. "
+                else -> ""
+            }
+        }
+    }
+    data2.forEachIndexed { index, it ->
+        if (it == "1") {
+            param2 = when(index) {
+                0 -> "Не показ. аналоговые каналы. "
+                1 -> "Не показ. цифровые каналы. "
+                2 -> "Помехи. "
+                3 -> "Нет сигнала. "
+                4 -> "Оборван кабель. "
+                5 -> "Замена кабеля в квартире. "
+                6 -> "Замена кабеля в подъезде. "
+                else -> ""
+            }
+        }
+    }
+    data3.forEachIndexed { index, it ->
+        if (it == "1") {
+            param3 = when(index) {
+                1 -> "Настройка аналоговых каналов"
+                2 -> "Настройка цифровых каналов"
+                3 -> "Сортировка каналов"
+                else -> ""
+            }
+        }
+    }
+    return param1 + param2 + param3
+}
+
+fun forPoolInternet(pool1: String, pool2: String, pool3: String): String {
+    var param1 = ""
+    var param2 = ""
+    var param3 = ""
+    val data1 = pool1.splitToSequence("*")
+    val data2 = pool2.splitToSequence("*")
+    val data3 = pool3.splitToSequence("*")
+    data1.forEachIndexed {index, it ->
+        if (it == "1") {
+            param1 = when (index) {
+                0 -> "Доподключение. "
+                1 -> "Проверить скорость. "
+                2 -> "Частые отключения. "
+                3 -> "Возобновить. "
+                else -> ""
+            }
+        }
+    }
+    data2.forEachIndexed { index, it ->
+        if (it == "1") {
+            param2 = when(index) {
+                0 -> "Сетевой кабель не подключен. "
+                1 -> "Настроить VPN. "
+                2 -> "Настроить Роутер. "
+                3 -> "Заменить кабель. "
+                4 -> "Нарастить кабель. "
+                5 -> "Переобжать коннектор. "
+                else -> ""
+            }
+        }
+    }
+    data3.forEachIndexed { index, it ->
+        if (it == "1") {
+            param3 = when(index) {
+                1 -> "Перезагрузить Свитч"
+                2 -> "Перезагрузить ONU"
+                else -> ""
+            }
+        }
+    }
+    return param1 + param2 + param3
+
+}
+
 class SwipeRemoveItemBinder(
     override var swipeFlags: SwipeFlags,
     override var eventListener: (ViewEvent.OnItemSwiped) -> Unit,

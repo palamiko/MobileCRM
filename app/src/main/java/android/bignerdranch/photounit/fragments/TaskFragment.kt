@@ -1,6 +1,7 @@
 package android.bignerdranch.photounit.fragments
 
 import android.bignerdranch.photounit.R
+import android.bignerdranch.photounit.activity.MainActivity
 import android.bignerdranch.photounit.model.User
 import android.bignerdranch.photounit.model.modelsDB.TaskList
 import android.bignerdranch.photounit.utilits.*
@@ -12,11 +13,13 @@ import android.content.SharedPreferences
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateHandle
@@ -26,10 +29,14 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_task.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
 
-class TaskFragment : BaseFragment(R.layout.fragment_task) {
+class TaskFragment : Fragment() {
 
     private val taskViewModel: TaskViewModel by activityViewModels()
     private val userViewModel: UserViewModel by activityViewModels()
@@ -38,9 +45,11 @@ class TaskFragment : BaseFragment(R.layout.fragment_task) {
     private lateinit var savedStateHandle: SavedStateHandle
 
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
-    private lateinit var viewManager: RecyclerView.LayoutManager
-    private lateinit var colorDrawableBackground: ColorDrawable
-    private lateinit var deleteIcon: Drawable
+
+
+    private lateinit var observerSelectorDay: Observer<String>
+    private lateinit var observerSelectorState: Observer<Char>
+    private lateinit var observerArrayTask: Observer<ArrayList<TaskList>>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +60,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task) {
         savedStateHandle = currentBackStackEntry.savedStateHandle
 
         savedStateHandle.getLiveData<Boolean>(AuthorizationFragment.LOGIN_SUCCESSFUL)
-            .observe(currentBackStackEntry, Observer { success ->
+            .observe(currentBackStackEntry, { success ->
                 if (!success) {
                     val startDestination = navController.graph.startDestination
                     val navOptions = NavOptions.Builder()
@@ -62,32 +71,81 @@ class TaskFragment : BaseFragment(R.layout.fragment_task) {
             })
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_task, container, false)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        userViewModel.mAuthLiveData.observe(viewLifecycleOwner, {
-            if (it.currentUser == null) {
-                navController.navigate(R.id.action_global_authorizationFragment)
-            } else {
-                detectFirstInput()
-                restoreStateRadioButton()
+        if (userViewModel.mAuthLiveData.value?.currentUser == null) {
+            findNavController().navigate(R.id.action_global_authorizationFragment)
+        } else {
+            detectFirstInput()
+            restoreStateRadioButton()
+        }
+    }
 
-                // Слушатели
-                radioButtonListener()
-                getRequestIfChangePositionRadioButton()
-                createListenerReceivedTask()
-            }
-        })
+    override fun onStart() {
+        super.onStart()
+
+        // Слушатели
+        radioButtonListener()
+        createObserver()
+        startObservers()
     }
 
     override fun onResume() {
         super.onResume()
-        mainActivity.changeHeader(taskViewModel.getUserData())
+        (requireActivity() as MainActivity).changeHeader(taskViewModel.getUserData())
+
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(1000)
+            updateTaskList()
+
+        }
+        //updateTaskList()
     }
 
     override fun onPause() {
         saveStateRadioButton()
         super.onPause()
+    }
+
+    override fun onStop() {
+        removeObserver()
+        super.onStop()
+    }
+
+    private fun createObserver() {
+        /**Создает слушателей*/
+        observerSelectorDay = Observer {
+            if (taskViewModel.ldUserData.value?.id != null) {
+                taskViewModel.getTask()
+            }
+        }
+
+        observerSelectorState = Observer {
+            if (taskViewModel.ldUserData.value?.id != null) {
+                taskViewModel.getTask()
+            }
+        }
+
+        observerArrayTask = Observer {
+            createRecyclerView(it)
+        }
+
+    }
+
+    private fun removeObserver() {
+        /**Функция отключает слушателей*/
+        taskViewModel.selectorDay.removeObserver(observerSelectorDay)
+        taskViewModel.selectorState.removeObserver(observerSelectorState)
+        taskViewModel.arrayTask.removeObserver(observerArrayTask)
     }
 
     private fun radioButtonListener() {
@@ -109,30 +167,19 @@ class TaskFragment : BaseFragment(R.layout.fragment_task) {
         }
     }
 
-    private fun getRequestIfChangePositionRadioButton() {
+    private fun startObservers() {
         /**Функция подключает слушатели к переключателю даты заявки и (назначена/закрыта)
          * и производит запрос данных если эти переключали менются*/
 
         // Слушатель состояния переключателей даты заявок
-        taskViewModel.selectorDay.observe(viewLifecycleOwner, {
-            if (taskViewModel.ldUserData.value?.id != null) {
-                taskViewModel.getTask()
-            }
-        })
+        taskViewModel.selectorDay.observe(viewLifecycleOwner, observerSelectorDay)
 
         // Слушатель состояния переключателей состояния заявки
-        taskViewModel.selectorState.observe(viewLifecycleOwner, {
-            if (taskViewModel.ldUserData.value?.id != null) {
-                taskViewModel.getTask()
-            }
-        })
-    }
+        taskViewModel.selectorState.observe(viewLifecycleOwner, observerSelectorState)
 
-    private fun createListenerReceivedTask() {
         // Показываем RecyclerView как только получили заявки с сервера
-        taskViewModel.mapTask.observe(viewLifecycleOwner, { arrayTask ->
-            createRecyclerView(arrayTask)
-        })
+        taskViewModel.arrayTask.observe(viewLifecycleOwner, observerArrayTask)
+
     }
 
     private fun getUserDataFromSharedPref() {
@@ -173,8 +220,8 @@ class TaskFragment : BaseFragment(R.layout.fragment_task) {
 
     private fun detectFirstInput() {
         //  Если первое включение то выставляем заначения по умолчанию
-        if ( taskViewModel.selectorState.value == null) taskViewModel.setSelectorState(TASK_APPOINTED)
-        if (taskViewModel.selectorDay.value == null)  taskViewModel.setSelectorDay(TODAY)
+        taskViewModel.setSelectorState(taskViewModel.getSelectorState())
+        taskViewModel.setSelectorDay(taskViewModel.getSelectorDay())
 
         //  Если первый вход и нет данных пользователя в liveData получаем их из хранилища
         if (taskViewModel.ldUserData.value == null) {
@@ -193,22 +240,30 @@ class TaskFragment : BaseFragment(R.layout.fragment_task) {
         }
     }
 
+    private fun updateTaskList() {
+        /**Функция обновляет список заявок*/
+        if (taskViewModel.getSelectorState() == TASK_APPOINTED &&
+            taskViewModel.getSelectorDay() == taskViewModel.getDateTime(TODAY)) {
+            taskViewModel.getTaskDef()  // Если значени я по умолч. то обнов. с пармет. по умолч.
+        } else {
+            taskViewModel.getTask()  // Иначе обновляем с выставленными точками.
+        }
+    }
+
     private fun createRecyclerView(dataSet: ArrayList<TaskList>) {
         /**RecyclerView для назначеных заявок*/
-
-        viewAdapter = MainAdapter(dataSet, navController, taskViewModel)
-        viewManager = LinearLayoutManager(requireContext())
-        colorDrawableBackground = ColorDrawable(Color.parseColor("#ff0000"))
-        deleteIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_compited_task)!!
+        viewAdapter = MainAdapter(dataSet, findNavController(), taskViewModel)
+        val viewManager = LinearLayoutManager(requireContext())
+        val colorDrawableBackground = ColorDrawable(Color.parseColor("#ff0000"))
+        val deleteIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_compited_task)!!
 
         recyclerView.apply {
             setHasFixedSize(true)
             adapter = viewAdapter
             layoutManager = viewManager
-            //addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         }
 
-        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {  // or ItemTouchHelper.RIGHT
             override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, viewHolder2: RecyclerView.ViewHolder): Boolean {
                 return false
             }

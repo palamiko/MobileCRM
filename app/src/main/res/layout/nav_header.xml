@@ -20,22 +20,18 @@
         app:srcCompat="@mipmap/ic_launcher" />
 
     <TextView
+        style="@style/Theme.PhotoUnit.HeaderText"
         android:id="@+id/status_user"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="@string/text_status_user"
-        android:textColor="#FFFFFF"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/name_user"
         app:layout_constraintStart_toStartOf="@+id/photoUser" />
 
     <TextView
+        style="@style/Theme.PhotoUnit.HeaderText"
         android:id="@+id/name_user"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:text="@string/text_name_user"
-        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/status_user" />
 
@@ -43,8 +39,10 @@
         android:id="@+id/tv_ver_app"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ver 0.0.1"
-        android:textSize="10sp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/text_tv_version_app"
+        android:textSize="@dimen/small_text_ver_app"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

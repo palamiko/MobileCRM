@@ -8,6 +8,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_home_list.*
 
 
@@ -49,7 +50,7 @@ class HomeListFragment : BaseFragment(R.layout.fragment_home_list) {
             sharedModel.tempSelectNameHome = dataArray[i] // Формируем строку полного адреса для TextView
             sharedModel.getIdHomeFromMap(dataArray[i]) // id выбраного дома помещаем в LiveData путем извлечения из словаря который пришел через get, по его имени.
             sharedModel.setCurrentTextFullAddress()
-            navController.navigate(R.id.action_homeListFragment_to_photoFragment)
+            findNavController().navigate(R.id.action_homeListFragment_to_photoFragment)
         }
     }
 

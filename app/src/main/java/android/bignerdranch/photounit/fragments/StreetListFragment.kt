@@ -8,6 +8,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_street_list.*
 
 
@@ -42,7 +43,7 @@ class StreetListFragment : BaseFragment(R.layout.fragment_street_list) {
         list_street.setOnItemClickListener { _: AdapterView<*>, _: View, i: Int, _: Long ->
             sharedModel.tempSelectNameStreet = dataArray[i] + " " // Формируем строку полного адреса для TextView
             sharedModel.getIdStreetFromMap(dataArray[i]) // id выбраного микрорайона помещаем в LiveData путем извлечения из словаря который пришел через get, по его имени.
-            navController.navigate(R.id.action_streetListFragment_to_homeListFragment)
+            findNavController().navigate(R.id.action_streetListFragment_to_homeListFragment)
         }
     }
 
@@ -55,7 +56,6 @@ class StreetListFragment : BaseFragment(R.layout.fragment_street_list) {
     private fun createLiveDataObserver() {
         /** Создаем слушатели отдельно*/
         observerMapStreet = Observer {
-            println(it)
             sharedModel.createListStreet(it) // Как только был получен ответ от get запроса в виде Map, образуем ArrayList для ListView
         }
         observerListStreet = Observer {

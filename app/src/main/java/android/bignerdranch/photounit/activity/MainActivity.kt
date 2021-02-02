@@ -2,10 +2,7 @@ package android.bignerdranch.photounit.activity
 
 import android.bignerdranch.photounit.R
 import android.bignerdranch.photounit.model.User
-import android.bignerdranch.photounit.utilits.DataBaseCommunication
-import android.bignerdranch.photounit.utilits.SHARED_PREF_NAME
-import android.bignerdranch.photounit.utilits.detectUserIcon
-import android.bignerdranch.photounit.utilits.detectUserStatus
+import android.bignerdranch.photounit.utilits.*
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
@@ -16,6 +13,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.jakewharton.threetenabp.AndroidThreeTen
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -26,6 +24,7 @@ class MainActivity : AppCompatActivity(), DataBaseCommunication {
 
 
     lateinit var sharedPref: SharedPreferences
+    private lateinit var headerVerApp: TextView
     private lateinit var headerUserStatus: TextView
     private lateinit var headerUserName: TextView
     private lateinit var headerUserIcon: ImageView
@@ -33,9 +32,11 @@ class MainActivity : AppCompatActivity(), DataBaseCommunication {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        AndroidThreeTen.init(this)
 
         sharedPref = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE)
     }
+
 
     override fun onStart() {
         super.onStart()
@@ -64,6 +65,7 @@ class MainActivity : AppCompatActivity(), DataBaseCommunication {
         headerUserName.text = user.name
         headerUserStatus.text = detectUserStatus(user.status)
         headerUserIcon.setImageDrawable(detectUserIcon(user.status))
+        headerVerApp.text = VERSION_APP
     }
 
     private fun findNavigationView() {
@@ -73,10 +75,9 @@ class MainActivity : AppCompatActivity(), DataBaseCommunication {
             headerUserStatus = headerView.findViewById(R.id.status_user)
             headerUserName = headerView.findViewById(R.id.name_user)
             headerUserIcon = headerView.findViewById(R.id.photoUser)
+            headerVerApp = headerView.findViewById(R.id.tv_ver_app)
 
-        } else println("ЛОХ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-
-
+        } else println("Ошибка в MainActivity")
     }
 
     private fun changeListenerNavigateDestination() {

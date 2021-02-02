@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_distric_list.*
 
 
@@ -25,7 +26,7 @@ class DistrictListFragment : BaseFragment( R.layout.fragment_distric_list), Data
          * liveData idCurrentFragment, activity это отслеживает и меняет фрагмент*/
         sharedModel.idDistrict.observe(this, {
             sharedModel.httpGetListStreet(sharedModel.idDistrict.value.toString(), sharedModel.mapStreet) // Отправляем get запрос с id района. Получим Map с улицей и ее id
-            navController.navigate(R.id.action_districtListFragment_to_streetListFragment)
+            findNavController().navigate(R.id.action_districtListFragment_to_streetListFragment)
         })
     }
 
