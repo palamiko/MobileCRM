@@ -1,6 +1,8 @@
 package android.bignerdranch.photounit.utilits
 
-const val VERSION_APP = "ver 0.0.2"
+import android.bignerdranch.photounit.BuildConfig
+
+const val VERSION_APP = BuildConfig.VERSION_NAME
 const val SERVER_PORT = "20136"
 const val SERVER_ADDRESS = "http://87.76.32.43:$SERVER_PORT"
 const val GET_STREET = "get-street"

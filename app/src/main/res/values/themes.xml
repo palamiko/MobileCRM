@@ -51,4 +51,10 @@
         <item name="android:layout_marginStart">@dimen/margin_small</item>
     </style>
 
+    <!-- Стиль для EditText в AuthorizationFragment-->
+    <style name="Theme.PhotoUnit.AuthorizationFragment.TextEdit" parent="Theme.PhotoUnit">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:ems">10</item>
+    </style>
 </resources>

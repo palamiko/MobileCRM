@@ -8,12 +8,10 @@
     tools:context=".fragments.AuthorizationFragment">
 
     <EditText
+        style="@style/Theme.PhotoUnit.AuthorizationFragment.TextEdit"
         android:id="@+id/te_user_login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
         android:autofillHints="@string/login_te_hint_text"
-        android:ems="10"
         android:hint="@string/login_te_hint_text"
         android:inputType="text"
         android:maxLength="20"
@@ -22,11 +20,9 @@
         app:layout_constraintTop_toBottomOf="@+id/text_auth" />
 
     <EditText
+        style="@style/Theme.PhotoUnit.AuthorizationFragment.TextEdit"
         android:id="@+id/te_password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:ems="10"
         android:hint="@string/password_te_hint_text"
         android:autofillHints="@string/password_te_hint_text"
         android:inputType="textPassword"

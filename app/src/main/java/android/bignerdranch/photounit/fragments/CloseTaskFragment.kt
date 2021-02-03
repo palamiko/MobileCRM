@@ -7,9 +7,12 @@ import android.bignerdranch.photounit.model.modelsDB.TaskList
 import android.bignerdranch.photounit.utilits.FINISH_OK
 import android.bignerdranch.photounit.utilits.SwipeRemoveItemBinder
 import android.bignerdranch.photounit.utilits.TASK_COMPLETED
+import android.bignerdranch.photounit.utilits.helpers.MyTextWatcher
 import android.bignerdranch.photounit.utilits.viewHolder.ItemViewHolderLite
+
 import android.bignerdranch.photounit.viewModels.TaskViewModel
 import android.os.Bundle
+import android.text.Editable
 import android.widget.Toast
 import androidx.core.view.isInvisible
 import androidx.fragment.app.activityViewModels
@@ -23,47 +26,49 @@ import smartadapter.viewevent.listener.OnClickEventListener
 class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
 
     private val taskVM: TaskViewModel by activityViewModels()
-    private lateinit var smartRecyclerAdapter: SmartRecyclerAdapter
 
+
+    private lateinit var smartRecyclerAdapter: SmartRecyclerAdapter
 
     override fun onStart() {
         super.onStart()
         initView()
-
     }
 
     override fun onResume() {
         super.onResume()
-        if (taskVM.selectMaterial.value != null ) {
-            createRecyclerViewAdapter(taskVM.selectMaterial.value!!)
-        }
+        restoreTextFromEditText()
+        createRecyclerViewAdapter(taskVM.selectMaterial.value!!)
+
     }
+
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
         // Сохряняем заполенные поля
-        if (te_input_comment_close.text != null) {
-            outState.putString(TEXT_COMMENT, te_input_comment_close.text.toString())
+        if (te_comment_close.text != null) {
+            outState.putString(TEXT_COMMENT, te_comment_close.text.toString())
         }
-        if (te_input_summ.text != null) {
-            outState.putString(TEXT_SUMM, te_input_summ.text.toString())
+        if (te_summ.text != null) {
+            outState.putString(TEXT_SUMM, te_summ.text.toString())
         }
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
+
         if (savedInstanceState != null) {
-            savedInstanceState.getString(TEXT_COMMENT, "")
-            savedInstanceState.getString(TEXT_SUMM, "")
+            te_comment_close.setText(savedInstanceState.getString(TEXT_COMMENT, ""))
+            te_summ.setText(savedInstanceState.getString(TEXT_SUMM, ""))
         }
     }
 
-    private fun detectAddress(item: TaskList): String {
+    private fun detectAddress(item: TaskList?): String {
         /**Эта ф-ия проверяет приходит ли заявка с полным адресом или адрес забит от руки
          * и возвращает разные вариации в поле адрес*/
-        return if (item.name_ru == null) {
-            item.address
+        return if (item?.name_ru == null) {
+            item!!.address
         } else "${item.name_ru} ${item.building_number}-${item.flat}"
     }
 
@@ -74,33 +79,37 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
 
         detectPayTask()
         initializationBtnClickListener()
+        setTextEditChangeListener()
     }
 
     private fun createRecyclerViewAdapter(arrayMaterialSelect: ArrayList<MaterialUsed>) {
+        if (taskVM.selectMaterial.value != null ){
+            smartRecyclerAdapter = SmartRecyclerAdapter
+                .items(arrayMaterialSelect)
+                .map(MaterialUsed::class, ItemViewHolderLite::class)
+                .add(OnClickEventListener {
+                    Toast.makeText(requireContext(), "onClick ${it.position}", Toast.LENGTH_SHORT)
+                        .show()
+                })
+                .add(SwipeRemoveItemBinder(ItemTouchHelper.LEFT) {
+                    // Remove item from SmartRecyclerAdapter data set
+                    smartRecyclerAdapter.removeItem(it.viewHolder.adapterPosition)
+                    println(taskVM.selectMaterial.value)
+                })
+                .into(list_used_material)
+        }
 
-        smartRecyclerAdapter = SmartRecyclerAdapter
-            .items(arrayMaterialSelect)
-            .map(MaterialUsed::class, ItemViewHolderLite::class)
-            .add(OnClickEventListener {
-                Toast.makeText(requireContext(), "onClick ${it.position}", Toast.LENGTH_SHORT)
-                    .show()
-            })
-            .add(SwipeRemoveItemBinder(ItemTouchHelper.LEFT) {
-                // Remove item from SmartRecyclerAdapter data set
-                smartRecyclerAdapter.removeItem(it.viewHolder.adapterPosition)
-                println(taskVM.selectMaterial.value)
-            })
-            .into(list_used_material)
+
     }
 
     private fun sendCloseTask() {
         val dataCloseTask = DataCloseTask (
             id_task = taskVM.singleTask.value!!.id,
             state_task = TASK_COMPLETED,
-            id_user = taskVM.getUserData(id=true),
-            comment = getText(te_input_comment_close),
+            id_user = taskVM.getUserDataId(),
+            comment = getText(te_comment_close),
             finish = FINISH_OK,
-            summ = getText(te_input_summ),
+            summ = getText(te_summ),
             material = taskVM.selectMaterial.value!!
         )
         taskVM.closeTask (dataCloseTask = dataCloseTask)
@@ -121,9 +130,30 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
     private fun detectPayTask() {
         /**Функция определяет платная заявка или нет и меняет надпись в RecyclerView*/
         if (taskVM.singleTask.value!!.ispayable != "true") {
-            te_input_summ.isInvisible = true
+            te_summ.isInvisible = true
             tv_summ.isInvisible = true
         }
+    }
+
+    private fun setTextEditChangeListener() {
+        /**Сохраняет при изменении значения полей TextEdit, коментарии и смму*/
+        te_comment_close.addTextChangedListener(object : MyTextWatcher() {
+            override fun afterTextChanged(s: Editable?) {
+                taskVM.savedComment = s.toString()
+            }
+        })
+
+        te_summ.addTextChangedListener(object : MyTextWatcher() {
+            override fun afterTextChanged(s: Editable?) {
+                taskVM.savedSumm = s.toString()
+            }
+        })
+    }
+
+    private fun restoreTextFromEditText() {
+        /**Восстанавливает значения полей TextEdit, коментарии и смму*/
+        if (taskVM.savedComment != null) te_comment_close.setText(taskVM.savedComment)
+        if (taskVM.savedSumm != null) te_summ.setText(taskVM.savedSumm)
     }
 
 

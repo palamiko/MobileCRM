@@ -94,6 +94,7 @@ class TaskFragment : Fragment() {
         super.onStart()
 
         // Слушатели
+        clearSavedTextFromTextEdit()
         radioButtonListener()
         createObserver()
         startObservers()
@@ -104,11 +105,9 @@ class TaskFragment : Fragment() {
         (requireActivity() as MainActivity).changeHeader(taskViewModel.getUserData())
 
         CoroutineScope(Dispatchers.Main).launch {
-            delay(1000)
+            delay(900)
             updateTaskList()
-
         }
-        //updateTaskList()
     }
 
     override fun onPause() {
@@ -269,7 +268,7 @@ class TaskFragment : Fragment() {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDirection: Int) {
-                (viewAdapter as MainAdapter).removeItem(viewHolder.adapterPosition, viewHolder)
+                (viewAdapter as MainAdapter).removeItem(viewHolder.adapterPosition)
             }
 
             override fun isItemViewSwipeEnabled(): Boolean {
@@ -277,7 +276,7 @@ class TaskFragment : Fragment() {
                 return taskViewModel.selectorState.value == TASK_APPOINTED
             }
 
-            override fun onChildDraw(
+            override fun onChildDraw (
                 c: Canvas,
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
@@ -317,6 +316,13 @@ class TaskFragment : Fragment() {
         val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
+    }
+
+    private fun clearSavedTextFromTextEdit() {
+        /**Отчищает сохраненые в liveData значения полей TextEdit, коментарии и смму*/
+        taskViewModel.savedComment = null
+        taskViewModel.savedSumm = null
+        taskViewModel.selectMaterial.value = arrayListOf()
     }
 
     companion object {
