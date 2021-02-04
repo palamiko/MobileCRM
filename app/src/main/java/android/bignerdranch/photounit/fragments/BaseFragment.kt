@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
 
 
 open class BaseFragment(layout: Int) : Fragment(layout) {
@@ -15,9 +14,10 @@ open class BaseFragment(layout: Int) : Fragment(layout) {
 
 
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        navController = Navigation.findNavController(view)
+        //navController = Navigation.findNavController(view)
     }
 
 

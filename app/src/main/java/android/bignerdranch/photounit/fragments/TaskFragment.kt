@@ -2,6 +2,7 @@ package android.bignerdranch.photounit.fragments
 
 import android.bignerdranch.photounit.R
 import android.bignerdranch.photounit.activity.MainActivity
+import android.bignerdranch.photounit.databinding.FragmentTaskBinding
 import android.bignerdranch.photounit.model.User
 import android.bignerdranch.photounit.model.modelsDB.TaskList
 import android.bignerdranch.photounit.utilits.*
@@ -23,12 +24,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateHandle
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.fragment_task.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -40,6 +39,8 @@ class TaskFragment : Fragment() {
 
     private val taskViewModel: TaskViewModel by activityViewModels()
     private val userViewModel: UserViewModel by activityViewModels()
+
+    private var binding: FragmentTaskBinding? = null
 
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var savedStateHandle: SavedStateHandle
@@ -59,28 +60,19 @@ class TaskFragment : Fragment() {
         val currentBackStackEntry = navController.currentBackStackEntry!!
         savedStateHandle = currentBackStackEntry.savedStateHandle
 
-        savedStateHandle.getLiveData<Boolean>(AuthorizationFragment.LOGIN_SUCCESSFUL)
-            .observe(currentBackStackEntry, { success ->
-                if (!success) {
-                    val startDestination = navController.graph.startDestination
-                    val navOptions = NavOptions.Builder()
-                        .setPopUpTo(startDestination, true)
-                        .build()
-                    navController.navigate(startDestination, null, navOptions)
-                }
-            })
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_task, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val fragmentBinding = FragmentTaskBinding.inflate(inflater, container, false)
+        binding = fragmentBinding
+        return fragmentBinding.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
 
         if (userViewModel.mAuthLiveData.value?.currentUser == null) {
             findNavController().navigate(R.id.action_global_authorizationFragment)
@@ -150,7 +142,7 @@ class TaskFragment : Fragment() {
     private fun radioButtonListener() {
         /** Функция слушает переключения RadioButton и изменяет LiveData дня и состояния
          * заявки на выбранные */
-        radioGroupData.setOnCheckedChangeListener { _, id_rad_btn ->
+        binding?.radioGroupData?.setOnCheckedChangeListener { _, id_rad_btn ->
             when (id_rad_btn) {
                 R.id.r_btn_yesterday -> taskViewModel.setSelectorDay(YESTERDAY)
                 R.id.r_btn_today -> taskViewModel.setSelectorDay(TODAY)
@@ -158,7 +150,7 @@ class TaskFragment : Fragment() {
             }
         }
 
-        radioGroupState.setOnCheckedChangeListener { _, checkedId ->
+        binding?.radioGroupState?.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.r_btn_appointed -> taskViewModel.setSelectorState(TASK_APPOINTED)
                 R.id.r_btn_closed -> taskViewModel.setSelectorState(TASK_CLOSED)
@@ -197,23 +189,23 @@ class TaskFragment : Fragment() {
 
     private fun saveStateRadioButton() {
         /**Сохраняем положение RadioButton перед onPause*/
-        taskViewModel.radioButtonDay.value = radioGroupData.checkedRadioButtonId
-        taskViewModel.radioButtonState.value = radioGroupState.checkedRadioButtonId
+        taskViewModel.radioButtonDay.value = binding?.radioGroupData?.checkedRadioButtonId
+        taskViewModel.radioButtonState.value = binding?.radioGroupState?.checkedRadioButtonId
     }
 
     private fun restoreStateRadioButton() {
         /**Восстанавливаем положение RadioButton в onResume*/
 
         if (taskViewModel.radioButtonDay.value != null) {
-            radioGroupData.check(taskViewModel.radioButtonDay.value!!)
+            binding?.radioGroupData?.check(taskViewModel.radioButtonDay.value!!)
         } else {
-            radioGroupData.check(R.id.r_btn_today)
+            binding?.radioGroupData?.check(R.id.r_btn_today)
         }
 
         if (taskViewModel.radioButtonState.value != null) {
-            radioGroupState.check(taskViewModel.radioButtonState.value!!)
+            binding?.radioGroupState?.check(taskViewModel.radioButtonState.value!!)
         } else {
-            radioGroupState.check(R.id.r_btn_appointed)
+            binding?.radioGroupState?.check(R.id.r_btn_appointed)
         }
     }
 
@@ -256,7 +248,7 @@ class TaskFragment : Fragment() {
         val colorDrawableBackground = ColorDrawable(Color.parseColor("#ff0000"))
         val deleteIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_compited_task)!!
 
-        recyclerView.apply {
+        binding?.recyclerView?.apply {
             setHasFixedSize(true)
             adapter = viewAdapter
             layoutManager = viewManager
@@ -314,7 +306,7 @@ class TaskFragment : Fragment() {
             }
         }
         val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
-        itemTouchHelper.attachToRecyclerView(recyclerView)
+        itemTouchHelper.attachToRecyclerView(binding?.recyclerView)
 
     }
 
@@ -323,6 +315,11 @@ class TaskFragment : Fragment() {
         taskViewModel.savedComment = null
         taskViewModel.savedSumm = null
         taskViewModel.selectMaterial.value = arrayListOf()
+    }
+
+    override fun onDestroyView() {
+        binding = null
+        super.onDestroyView()
     }
 
     companion object {

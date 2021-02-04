@@ -1,6 +1,7 @@
 package android.bignerdranch.photounit.fragments
 
 import android.bignerdranch.photounit.R
+import android.bignerdranch.photounit.databinding.FragmentCloseTaskBinding
 import android.bignerdranch.photounit.model.DataCloseTask
 import android.bignerdranch.photounit.model.MaterialUsed
 import android.bignerdranch.photounit.model.modelsDB.TaskList
@@ -9,16 +10,16 @@ import android.bignerdranch.photounit.utilits.SwipeRemoveItemBinder
 import android.bignerdranch.photounit.utilits.TASK_COMPLETED
 import android.bignerdranch.photounit.utilits.helpers.MyTextWatcher
 import android.bignerdranch.photounit.utilits.viewHolder.ItemViewHolderLite
-
 import android.bignerdranch.photounit.viewModels.TaskViewModel
 import android.os.Bundle
 import android.text.Editable
+import android.view.View
 import android.widget.Toast
 import androidx.core.view.isInvisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
-import kotlinx.android.synthetic.main.fragment_close_task.*
+
 import smartadapter.SmartRecyclerAdapter
 import smartadapter.viewevent.listener.OnClickEventListener
 
@@ -26,9 +27,16 @@ import smartadapter.viewevent.listener.OnClickEventListener
 class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
 
     private val taskVM: TaskViewModel by activityViewModels()
-
+    private var binding: FragmentCloseTaskBinding? = null
 
     private lateinit var smartRecyclerAdapter: SmartRecyclerAdapter
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val fragmentBinding = FragmentCloseTaskBinding.bind(view)
+        binding = fragmentBinding
+    }
 
     override fun onStart() {
         super.onStart()
@@ -39,19 +47,17 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
         super.onResume()
         restoreTextFromEditText()
         createRecyclerViewAdapter(taskVM.selectMaterial.value!!)
-
     }
-
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
         // Сохряняем заполенные поля
-        if (te_comment_close.text != null) {
-            outState.putString(TEXT_COMMENT, te_comment_close.text.toString())
+        if (binding?.teCommentClose?.text != null) {
+            outState.putString(TEXT_COMMENT, binding?.teCommentClose?.text.toString())
         }
-        if (te_summ.text != null) {
-            outState.putString(TEXT_SUMM, te_summ.text.toString())
+        if (binding?.teSumm?.text != null) {
+            outState.putString(TEXT_SUMM, binding?.teSumm?.text.toString())
         }
     }
 
@@ -59,8 +65,8 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
         super.onViewStateRestored(savedInstanceState)
 
         if (savedInstanceState != null) {
-            te_comment_close.setText(savedInstanceState.getString(TEXT_COMMENT, ""))
-            te_summ.setText(savedInstanceState.getString(TEXT_SUMM, ""))
+            binding?.teCommentClose?.setText(savedInstanceState.getString(TEXT_COMMENT, ""))
+            binding?.teSumm?.setText(savedInstanceState.getString(TEXT_SUMM, ""))
         }
     }
 
@@ -72,10 +78,9 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
         } else "${item.name_ru} ${item.building_number}-${item.flat}"
     }
 
-
     private fun initView() {
-        tv_address_close_task.text = detectAddress(taskVM.singleTask.value!!)
-        tv_comment_close_task.text = taskVM.singleTask.value!!.comments
+        binding?.tvAddressCloseTask?.text = detectAddress(taskVM.singleTask.value!!)
+        binding?.tvCommentCloseTask?.text = taskVM.singleTask.value!!.comments
 
         detectPayTask()
         initializationBtnClickListener()
@@ -83,7 +88,7 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
     }
 
     private fun createRecyclerViewAdapter(arrayMaterialSelect: ArrayList<MaterialUsed>) {
-        if (taskVM.selectMaterial.value != null ){
+        if (taskVM.selectMaterial.value != null ) {
             smartRecyclerAdapter = SmartRecyclerAdapter
                 .items(arrayMaterialSelect)
                 .map(MaterialUsed::class, ItemViewHolderLite::class)
@@ -96,10 +101,8 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
                     smartRecyclerAdapter.removeItem(it.viewHolder.adapterPosition)
                     println(taskVM.selectMaterial.value)
                 })
-                .into(list_used_material)
+                .into(binding?.listUsedMaterial!!)
         }
-
-
     }
 
     private fun sendCloseTask() {
@@ -107,9 +110,9 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
             id_task = taskVM.singleTask.value!!.id,
             state_task = TASK_COMPLETED,
             id_user = taskVM.getUserDataId(),
-            comment = getText(te_comment_close),
+            comment = getText(binding?.teCommentClose!!),
             finish = FINISH_OK,
-            summ = getText(te_summ),
+            summ = getText(binding?.teSumm!!),
             material = taskVM.selectMaterial.value!!
         )
         taskVM.closeTask (dataCloseTask = dataCloseTask)
@@ -117,12 +120,12 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
 
     private fun initializationBtnClickListener() {
         /**Инициализация слушателей нажатий кнопок*/
-        btn_close_task.setOnClickListener {
+        binding?.btnCloseTask?.setOnClickListener {
             sendCloseTask()
             findNavController().navigate(R.id.action_closeTaskFragment_to_taskFragment)
         }
 
-        btn_add_material.setOnClickListener {
+        binding?.btnAddMaterial?.setOnClickListener {
             findNavController().navigate(R.id.action_closeTaskFragment_to_selectMaterialFragment)
         }
     }
@@ -130,20 +133,19 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
     private fun detectPayTask() {
         /**Функция определяет платная заявка или нет и меняет надпись в RecyclerView*/
         if (taskVM.singleTask.value!!.ispayable != "true") {
-            te_summ.isInvisible = true
-            tv_summ.isInvisible = true
+            binding?.teSumm?.isInvisible = true
         }
     }
 
     private fun setTextEditChangeListener() {
         /**Сохраняет при изменении значения полей TextEdit, коментарии и смму*/
-        te_comment_close.addTextChangedListener(object : MyTextWatcher() {
+        binding?.teCommentClose?.addTextChangedListener(object : MyTextWatcher() {
             override fun afterTextChanged(s: Editable?) {
                 taskVM.savedComment = s.toString()
             }
         })
 
-        te_summ.addTextChangedListener(object : MyTextWatcher() {
+        binding?.teSumm?.addTextChangedListener(object : MyTextWatcher() {
             override fun afterTextChanged(s: Editable?) {
                 taskVM.savedSumm = s.toString()
             }
@@ -152,10 +154,14 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
 
     private fun restoreTextFromEditText() {
         /**Восстанавливает значения полей TextEdit, коментарии и смму*/
-        if (taskVM.savedComment != null) te_comment_close.setText(taskVM.savedComment)
-        if (taskVM.savedSumm != null) te_summ.setText(taskVM.savedSumm)
+        if (taskVM.savedComment != null) binding?.teCommentClose?.setText(taskVM.savedComment)
+        if (taskVM.savedSumm != null) binding?.teSumm?.setText(taskVM.savedSumm)
     }
 
+    override fun onDestroyView() {
+        binding = null
+        super.onDestroyView()
+    }
 
     companion object {
         const val TEXT_COMMENT = "text_edit_comment"

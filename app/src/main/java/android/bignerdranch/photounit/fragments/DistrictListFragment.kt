@@ -1,6 +1,7 @@
 package android.bignerdranch.photounit.fragments
 
 import android.bignerdranch.photounit.R
+import android.bignerdranch.photounit.databinding.FragmentDistricListBinding
 import android.bignerdranch.photounit.utilits.DataBaseCommunication
 import android.bignerdranch.photounit.utilits.districtArray
 import android.bignerdranch.photounit.viewModels.SharedViewModel
@@ -10,13 +11,14 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import kotlinx.android.synthetic.main.fragment_distric_list.*
 
 
 class DistrictListFragment : BaseFragment( R.layout.fragment_distric_list), DataBaseCommunication {
 
     private val sharedModel: SharedViewModel by activityViewModels()
     lateinit var adapter: ArrayAdapter<String>
+
+    private var binding: FragmentDistricListBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +32,12 @@ class DistrictListFragment : BaseFragment( R.layout.fragment_distric_list), Data
         })
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val fragmentBinding = FragmentDistricListBinding.bind(view)
+        binding = fragmentBinding
+    }
+
     override fun onStart() {
         super.onStart()
         createList()
@@ -38,10 +46,15 @@ class DistrictListFragment : BaseFragment( R.layout.fragment_distric_list), Data
     private fun createList() {
         // создаем адаптер и наполняем его данными
         adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, districtArray)
-        list_district.adapter = adapter // напоняем view данными из адаптера
-        list_district.setOnItemClickListener { _: AdapterView<*>, _: View, i: Int, _: Long ->
+        binding?.listDistrict?.adapter = adapter // напоняем view данными из адаптера
+        binding?.listDistrict?.setOnItemClickListener { _: AdapterView<*>, _: View, i: Int, _: Long ->
             sharedModel.tempSelectNameDistrict = districtArray[i] + " "// Формируем строку полного адреса для TextView
             sharedModel.getIdDistrictFromMap(districtArray[i]) // id выбраного микрорайона помещаем в LiveData
         }
+    }
+
+    override fun onDestroyView() {
+        binding = null
+        super.onDestroyView()
     }
 }

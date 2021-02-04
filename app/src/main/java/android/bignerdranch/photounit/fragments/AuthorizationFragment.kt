@@ -2,6 +2,7 @@ package android.bignerdranch.photounit.fragments
 
 import android.annotation.SuppressLint
 import android.bignerdranch.photounit.R
+import android.bignerdranch.photounit.databinding.FragmentAuthorizationBinding
 import android.bignerdranch.photounit.fragments.TaskFragment.Companion.FIRST
 import android.bignerdranch.photounit.utilits.DataBaseCommunication
 import android.bignerdranch.photounit.utilits.KEY_USER_DATA
@@ -23,7 +24,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import kotlinx.android.synthetic.main.fragment_authorization.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,6 +33,7 @@ class AuthorizationFragment : BaseFragment(R.layout.fragment_authorization), Dat
 
     private val userViewModel: UserViewModel by activityViewModels()
     private lateinit var savedStateHandle: SavedStateHandle
+    private var binding: FragmentAuthorizationBinding? = null
 
     private val dataUser = MutableLiveData<String>()  // Информация из Firebase
 
@@ -45,11 +46,15 @@ class AuthorizationFragment : BaseFragment(R.layout.fragment_authorization), Dat
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         sharedPref = requireActivity().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE)
         editorSharedPref = sharedPref.edit()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val fragmentBinding = FragmentAuthorizationBinding.bind(view)
+        binding = fragmentBinding
+
         if (userViewModel.mAuthLiveData.value != null) userViewModel.logOut()
         savedStateHandle = findNavController().previousBackStackEntry!!.savedStateHandle
         savedStateHandle.set(LOGIN_SUCCESSFUL, false)
@@ -62,9 +67,9 @@ class AuthorizationFragment : BaseFragment(R.layout.fragment_authorization), Dat
     }
 
     private fun init() {
-        sign_in.setOnClickListener {
-            load_input.isVisible = true
-            userViewModel.login(getText(te_user_login), getText(te_password))  // Отправляем POST в корутине.
+        binding?.signIn?.setOnClickListener {
+            binding?.loadInput?.isVisible = true
+            userViewModel.login(getText(binding?.teUserLogin!!), getText(binding?.tePassword!!))  // Отправляем POST в корутине.
         }
         userViewModel.ldToken.observe(this, {
             authWithCustomToken(it)  // Если изменилась лайвдата то пришел токен и авторизуемся
@@ -84,7 +89,7 @@ class AuthorizationFragment : BaseFragment(R.layout.fragment_authorization), Dat
     private fun clearData() {
         dataUser.value = null
         userViewModel.clearToken()
-        load_input.isInvisible = true
+        binding?.loadInput?.isInvisible = true
     }
 
     // Функция аутентифицирует в FireBase используя токен
@@ -105,14 +110,14 @@ class AuthorizationFragment : BaseFragment(R.layout.fragment_authorization), Dat
                                 }
                             }
                         } else {
-                            load_input.isInvisible = true
+                            binding?.loadInput?.isInvisible = true
                             Log.w(ContentValues.TAG, "signInWithCustomToken:failure", task.exception)
                             Toast.makeText(requireContext(), "Ошибка авторизации", Toast.LENGTH_SHORT).show()
                         }
                     }
             }
         } else {
-            load_input.isInvisible = true
+            binding?.loadInput?.isInvisible = true
             Toast.makeText(requireContext(), "Ошибка авторизации. Token не получен.", Toast.LENGTH_SHORT).show()
         }
     }
@@ -120,6 +125,11 @@ class AuthorizationFragment : BaseFragment(R.layout.fragment_authorization), Dat
     private fun writeUserDataInSharedPref(userData: String) {
         editorSharedPref.putString(KEY_USER_DATA, userData)
         editorSharedPref.apply()
+    }
+
+    override fun onDestroyView() {
+        binding = null
+        super.onDestroyView()
     }
     companion object {
         const val LOGIN_SUCCESSFUL: String = "LOGIN_SUCCESSFUL"

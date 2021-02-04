@@ -1,6 +1,7 @@
 package android.bignerdranch.photounit.activity
 
 import android.bignerdranch.photounit.R
+import android.bignerdranch.photounit.databinding.ActivityMainBinding
 import android.bignerdranch.photounit.model.User
 import android.bignerdranch.photounit.utilits.*
 import android.content.SharedPreferences
@@ -14,7 +15,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.jakewharton.threetenabp.AndroidThreeTen
-import kotlinx.android.synthetic.main.activity_main.*
+
 
 
 class MainActivity : AppCompatActivity(), DataBaseCommunication {
@@ -22,6 +23,7 @@ class MainActivity : AppCompatActivity(), DataBaseCommunication {
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
 
+    private lateinit var binding: ActivityMainBinding
 
     lateinit var sharedPref: SharedPreferences
     private lateinit var headerVerApp: TextView
@@ -31,9 +33,10 @@ class MainActivity : AppCompatActivity(), DataBaseCommunication {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        AndroidThreeTen.init(this)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
+        AndroidThreeTen.init(this)
         sharedPref = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE)
     }
 
@@ -46,7 +49,7 @@ class MainActivity : AppCompatActivity(), DataBaseCommunication {
     private fun initNavigationComponent() {
 
         navController = (supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment).navController  // Инициализируем NavController
-        appBarConfiguration = AppBarConfiguration(navController.graph, drawer_layout)
+        appBarConfiguration = AppBarConfiguration(navController.graph, binding.drawerLayout)
         appBarConfiguration.topLevelDestinations.addAll(
             setOf(
                 R.id.taskFragment,
@@ -54,8 +57,8 @@ class MainActivity : AppCompatActivity(), DataBaseCommunication {
             )
         )  // Указываем "верхние" уровни навирации. То где будет гамбургер.
 
-        toolbar.setupWithNavController(navController, appBarConfiguration)
-        nav_view.setupWithNavController(navController)
+        binding.toolbar.setupWithNavController(navController, appBarConfiguration)
+        binding.navView.setupWithNavController(navController)
 
         changeListenerNavigateDestination()
         findNavigationView()
@@ -69,9 +72,9 @@ class MainActivity : AppCompatActivity(), DataBaseCommunication {
     }
 
     private fun findNavigationView() {
-        if (nav_view.headerCount > 0) {
+        if (binding.navView.headerCount > 0) {
             // avoid NPE by first checking if there is at least one Header View available
-            val headerView: View = nav_view.getHeaderView(0)
+            val headerView: View = binding.navView.getHeaderView(0)
             headerUserStatus = headerView.findViewById(R.id.status_user)
             headerUserName = headerView.findViewById(R.id.name_user)
             headerUserIcon = headerView.findViewById(R.id.photoUser)
@@ -85,7 +88,7 @@ class MainActivity : AppCompatActivity(), DataBaseCommunication {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.authorizationFragment) {
                 sharedPref.edit().clear().apply()
-                toolbar.navigationIcon = null
+                binding.toolbar.navigationIcon = null
             }
         }
     }

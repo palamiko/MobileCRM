@@ -2,7 +2,7 @@ package android.bignerdranch.photounit.utilits
 
 import android.bignerdranch.photounit.BuildConfig
 
-const val VERSION_APP = BuildConfig.VERSION_NAME
+const val VERSION_APP =   "ver ${BuildConfig.VERSION_NAME}"
 const val SERVER_PORT = "20136"
 const val SERVER_ADDRESS = "http://87.76.32.43:$SERVER_PORT"
 const val GET_STREET = "get-street"
@@ -14,7 +14,6 @@ const val AUTH_PASS = "vtufnhjY-124"
 const val AUTH_IN_APP = "register"
 const val CLOSE_TASK = "close_task"
 const val GET_MATERIAL_LIST = "get_list_material"
-
 
 // Состояния заявки  //
 

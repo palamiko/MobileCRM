@@ -1,6 +1,7 @@
 package android.bignerdranch.photounit.fragments
 
 import android.bignerdranch.photounit.R
+import android.bignerdranch.photounit.databinding.FragmentSelectMaterialBinding
 import android.bignerdranch.photounit.model.MaterialUsed
 import android.bignerdranch.photounit.utilits.viewHolder.ItemViewHolderExtraLite
 import android.bignerdranch.photounit.viewModels.TaskViewModel
@@ -9,12 +10,13 @@ import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import kotlinx.android.synthetic.main.fragment_select_material.*
 import smartadapter.SmartRecyclerAdapter
 import smartadapter.viewevent.listener.OnClickEventListener
 
 class SelectMaterialFragment : BaseFragment(R.layout.fragment_select_material) {
     private val taskViewModel: TaskViewModel by activityViewModels()
+    private var binding: FragmentSelectMaterialBinding? = null
+
     private lateinit var smartRecyclerAdapter: SmartRecyclerAdapter
     lateinit var observerArrayMaterial: Observer<ArrayList<MaterialUsed>>
 
@@ -26,6 +28,8 @@ class SelectMaterialFragment : BaseFragment(R.layout.fragment_select_material) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val fragmentBinding = FragmentSelectMaterialBinding.bind(view)
+        binding = fragmentBinding
         setLiveDataObserve()
     }
 
@@ -38,7 +42,7 @@ class SelectMaterialFragment : BaseFragment(R.layout.fragment_select_material) {
                 taskViewModel.selectMaterial.value!!.add(arrayMaterial[it.position])  // Добавляем выбранный материал в массив
                 findNavController().navigate(R.id.action_selectMaterialFragment_to_countMaterialFragment)
             })
-            .into(list_material_select)
+            .into(binding?.listMaterialSelect!!)
     }
 
     private fun createLiveDataObserver() {
@@ -51,5 +55,10 @@ class SelectMaterialFragment : BaseFragment(R.layout.fragment_select_material) {
     private fun setLiveDataObserve() {
         /** Подключаем слушатели к LiveData*/
         taskViewModel.arrayMaterialList.observe(viewLifecycleOwner, observerArrayMaterial)
+    }
+
+    override fun onDestroyView() {
+        binding = null
+        super.onDestroyView()
     }
 }
