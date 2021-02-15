@@ -24,7 +24,7 @@
         app:startDestination="@id/photoFragment">
         <fragment
             android:id="@+id/streetListFragment"
-            android:name="android.bignerdranch.photounit.fragments.StreetListFragment"
+            android:name="android.bignerdranch.photounit.fragments.photo.StreetListFragment"
             android:label="@string/fragment_title_street"
             tools:layout="@layout/fragment_street_list">
             <action
@@ -36,7 +36,7 @@
         </fragment>
         <fragment
             android:id="@+id/homeListFragment"
-            android:name="android.bignerdranch.photounit.fragments.HomeListFragment"
+            android:name="android.bignerdranch.photounit.fragments.photo.HomeListFragment"
             android:label="@string/fragment_title_home"
             tools:layout="@layout/fragment_home_list">
             <action
@@ -48,7 +48,7 @@
         </fragment>
         <fragment
             android:id="@+id/districtListFragment"
-            android:name="android.bignerdranch.photounit.fragments.DistrictListFragment"
+            android:name="android.bignerdranch.photounit.fragments.photo.DistrictListFragment"
             android:label="@string/fragment_title_district"
             tools:layout="@layout/fragment_distric_list">
             <action
@@ -61,7 +61,7 @@
 
         <fragment
             android:id="@+id/photoFragment"
-            android:name="android.bignerdranch.photounit.fragments.PhotoFragment"
+            android:name="android.bignerdranch.photounit.fragments.photo.PhotoFragment"
             android:label="@string/fragment_title_photo_unit"
             tools:layout="@layout/fragment_photo">
             <action
@@ -76,7 +76,7 @@
 
         <fragment
             android:id="@+id/closeTaskFragment"
-            android:name="android.bignerdranch.photounit.fragments.CloseTaskFragment"
+            android:name="android.bignerdranch.photounit.fragments.task.CloseTaskFragment"
             android:label="@string/fragment_title_close_task"
             tools:layout="@layout/fragment_close_task">
             <action
@@ -89,7 +89,7 @@
 
         <fragment
             android:id="@+id/taskFragment"
-            android:name="android.bignerdranch.photounit.fragments.TaskFragment"
+            android:name="android.bignerdranch.photounit.fragments.task.TaskFragment"
             android:label="@string/fragment_title_task"
             tools:layout="@layout/fragment_task">
             <action
@@ -111,7 +111,7 @@
             app:destination="@id/authorizationFragment" />
         <fragment
             android:id="@+id/selectMaterialFragment"
-            android:name="android.bignerdranch.photounit.fragments.SelectMaterialFragment"
+            android:name="android.bignerdranch.photounit.fragments.task.SelectMaterialFragment"
             android:label="@string/fragment_title_select_material"
             tools:layout="@layout/fragment_select_material" >
             <action
@@ -121,13 +121,13 @@
 
         <fragment
             android:id="@+id/countMaterialFragment"
-            android:name="android.bignerdranch.photounit.fragments.CountMaterialFragment"
+            android:name="android.bignerdranch.photounit.fragments.task.CountMaterialFragment"
             android:label="@string/fragment_title_count_material"
             tools:layout="@layout/fragment_count_material" >
             <action
                 android:id="@+id/action_countMaterialFragment_to_closeTaskFragment"
                 app:destination="@id/closeTaskFragment"
-                app:enterAnim="@anim/fragment_fade_enter"
+
                 app:popUpTo="@id/closeTaskFragment"
                 app:popUpToInclusive="true" />
         </fragment>

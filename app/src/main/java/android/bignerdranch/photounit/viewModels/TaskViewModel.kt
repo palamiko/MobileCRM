@@ -67,4 +67,9 @@ class TaskViewModel : ViewModel(), DataBaseCommunication {
     fun setSelectorState(state: Char) {
         selectorState.value = state
     }
+
+    fun getListMaterial() {
+        /**Получить список материалов*/
+        httpGetListMaterial(arrayMaterialList)
+    }
 }

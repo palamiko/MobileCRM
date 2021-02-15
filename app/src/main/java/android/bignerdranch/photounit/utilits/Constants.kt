@@ -2,16 +2,24 @@ package android.bignerdranch.photounit.utilits
 
 import android.bignerdranch.photounit.BuildConfig
 
+// Основная информация
 const val VERSION_APP =   "ver ${BuildConfig.VERSION_NAME}"
+
 const val SERVER_PORT = "20136"
 const val SERVER_ADDRESS = "http://87.76.32.43:$SERVER_PORT"
+const val BASE_URL = "$SERVER_ADDRESS/"
+
+// Базовая http авторизация для запросов
+const val AUTH_USER = "Mobile-CRM_User"
+const val AUTH_PASS = "vtufnhjY-124"
+
+// Названия запростов
 const val GET_STREET = "get-street"
 const val GET_HOME = "get-home"
 const val GET_TASK_FOR_MASTER = "get_task_for_master_period"
 const val POST_LOAD_PHOTO = "uploadImg"
-const val AUTH_USER = "Mobile-CRM_User"
-const val AUTH_PASS = "vtufnhjY-124"
 const val AUTH_IN_APP = "register"
+const val GET_AUTHORIZATION = "authorization"
 const val CLOSE_TASK = "close_task"
 const val GET_MATERIAL_LIST = "get_list_material"
 

@@ -1,10 +1,13 @@
 package android.bignerdranch.photounit.utilits
 
 import android.bignerdranch.photounit.R
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -29,6 +32,16 @@ fun AppCompatActivity.detectUserIcon(status: String): Drawable? =
         "disp" -> ContextCompat.getDrawable(this, R.drawable.ic_operator)
         else -> ContextCompat.getDrawable(this, R.drawable.ic_master)
 
+}
+
+fun View.hideKeyboard() {
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.hideSoftInputFromWindow(windowToken, 0)
+}
+
+fun View.showKeyboard() {
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
 }
 
 fun detectProblem(pool1: String, pool2: String, pool3: String, service: String): String {
@@ -189,9 +202,9 @@ class SwipeRemoveItemBinder(
         val itemView = viewHolder.itemView
         val icon = ContextCompat.getDrawable(
             viewHolder.itemView.context,
-            R.drawable.ic_compited_task
+            R.drawable.ic_delete_material
         )
-        val background = ColorDrawable(Color.GREEN)
+        val background = ColorDrawable(Color.parseColor("#718792"))
 
         val iconMargin = (itemView.height - icon!!.intrinsicHeight) / 2
         val iconTop = itemView.top + (itemView.height - icon.intrinsicHeight) / 2

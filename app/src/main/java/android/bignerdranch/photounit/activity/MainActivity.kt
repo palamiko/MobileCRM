@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity(), DataBaseCommunication {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        AndroidThreeTen.init(this)
+        AndroidThreeTen.init(this)  // Включает подержку новых методов для старых тел.
         sharedPref = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE)
     }
 
@@ -57,8 +57,10 @@ class MainActivity : AppCompatActivity(), DataBaseCommunication {
             )
         )  // Указываем "верхние" уровни навирации. То где будет гамбургер.
 
-        binding.toolbar.setupWithNavController(navController, appBarConfiguration)
-        binding.navView.setupWithNavController(navController)
+        binding.apply {
+            toolbar.setupWithNavController(navController, appBarConfiguration)
+            navView.setupWithNavController(navController)
+        }
 
         changeListenerNavigateDestination()
         findNavigationView()

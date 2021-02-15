@@ -1,7 +1,8 @@
-package android.bignerdranch.photounit.fragments
+package android.bignerdranch.photounit.fragments.task
 
 import android.bignerdranch.photounit.R
 import android.bignerdranch.photounit.databinding.FragmentSelectMaterialBinding
+import android.bignerdranch.photounit.fragments.BaseFragment
 import android.bignerdranch.photounit.model.MaterialUsed
 import android.bignerdranch.photounit.utilits.viewHolder.ItemViewHolderExtraLite
 import android.bignerdranch.photounit.viewModels.TaskViewModel
@@ -17,24 +18,22 @@ class SelectMaterialFragment : BaseFragment(R.layout.fragment_select_material) {
     private val taskViewModel: TaskViewModel by activityViewModels()
     private var binding: FragmentSelectMaterialBinding? = null
 
-    private lateinit var smartRecyclerAdapter: SmartRecyclerAdapter
     lateinit var observerArrayMaterial: Observer<ArrayList<MaterialUsed>>
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        createLiveDataObserver()
-        taskViewModel.httpGetListMaterial(taskViewModel.arrayMaterialList)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val fragmentBinding = FragmentSelectMaterialBinding.bind(view)
         binding = fragmentBinding
+
+        createLiveDataObserver()
         setLiveDataObserve()
+        taskViewModel.getListMaterial()
     }
 
     private fun createList(arrayMaterial: ArrayList<MaterialUsed>) {
-        smartRecyclerAdapter = SmartRecyclerAdapter
+        val smartRecyclerAdapter: SmartRecyclerAdapter = SmartRecyclerAdapter
             .items(arrayMaterial)
             .map(MaterialUsed::class, ItemViewHolderExtraLite::class)
             .add(OnClickEventListener {

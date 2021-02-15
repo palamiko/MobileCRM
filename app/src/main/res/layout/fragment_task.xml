@@ -1,88 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/constrainLayoutTask"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".fragments.TaskFragment" >
 
-    <View
-        android:id="@+id/divider2"
-        android:layout_width="2dp"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
-        app:layout_constraintEnd_toStartOf="@+id/radioGroupState"
-        app:layout_constraintStart_toEndOf="@+id/radioGroupData"
-        app:layout_constraintTop_toTopOf="@+id/radioGroupData" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroupData"
-        tools:listitem="@layout/task_recycler_view_item" >
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/constrainLayoutTask"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".fragments.task.TaskFragment">
 
-    </androidx.recyclerview.widget.RecyclerView>
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="2dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintBottom_toTopOf="@+id/recyclerView"
+            app:layout_constraintEnd_toStartOf="@+id/radioGroupState"
+            app:layout_constraintStart_toEndOf="@+id/radioGroupData"
+            app:layout_constraintTop_toTopOf="@+id/radioGroupData" />
 
-    <RadioGroup
-        android:id="@+id/radioGroupData"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/radioGroupData"
+            tools:listitem="@layout/task_recycler_view_item">
 
-        <RadioButton
-            android:id="@+id/r_btn_yesterday"
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <RadioGroup
+            android:id="@+id/radioGroupData"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/radio_btn_yesterday" />
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <RadioButton
-            android:id="@+id/r_btn_today"
+            <RadioButton
+                android:id="@+id/r_btn_yesterday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_btn_yesterday" />
+
+            <RadioButton
+                android:id="@+id/r_btn_today"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_btn_today" />
+
+            <RadioButton
+                android:id="@+id/r_btn_tomorrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_btn_tomorrow" />
+
+        </RadioGroup>
+
+        <RadioGroup
+            android:id="@+id/radioGroupState"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/radio_btn_today" />
+            android:layout_marginEnd="4dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/radioGroupData">
 
-        <RadioButton
-            android:id="@+id/r_btn_tomorrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/radio_btn_tomorrow" />
+            <RadioButton
+                android:id="@+id/r_btn_appointed"
+                android:layout_width="wrap_content"
+                android:layout_height="27dp"
+                android:text="@string/radio_btn_appointed" />
 
-    </RadioGroup>
-
-    <RadioGroup
-        android:id="@+id/radioGroupState"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/radioGroupData">
-
-        <RadioButton
-            android:id="@+id/r_btn_appointed"
-            android:layout_width="wrap_content"
-            android:layout_height="27dp"
-            android:text="@string/radio_btn_appointed" />
-
-        <RadioButton
-            android:id="@+id/r_btn_closed"
-            android:layout_width="match_parent"
-            android:layout_height="27dp"
-            android:text="@string/radio_btn_closed" />
-    </RadioGroup>
+            <RadioButton
+                android:id="@+id/r_btn_closed"
+                android:layout_width="match_parent"
+                android:layout_height="27dp"
+                android:text="@string/radio_btn_closed" />
+        </RadioGroup>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
-
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 

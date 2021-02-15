@@ -12,15 +12,14 @@ import com.github.kittinunf.fuel.core.extensions.jsonBody
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.json.FuelJson
 import com.github.kittinunf.result.Result
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.threeten.bp.LocalDate
@@ -28,77 +27,6 @@ import org.threeten.bp.format.DateTimeFormatter
 
 
 interface DataBaseCommunication {
-
-    fun httpGetListStreet(id: String, savedObjects: MutableLiveData<Map<String, String>>) {
-        /** Функция принимает whoGet - является продолжением ссылки и названием вызываемой
-         * функции со стороны сервера, id - это id района или улицы в базе CRM,
-         * после запроса возвращается Json объект кторый десериализуется в Map масив и
-         * заносится в LiveData переменную*/
-        CoroutineScope(Dispatchers.IO).launch {
-            val httpAsync = "$SERVER_ADDRESS/$GET_STREET/$id"
-                .httpGet()
-                .authentication()
-                .basic(AUTH_USER, AUTH_PASS)
-                .responseJson { _, _, result ->
-                    when (result) {
-                        is Result.Failure -> {
-                            val ex = result.getException()
-                            println(ex)
-                        }
-                        is Result.Success -> {
-                            val data = result.get() // Получаем ответ в виде строки
-                            val jsonData = FuelJson(data.content) // Конвектируем в JsonObject
-                            val mGson = Gson()
-                            val tutorialMap: Map<String, String> = mGson.fromJson(
-                                jsonData.obj()
-                                    .toString(), // Конвектируем в kotlin Map<String, String>
-                                object : TypeToken<Map<String, String>>() {}.type
-                            )
-                            savedObjects.postValue(tutorialMap) // Помещаем результат в LiveData переменную
-                        }
-                    }
-                }
-            httpAsync.join()
-        }
-    }
-
-    fun httpGetListHome(
-        idDistrict: String,
-        idStreet: String,
-        savedObjects: MutableLiveData<Map<String, String>>
-    ) {
-        /** Функция принимает whoGet - является продолжением ссылки и названием вызываемой
-         * функции со стороны сервера, idDistrict - это id района в базе CRM, idStreet это id улицы
-         * после запроса возвращается Json объект с номерами и id домов,
-         * который десериализуется в Map масив и заносится в LiveData переменную*/
-
-        CoroutineScope(Dispatchers.IO).launch {
-            val httpAsync = "$SERVER_ADDRESS/$GET_HOME/$idDistrict/$idStreet"
-                .httpGet()
-                .authentication()
-                .basic(AUTH_USER, AUTH_PASS)
-                .responseJson { _, _, result ->
-                    when (result) {
-                        is Result.Failure -> {
-                            val ex = result.getException()
-                            println(ex)
-                        }
-                        is Result.Success -> {
-                            val data = result.get() // Получаем ответ в виде строки
-                            val jsonData = FuelJson(data.content) // Конвектируем в JsonObject
-                            val mGson = Gson()
-                            val tutorialMap: Map<String, String> = mGson.fromJson(
-                                jsonData.obj()
-                                    .toString(), // Конвектируем в kotlin Map<String, String>
-                                object : TypeToken<Map<String, String>>() {}.type
-                            )
-                            savedObjects.postValue(tutorialMap) // Помещаем результат в LiveData переменную
-                        }
-                    }
-                }
-            httpAsync.join()
-        }
-    }
 
     fun httpGetListTask(
         savedObjects: MutableLiveData<ArrayList<TaskList>>,
@@ -138,60 +66,6 @@ interface DataBaseCommunication {
         }
     }
 
-    // Функция отправляет POST с login pass, при успешной аутентификации получает токен FireBase
-    fun sendPostForAuth(
-        login: String,
-        password: String,
-        liveDataToken: MutableLiveData<String>
-    ) {
-        val timeout = 10000 // 5000 milliseconds = 10 seconds.
-        val timeoutRead = 60000 // 60000 milliseconds = 1 minute.
-
-        CoroutineScope(Dispatchers.IO).launch {
-            Fuel.post("$SERVER_ADDRESS/$AUTH_IN_APP").timeout(timeout).timeoutRead(timeoutRead)
-                .authentication()
-                .basic(AUTH_USER, AUTH_PASS)
-                .jsonBody(
-                    """
-  { "login" : "$login",
-    "password" : "$password"
-  }
-  """
-                )
-                .response { _, response, _ ->
-                    liveDataToken.postValue(
-                        response.body().asString("text/html")
-                    )  // Записывает полученый токен в LiveData
-                }
-        }
-
-    }
-
-    // Функция отправляет POST с login pass, при успешной аутентификации получает токен FireBase
-    suspend fun sendPostForAuth(
-        login: String,
-        password: String
-    ): String {
-        val timeout = 10000 // 5000 milliseconds = 10 seconds.
-        val timeoutRead = 60000 // 60000 milliseconds = 1 minute.
-        var myResponse = ""
-
-
-            Fuel.post("$SERVER_ADDRESS/$AUTH_IN_APP").timeout(timeout).timeoutRead(timeoutRead)
-                .authentication()
-                .basic(AUTH_USER, AUTH_PASS)
-                .jsonBody (
-                    """
-  { "login" : "$login",
-    "password" : "$password"
-  }
-  """
-                )
-                .response { _, response, _ ->
-                       myResponse = response.body().asString("text/html")
-                }
-        return myResponse
-    }
 
     fun closeTask (
         /**Ф-ия закрывает заявку*/
@@ -215,22 +89,10 @@ interface DataBaseCommunication {
         }
     }
 
-
-
-    fun getUserDataFromFirebase(userRef: DatabaseReference, liveData: MutableLiveData<String> ) {
-        /** Функция получает из Firebase данные пользователя после загрузки TaskFragment*/
-
-        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
-
-            override fun onDataChange(snapshot: DataSnapshot) {
-                liveData.postValue(Json.encodeToString(snapshot.getValue(User::class.java) ?: User()))
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                println("message: ${error.message} details: ${error.details}")
-            }
-        }
-        )
+    suspend fun getDataFromFirebase(reference: DatabaseReference?): String = withContext(Dispatchers.IO) {
+        var data = ""
+        if (reference != null) {data = Json.encodeToString(reference.get().await().getValue(User::class.java))}
+        return@withContext data
     }
 
     fun httpGetListMaterial(savedObjects: MutableLiveData<ArrayList<MaterialUsed>>) {

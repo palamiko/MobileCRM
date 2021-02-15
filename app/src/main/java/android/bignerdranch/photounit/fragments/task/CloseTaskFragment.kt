@@ -1,13 +1,12 @@
-package android.bignerdranch.photounit.fragments
+package android.bignerdranch.photounit.fragments.task
 
 import android.bignerdranch.photounit.R
 import android.bignerdranch.photounit.databinding.FragmentCloseTaskBinding
+import android.bignerdranch.photounit.fragments.BaseFragment
 import android.bignerdranch.photounit.model.DataCloseTask
 import android.bignerdranch.photounit.model.MaterialUsed
 import android.bignerdranch.photounit.model.modelsDB.TaskList
-import android.bignerdranch.photounit.utilits.FINISH_OK
-import android.bignerdranch.photounit.utilits.SwipeRemoveItemBinder
-import android.bignerdranch.photounit.utilits.TASK_COMPLETED
+import android.bignerdranch.photounit.utilits.*
 import android.bignerdranch.photounit.utilits.helpers.MyTextWatcher
 import android.bignerdranch.photounit.utilits.viewHolder.ItemViewHolderLite
 import android.bignerdranch.photounit.viewModels.TaskViewModel
@@ -16,10 +15,10 @@ import android.text.Editable
 import android.view.View
 import android.widget.Toast
 import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
-
 import smartadapter.SmartRecyclerAdapter
 import smartadapter.viewevent.listener.OnClickEventListener
 
@@ -29,13 +28,14 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
     private val taskVM: TaskViewModel by activityViewModels()
     private var binding: FragmentCloseTaskBinding? = null
 
-    private lateinit var smartRecyclerAdapter: SmartRecyclerAdapter
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val fragmentBinding = FragmentCloseTaskBinding.bind(view)
         binding = fragmentBinding
+
+        binding!!.teCommentClose.requestFocus()
+        view.showKeyboard()
     }
 
     override fun onStart() {
@@ -47,6 +47,11 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
         super.onResume()
         restoreTextFromEditText()
         createRecyclerViewAdapter(taskVM.selectMaterial.value!!)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        view?.hideKeyboard()  // Скрыть клавиатуру при выходе с экрана
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -89,6 +94,8 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
 
     private fun createRecyclerViewAdapter(arrayMaterialSelect: ArrayList<MaterialUsed>) {
         if (taskVM.selectMaterial.value != null ) {
+            if (arrayMaterialSelect.isNotEmpty()) binding?.listUsedMaterial?.isVisible = true
+            var smartRecyclerAdapter: SmartRecyclerAdapter? = null
             smartRecyclerAdapter = SmartRecyclerAdapter
                 .items(arrayMaterialSelect)
                 .map(MaterialUsed::class, ItemViewHolderLite::class)
@@ -98,7 +105,7 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
                 })
                 .add(SwipeRemoveItemBinder(ItemTouchHelper.LEFT) {
                     // Remove item from SmartRecyclerAdapter data set
-                    smartRecyclerAdapter.removeItem(it.viewHolder.adapterPosition)
+                    smartRecyclerAdapter?.removeItem(it.viewHolder.adapterPosition)
                     println(taskVM.selectMaterial.value)
                 })
                 .into(binding?.listUsedMaterial!!)
@@ -132,8 +139,11 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
 
     private fun detectPayTask() {
         /**Функция определяет платная заявка или нет и меняет надпись в RecyclerView*/
-        if (taskVM.singleTask.value!!.ispayable != "true") {
+        if (!taskVM.singleTask.value!!.ispayable) {
             binding?.teSumm?.isInvisible = true
+        }
+        if (taskVM.singleTask.value!!.isdom) {
+            binding?.teSumm?.isVisible = true
         }
     }
 

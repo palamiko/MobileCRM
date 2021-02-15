@@ -1,5 +1,6 @@
 package android.bignerdranch.photounit.model
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 
@@ -10,4 +11,10 @@ data class User (
     var pass: String = "",
     var name: String = "",
     var status: String = ""
+)
+
+@Serializable
+data class TokenFirebase(
+    @SerialName("token")
+    val value: String
 )

@@ -17,7 +17,7 @@ data class TaskList(
     var ended: String = "",
     var comments: String = "",
     var id_u: String = "",  // ИД мастера
-    var ispayable: String = "",
+    var ispayable: Boolean = false,
     var id_u_r: String = "",  // ИД менеджера
     var comments2: String = "",  // Рекомендуемое время выполнения
     var id_parent: String = "",

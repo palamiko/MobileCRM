@@ -4,16 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.CountMaterialFragment" >
+    tools:context=".fragments.task.CountMaterialFragment">
 
     <TextView
         android:id="@+id/tv_count_used_material_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:text="@string/text_count_used_material_text"
-        app:layout_constraintStart_toStartOf="@+id/tv_name_used_material"
-        app:layout_constraintTop_toBottomOf="@+id/tv_name_used_material" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/te_count_material"
+        app:layout_constraintStart_toStartOf="@+id/tv_name_used_material" />
 
     <TextView
         android:id="@+id/tv_name_used_material"
@@ -22,6 +21,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/text_name_material"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -30,9 +30,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:ems="3"
-        android:hint="@string/hint_count_material"
         android:autofillHints="@string/hint_count_material"
+        android:ems="3"
         android:inputType="number"
         app:layout_constraintStart_toEndOf="@+id/tv_count_used_material_text"
         app:layout_constraintTop_toBottomOf="@+id/tv_name_used_material" />

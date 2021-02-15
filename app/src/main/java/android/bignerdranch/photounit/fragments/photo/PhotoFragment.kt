@@ -1,14 +1,14 @@
-package android.bignerdranch.photounit.fragments
+package android.bignerdranch.photounit.fragments.photo
 
 import android.Manifest
 import android.app.Activity
 import android.bignerdranch.photounit.R
 import android.bignerdranch.photounit.databinding.FragmentPhotoBinding
+import android.bignerdranch.photounit.fragments.BaseFragment
+import android.bignerdranch.photounit.model.Photo
 import android.bignerdranch.photounit.utilits.UploadUtility
 import android.bignerdranch.photounit.viewModels.SharedViewModel
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -18,7 +18,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.github.drjacky.imagepicker.ImagePicker
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.*
 
@@ -32,17 +31,15 @@ class PhotoFragment : BaseFragment(R.layout.fragment_photo) {
         super.onViewCreated(view, savedInstanceState)
         val fragmentBinding = FragmentPhotoBinding.bind(view)
         binding = fragmentBinding
-    }
 
-    override fun onStart() {
-        super.onStart()
         setLiveDataObserve()
         requestPermissions()
+        bindAllView()
     }
 
     override fun onResume() {
         super.onResume()
-        bindAllView()
+        detectButtonVisible()
     }
 
     private fun getPhoto() {
@@ -54,20 +51,13 @@ class PhotoFragment : BaseFragment(R.layout.fragment_photo) {
             .start { resultCode, data ->
                 when (resultCode) {
                     Activity.RESULT_OK -> {
-                        //Image Uri will not be null for RESULT_OK
-                        //val fileUri = data?.data
-                        //You can get File object from intent
-                        //val file: File? = ImagePicker.getFile(data)
-                        //You can also get File Path from intent
+                        val fileUri = data?.data
+                        val file: File? = ImagePicker.getFile(data)
                         val filePath: String? = ImagePicker.getFilePath(data)
-                        val takenImage = BitmapFactory.decodeFile(filePath) // Само фото
-                        //val rotateImage: Bitmap = rotateImageFun(takenImage) // Переворачиваем фото в функции
-                        val stream = ByteArrayOutputStream()
-                        takenImage.compress(Bitmap.CompressFormat.JPEG, 100, stream) // Компрессия до JPEG
-                        val byteArray: ByteArray = stream.toByteArray() // Конвертация в ByteArray для передачи в POST
-                        // Помещаем JPEG и ByteArray каждый в свой LiveData во ViewModel
-                        sharedModel.setFilePhotoByteArr(byteArray) // Нужно для передачи в POST
-                        sharedModel.setPhoto(takenImage) // Нужно для отображения на экране в ImageView
+                        val myPhoto = Photo(fileUri, file, filePath)
+
+                        sharedModel.setPhoto(myPhoto) // Помещаем клас Photo в ViewModel
+                        sharedModel.setPhotoJpeg(myPhoto) // Нужно для отображения на экране в ImageView
                     }
                     ImagePicker.RESULT_ERROR -> {
                         Toast.makeText(context, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
@@ -79,40 +69,42 @@ class PhotoFragment : BaseFragment(R.layout.fragment_photo) {
             }
     }
 
-
     private fun bindAllView() {
         // Биндим кнопки
-        binding?.btnGetPhoto?.setOnClickListener { getPhoto() } // Сделать фото
+        binding?.apply {
+            btnGetPhoto.setOnClickListener { getPhoto() } // Сделать фото
+            btnLoadPhoto.setOnClickListener { uploadImageToServer() } // Отправить на сервер
+            btnAddAddress.setOnClickListener {
+                findNavController().navigate(R.id.action_photoFragment_to_districtListFragment)
+            }
+            textViewFullAddress.text = sharedModel.textFullAddress
+        }
+    }
 
-        binding?.btnLoadPhoto?.setOnClickListener { uploadImageToServer() } // Отправить на сервер
+    private fun detectButtonVisible() {
         if (sharedModel.textFullAddress != "") { // Пока нет полного аддреса кнопку не видно
             binding?.btnLoadPhoto?.isVisible = true
         } else binding?.btnLoadPhoto?.isInvisible = true
 
-        binding?.btnAddAddress?.setOnClickListener {
-            findNavController().navigate(R.id.action_photoFragment_to_districtListFragment)
-        }
-
         if (sharedModel.photoLiveData.value != null) { // Пока нет фото кнопку не видно
             binding?.btnAddAddress?.isVisible = true
         } else binding?.btnAddAddress?.isInvisible = true
-
-       binding?.textViewFullAddress?.text = sharedModel.textFullAddress
     }
 
     private fun uploadImageToServer() {
-        val photo: ByteArray? = sharedModel.getFilePhotoByteArr()
+        val photo: Photo? = sharedModel.getPhoto()
         if (photo != null) {
-            File(sharedModel.currentPhotoPath.absolutePath).writeBytes(photo) // Создаем фаил фото из ByteArray
-            UploadUtility(requireActivity(), sharedModel.idHome.value.toString()) // Указываем Id дома
-                .uploadFile(sharedModel.currentPhotoPath.absolutePath) // Отправляем фото в POST
+            //File(sharedModel.currentPhotoPath.absolutePath).writeBytes(photo) // Создаем фаил фото из ByteArray
+
+            UploadUtility(requireActivity(), sharedModel.mHome.id.toString())
+                .uploadFile(photo.filePath!!) // Отправляем фото в POST
         } else {
             Toast.makeText(requireContext(), "Сделай фото", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun setLiveDataObserve() {
-        sharedModel.photoLiveData.observe(this, {
+        sharedModel.photoLiveData.observe(viewLifecycleOwner, {
             binding?.ivPhoto?.setImageBitmap(it) // Выставляет фотку в imageView
         })
     }
@@ -128,17 +120,9 @@ class PhotoFragment : BaseFragment(R.layout.fragment_photo) {
         }
     }
 
-    override fun onStop() {
-        sharedModel.photoLiveData.removeObservers(this)
-        super.onStop()
-    }
-
     override fun onDestroyView() {
+        sharedModel.photoLiveData.removeObservers(this)
         binding = null
         super.onDestroyView()
     }
-
 }
-
-
-

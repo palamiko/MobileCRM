@@ -1,4 +1,4 @@
-package android.bignerdranch.photounit.fragments
+package android.bignerdranch.photounit.fragments.task
 
 import android.bignerdranch.photounit.R
 import android.bignerdranch.photounit.activity.MainActivity
@@ -8,16 +8,13 @@ import android.bignerdranch.photounit.model.modelsDB.TaskList
 import android.bignerdranch.photounit.utilits.*
 import android.bignerdranch.photounit.utilits.viewHolder.MainAdapter
 import android.bignerdranch.photounit.viewModels.TaskViewModel
-import android.bignerdranch.photounit.viewModels.UserViewModel
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -28,6 +25,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -35,10 +33,9 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
 
-class TaskFragment : Fragment() {
+class TaskFragment : Fragment(R.layout.fragment_task) {
 
     private val taskViewModel: TaskViewModel by activityViewModels()
-    private val userViewModel: UserViewModel by activityViewModels()
 
     private var binding: FragmentTaskBinding? = null
 
@@ -62,21 +59,13 @@ class TaskFragment : Fragment() {
 
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val fragmentBinding = FragmentTaskBinding.inflate(inflater, container, false)
-        binding = fragmentBinding
-        return fragmentBinding.root
-    }
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
-
-        if (userViewModel.mAuthLiveData.value?.currentUser == null) {
+        if (FirebaseAuth.getInstance().currentUser == null) {
             findNavController().navigate(R.id.action_global_authorizationFragment)
         } else {
+            val fragmentTaskBinding = FragmentTaskBinding.bind(view)
+            binding = fragmentTaskBinding
             detectFirstInput()
             restoreStateRadioButton()
         }
@@ -134,9 +123,12 @@ class TaskFragment : Fragment() {
 
     private fun removeObserver() {
         /**Функция отключает слушателей*/
-        taskViewModel.selectorDay.removeObserver(observerSelectorDay)
-        taskViewModel.selectorState.removeObserver(observerSelectorState)
-        taskViewModel.arrayTask.removeObserver(observerArrayTask)
+        taskViewModel.apply {
+            selectorDay.removeObserver(observerSelectorDay)
+            selectorState.removeObserver(observerSelectorState)
+            arrayTask.removeObserver(observerArrayTask)
+        }
+
     }
 
     private fun radioButtonListener() {
@@ -162,14 +154,17 @@ class TaskFragment : Fragment() {
         /**Функция подключает слушатели к переключателю даты заявки и (назначена/закрыта)
          * и производит запрос данных если эти переключали менются*/
 
-        // Слушатель состояния переключателей даты заявок
-        taskViewModel.selectorDay.observe(viewLifecycleOwner, observerSelectorDay)
+        taskViewModel.apply {
+            // Слушатель состояния переключателей даты заявок
+            selectorDay.observe(viewLifecycleOwner, observerSelectorDay)
 
-        // Слушатель состояния переключателей состояния заявки
-        taskViewModel.selectorState.observe(viewLifecycleOwner, observerSelectorState)
+            // Слушатель состояния переключателей состояния заявки
+            selectorState.observe(viewLifecycleOwner, observerSelectorState)
 
-        // Показываем RecyclerView как только получили заявки с сервера
-        taskViewModel.arrayTask.observe(viewLifecycleOwner, observerArrayTask)
+            // Показываем RecyclerView как только получили заявки с сервера
+            arrayTask.observe(viewLifecycleOwner, observerArrayTask)
+        }
+
 
     }
 
@@ -189,8 +184,10 @@ class TaskFragment : Fragment() {
 
     private fun saveStateRadioButton() {
         /**Сохраняем положение RadioButton перед onPause*/
-        taskViewModel.radioButtonDay.value = binding?.radioGroupData?.checkedRadioButtonId
-        taskViewModel.radioButtonState.value = binding?.radioGroupState?.checkedRadioButtonId
+        taskViewModel.apply {
+            radioButtonDay.value = binding?.radioGroupData?.checkedRadioButtonId
+            radioButtonState.value = binding?.radioGroupState?.checkedRadioButtonId
+        }
     }
 
     private fun restoreStateRadioButton() {
@@ -211,8 +208,10 @@ class TaskFragment : Fragment() {
 
     private fun detectFirstInput() {
         //  Если первое включение то выставляем заначения по умолчанию
-        taskViewModel.setSelectorState(taskViewModel.getSelectorState())
-        taskViewModel.setSelectorDay(taskViewModel.getSelectorDay())
+        taskViewModel.apply {
+            setSelectorState(taskViewModel.getSelectorState())
+            setSelectorDay(taskViewModel.getSelectorDay())
+        }
 
         //  Если первый вход и нет данных пользователя в liveData получаем их из хранилища
         if (taskViewModel.ldUserData.value == null) {
@@ -245,7 +244,7 @@ class TaskFragment : Fragment() {
         /**RecyclerView для назначеных заявок*/
         viewAdapter = MainAdapter(dataSet, findNavController(), taskViewModel)
         val viewManager = LinearLayoutManager(requireContext())
-        val colorDrawableBackground = ColorDrawable(Color.parseColor("#ff0000"))
+        val colorDrawableBackground = ColorDrawable(Color.parseColor("#718792"))
         val deleteIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_compited_task)!!
 
         binding?.recyclerView?.apply {
@@ -312,9 +311,12 @@ class TaskFragment : Fragment() {
 
     private fun clearSavedTextFromTextEdit() {
         /**Отчищает сохраненые в liveData значения полей TextEdit, коментарии и смму*/
-        taskViewModel.savedComment = null
-        taskViewModel.savedSumm = null
-        taskViewModel.selectMaterial.value = arrayListOf()
+        taskViewModel.apply {
+            savedComment = null
+            savedSumm = null
+            selectMaterial.value = arrayListOf()
+        }
+
     }
 
     override fun onDestroyView() {

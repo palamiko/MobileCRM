@@ -76,9 +76,8 @@ class MainAdapter(private val dataSet: ArrayList<TaskList>, private val navContr
             return i
         }
 
-        private fun detectPayable(pay: String): Int {
-            return if (pay == "false") View.INVISIBLE
-            else View.VISIBLE
+        private fun detectPayable(pay: Boolean): Int {
+            return if (!pay) View.INVISIBLE else View.VISIBLE
         }
     }
 
