@@ -21,7 +21,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,7 +34,6 @@ class AuthorizationFragment : BaseFragment(R.layout.fragment_authorization), Dat
     private lateinit var savedStateHandle: SavedStateHandle
     private var binding: FragmentAuthorizationBinding? = null
 
-    lateinit var authResult: AuthResult
     // SharedPreference
     private lateinit var sharedPref: SharedPreferences
     private lateinit var editorSharedPref: SharedPreferences.Editor
@@ -69,6 +67,8 @@ class AuthorizationFragment : BaseFragment(R.layout.fragment_authorization), Dat
         super.onPause()
     }
 
+
+
     @ExperimentalSerializationApi
     private fun signIn(view: View) {
 
@@ -80,17 +80,15 @@ class AuthorizationFragment : BaseFragment(R.layout.fragment_authorization), Dat
                     userViewModel.getAuthorization(binding?.teUserLogin, binding?.tePassword)
                 //  Авторизуемся в Firebase при помощи токена
                 if (token.value != "0") {
-                    authResult = userViewModel.logInWithToken(token)!!
+                    val authResult = userViewModel.logInWithToken(token)!!
                     //  Если авторизация успешна получаем ссылку на базу данных с данными пользователя
-                    val reference: DatabaseReference? = userViewModel.getUserDataInFirebase(authResult)
+                    val reference: DatabaseReference? = userViewModel.getUserDataReference(authResult)
                     if (reference != null) {
                         //  Загружам данные пользователя из FireBase
                         val data = userViewModel.getDataFromFirebase(reference)
                         if (data != "") {
-                            //  Сохраняем данные в SharedPreference
-                            saveData(data)
-                            //  Переходим на фрагмент заявок
-                            invisibleProgressBar()
+                            saveData(data)  //  Сохраняем данные в SharedPreference
+                            invisibleProgressBar()  //  Переходим на фрагмент заявок
                             getNextFragment()
                         } else showSnackBar(view, "Пустые данные из Firebase"); invisibleProgressBar()
                     } else showSnackBar(view, "Ошибка ссылки на Firebase"); invisibleProgressBar()

@@ -3,7 +3,6 @@ package android.bignerdranch.photounit.fragments
 import android.util.Log
 import android.widget.EditText
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
 import kotlinx.coroutines.*
 import kotlinx.serialization.SerializationException
 import okio.IOException
@@ -13,7 +12,7 @@ import retrofit2.HttpException
 open class BaseFragment(layout: Int) : Fragment(layout) {
 
 
-    lateinit var navController: NavController
+
 
     var coroutineScope = createCoroutineScope()
 

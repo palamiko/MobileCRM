@@ -2,18 +2,26 @@ package android.bignerdranch.photounit.viewModels
 
 import android.bignerdranch.photounit.model.MaterialUsed
 import android.bignerdranch.photounit.model.User
-import android.bignerdranch.photounit.model.modelsDB.TaskList
+import android.bignerdranch.photounit.model.modelsDB.TaskModel
+import android.bignerdranch.photounit.network.NetworkApiService
+import android.bignerdranch.photounit.network.NetworkModule
 import android.bignerdranch.photounit.utilits.DataBaseCommunication
 import android.bignerdranch.photounit.utilits.TASK_APPOINTED
 import android.bignerdranch.photounit.utilits.TODAY
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import kotlinx.serialization.ExperimentalSerializationApi
+import org.threeten.bp.LocalDate
+import org.threeten.bp.format.DateTimeFormatter
 
 
-class TaskViewModel : ViewModel(), DataBaseCommunication {
+class TaskViewModel: ViewModel(), DataBaseCommunication {
 
-    val arrayTask = MutableLiveData<ArrayList<TaskList>>()  // Массив заявок с сервера
-    val singleTask = MutableLiveData<TaskList>()  // Данные одной заявки
+    @ExperimentalSerializationApi
+    private val networkApi: NetworkApiService = NetworkModule().networkApiService
+
+    val arrayTask = MutableLiveData<ArrayList<TaskModel>>()  // Массив заявок с сервера
+    val singleTask = MutableLiveData<TaskModel>()  // Данные одной заявки
 
 
     val selectMaterial = MutableLiveData<ArrayList<MaterialUsed>>()  // Здесь содержатся выбранные для списания материалы
@@ -37,17 +45,28 @@ class TaskViewModel : ViewModel(), DataBaseCommunication {
         selectMaterial.value = arrayListOf()  // Инициализируем масив
     }
 
-    fun getTaskDef() {
-        httpGetListTask(arrayTask, getUserDataId())
+
+    @ExperimentalSerializationApi
+    suspend fun newGetTask(id_master: String, state_task: Char = TASK_APPOINTED,
+                           date_making: String ): ArrayList<TaskModel> {
+        return networkApi.getTaskMaster(id_master, state_task, date_making)
     }
 
-    fun getTask() {
-        httpGetListTask(arrayTask, getUserDataId(), selectorState.value!!, selectorDay.value!!)
+    @ExperimentalSerializationApi
+    suspend fun updateTask() {
+        val responseTask = newGetTask(getUserId(), getSelectorState(), getSelectorDay())
+        if (arrayTask.value != responseTask) arrayTask.postValue(responseTask)
+    }
+
+    @ExperimentalSerializationApi
+    suspend fun getMaterial() {
+        val result = networkApi.getMaterial()
+        if (arrayMaterialList.value != result) arrayMaterialList.postValue(result)
     }
 
     fun getUserData(): User = ldUserData.value ?: User()
 
-    fun getUserDataId(): String = ldUserData.value?.id.toString()
+    fun getUserId(): String = ldUserData.value?.id.toString()
 
     fun getSelectorState(): Char = selectorState.value ?: TASK_APPOINTED
 
@@ -68,8 +87,28 @@ class TaskViewModel : ViewModel(), DataBaseCommunication {
         selectorState.value = state
     }
 
-    fun getListMaterial() {
-        /**Получить список материалов*/
-        httpGetListMaterial(arrayMaterialList)
+    fun getSelectMaterial(): ArrayList<MaterialUsed> = selectMaterial.value ?: ArrayList()
+
+
+    private fun getDateTime(day: Int): String {
+        val today: LocalDate = LocalDate.now()
+        val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-M-dd 00:00:00")
+        var dayReturn = ""
+
+        when (day) {
+            -1 -> {
+                val yesterday: LocalDate = today.minusDays(1)
+                dayReturn = yesterday.format(formatter)
+            }
+            0 -> {
+                dayReturn = today.format(formatter)
+            }
+            1 -> {
+                val tomorrow: LocalDate = today.plusDays(1)
+                dayReturn = tomorrow.format(formatter)
+            }
+        }
+        return dayReturn
     }
+
 }

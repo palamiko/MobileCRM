@@ -2,17 +2,13 @@ package android.bignerdranch.photounit.utilits
 
 import android.app.Activity
 import android.app.ProgressDialog
-import android.graphics.Bitmap
-import android.os.Environment
 import android.util.Log
 import android.webkit.MimeTypeMap
 import android.widget.Toast
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileOutputStream
 
 class UploadUtility(_activity: Activity, homeId: String) {
 
@@ -23,11 +19,9 @@ class UploadUtility(_activity: Activity, homeId: String) {
     private val client = OkHttpClient()
 
 
-
     fun uploadFile(sourceFilePath: String, uploadedFileName: String? = null) {
         uploadFile(File(sourceFilePath), uploadedFileName)
     }
-
 
     private fun uploadFile(sourceFile: File, uploadedFileName: String? = null) {
         Thread {
@@ -67,30 +61,6 @@ class UploadUtility(_activity: Activity, homeId: String) {
             }
             toggleProgressDialog(false)
         }.start()
-    }
-
-    fun bitmapToFile(bitmap: Bitmap, fileNameToSave: String): File? { // File name like "image.png"
-        //create a file to write bitmap data
-        var file: File? = null
-        return try {
-            file = File(Environment.getExternalStorageDirectory().toString() + File.separator + fileNameToSave)
-            file.createNewFile()
-
-            //Convert bitmap to byte array
-            val bos = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos) // YOU can also save it in JPEG
-            val bitmapdata = bos.toByteArray()
-
-            //write the bytes in file
-            val fos = FileOutputStream(file)
-            fos.write(bitmapdata)
-            fos.flush()
-            fos.close()
-            file
-        } catch (e: Exception) {
-            e.printStackTrace()
-            file // it will return null
-        }
     }
 
     // url = file path or whatever suitable URL you want.

@@ -1,6 +1,7 @@
 package android.bignerdranch.photounit.viewModels
 
 import android.bignerdranch.photounit.model.TokenFirebase
+import android.bignerdranch.photounit.model.User
 import android.bignerdranch.photounit.network.NetworkModule
 import android.bignerdranch.photounit.utilits.DataBaseCommunication
 import android.bignerdranch.photounit.utilits.USERS
@@ -15,6 +16,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class UserViewModel: ViewModel(), DataBaseCommunication {
 
@@ -39,13 +42,18 @@ class UserViewModel: ViewModel(), DataBaseCommunication {
         }
     }
 
-    suspend fun getUserDataInFirebase(authResult: AuthResult?): DatabaseReference?  = withContext(Dispatchers.IO) {
+    suspend fun getUserDataReference(authResult: AuthResult?): DatabaseReference?  = withContext(Dispatchers.IO) {
         if (authResult != null) {
             val user = mAuth.currentUser?.uid
             val database = Firebase.database
             return@withContext database.getReference("$USERS/$user")
         } else return@withContext null
+    }
 
+    suspend fun getDataFromFirebase(reference: DatabaseReference?): String = withContext(Dispatchers.IO) {
+        var data = ""
+        if (reference != null) {data = Json.encodeToString(reference.get().await().getValue(User::class.java))}
+        return@withContext data
     }
 
     @ExperimentalSerializationApi

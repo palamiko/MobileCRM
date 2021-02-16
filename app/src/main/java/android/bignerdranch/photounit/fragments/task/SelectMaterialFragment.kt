@@ -8,9 +8,14 @@ import android.bignerdranch.photounit.utilits.viewHolder.ItemViewHolderExtraLite
 import android.bignerdranch.photounit.viewModels.TaskViewModel
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.launch
+import kotlinx.serialization.ExperimentalSerializationApi
 import smartadapter.SmartRecyclerAdapter
 import smartadapter.viewevent.listener.OnClickEventListener
 
@@ -21,6 +26,7 @@ class SelectMaterialFragment : BaseFragment(R.layout.fragment_select_material) {
     lateinit var observerArrayMaterial: Observer<ArrayList<MaterialUsed>>
 
 
+    @ExperimentalSerializationApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -29,7 +35,15 @@ class SelectMaterialFragment : BaseFragment(R.layout.fragment_select_material) {
 
         createLiveDataObserver()
         setLiveDataObserve()
-        taskViewModel.getListMaterial()
+        taskViewModel.viewModelScope.launch{getListMaterial()}
+    }
+
+    @ExperimentalSerializationApi
+    suspend fun getListMaterial() {
+
+        binding?.progressBarSelectMaterial?.isVisible = taskViewModel.arrayMaterialList.value.isNullOrEmpty()
+        taskViewModel.getMaterial()
+        binding?.progressBarSelectMaterial?.isGone = true
     }
 
     private fun createList(arrayMaterial: ArrayList<MaterialUsed>) {

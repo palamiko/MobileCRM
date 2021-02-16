@@ -5,7 +5,7 @@ import android.bignerdranch.photounit.databinding.FragmentCloseTaskBinding
 import android.bignerdranch.photounit.fragments.BaseFragment
 import android.bignerdranch.photounit.model.DataCloseTask
 import android.bignerdranch.photounit.model.MaterialUsed
-import android.bignerdranch.photounit.model.modelsDB.TaskList
+import android.bignerdranch.photounit.model.modelsDB.TaskModel
 import android.bignerdranch.photounit.utilits.*
 import android.bignerdranch.photounit.utilits.helpers.MyTextWatcher
 import android.bignerdranch.photounit.utilits.viewHolder.ItemViewHolderLite
@@ -75,11 +75,11 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
         }
     }
 
-    private fun detectAddress(item: TaskList?): String {
+    private fun detectAddress(item: TaskModel?): String {
         /**Эта ф-ия проверяет приходит ли заявка с полным адресом или адрес забит от руки
          * и возвращает разные вариации в поле адрес*/
         return if (item?.name_ru == null) {
-            item!!.address
+            item!!.address!!
         } else "${item.name_ru} ${item.building_number}-${item.flat}"
     }
 
@@ -114,9 +114,9 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
 
     private fun sendCloseTask() {
         val dataCloseTask = DataCloseTask (
-            id_task = taskVM.singleTask.value!!.id,
+            id_task = taskVM.singleTask.value!!.id_task,
             state_task = TASK_COMPLETED,
-            id_user = taskVM.getUserDataId(),
+            id_user = taskVM.getUserId(),
             comment = getText(binding?.teCommentClose!!),
             finish = FINISH_OK,
             summ = getText(binding?.teSumm!!),
@@ -139,10 +139,10 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
 
     private fun detectPayTask() {
         /**Функция определяет платная заявка или нет и меняет надпись в RecyclerView*/
-        if (!taskVM.singleTask.value!!.ispayable) {
+        if (!taskVM.singleTask.value!!.ispayable!!) {
             binding?.teSumm?.isInvisible = true
         }
-        if (taskVM.singleTask.value!!.isdom) {
+        if (taskVM.singleTask.value!!.isDom!!) {
             binding?.teSumm?.isVisible = true
         }
     }

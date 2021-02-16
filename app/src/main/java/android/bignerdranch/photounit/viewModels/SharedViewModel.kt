@@ -42,10 +42,6 @@ class SharedViewModel : ViewModel(), DataBaseCommunication {
         photoLiveData.value = compressToJpeg(photo)
     }
 
-    fun getPhotoJpeg(): Bitmap {
-        return photoLiveData.value!!
-    }
-
     // Сюда помещается экземпляр класса Photo
     fun setPhoto(photo: Photo) {
         filePhoto.value = photo
@@ -90,7 +86,7 @@ class SharedViewModel : ViewModel(), DataBaseCommunication {
         textFullAddress = tempSelectNameDistrict + tempSelectNameStreet + tempSelectNameHome
     }
 
-    fun compressToJpeg(photo: Photo): Bitmap {
+    private fun compressToJpeg(photo: Photo): Bitmap {
         /** Пережимает фото до Jpeg */
         val takenImage = BitmapFactory.decodeFile(photo.filePath) // Само фото
         val stream = ByteArrayOutputStream()

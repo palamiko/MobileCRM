@@ -3,8 +3,9 @@ package android.bignerdranch.photounit.fragments.task
 import android.bignerdranch.photounit.R
 import android.bignerdranch.photounit.activity.MainActivity
 import android.bignerdranch.photounit.databinding.FragmentTaskBinding
+import android.bignerdranch.photounit.fragments.BaseFragment
 import android.bignerdranch.photounit.model.User
-import android.bignerdranch.photounit.model.modelsDB.TaskList
+import android.bignerdranch.photounit.model.modelsDB.TaskModel
 import android.bignerdranch.photounit.utilits.*
 import android.bignerdranch.photounit.utilits.viewHolder.MainAdapter
 import android.bignerdranch.photounit.viewModels.TaskViewModel
@@ -17,7 +18,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateHandle
@@ -26,14 +28,14 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 
 
-class TaskFragment : Fragment(R.layout.fragment_task) {
+class TaskFragment : BaseFragment(R.layout.fragment_task) {
 
     private val taskViewModel: TaskViewModel by activityViewModels()
 
@@ -47,7 +49,8 @@ class TaskFragment : Fragment(R.layout.fragment_task) {
 
     private lateinit var observerSelectorDay: Observer<String>
     private lateinit var observerSelectorState: Observer<Char>
-    private lateinit var observerArrayTask: Observer<ArrayList<TaskList>>
+    private lateinit var observerArrayTask: Observer<ArrayList<TaskModel>>
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,18 +59,21 @@ class TaskFragment : Fragment(R.layout.fragment_task) {
         val navController = findNavController()
         val currentBackStackEntry = navController.currentBackStackEntry!!
         savedStateHandle = currentBackStackEntry.savedStateHandle
-
     }
 
+    @ExperimentalSerializationApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (FirebaseAuth.getInstance().currentUser == null) {
             findNavController().navigate(R.id.action_global_authorizationFragment)
-        } else {
+        }
+        else {
             val fragmentTaskBinding = FragmentTaskBinding.bind(view)
             binding = fragmentTaskBinding
             detectFirstInput()
             restoreStateRadioButton()
+            createObserver()
+            startObservers()
         }
     }
 
@@ -77,18 +83,14 @@ class TaskFragment : Fragment(R.layout.fragment_task) {
         // Слушатели
         clearSavedTextFromTextEdit()
         radioButtonListener()
-        createObserver()
-        startObservers()
     }
 
+    @ExperimentalSerializationApi
     override fun onResume() {
         super.onResume()
-        (requireActivity() as MainActivity).changeHeader(taskViewModel.getUserData())
 
-        CoroutineScope(Dispatchers.Main).launch {
-            delay(900)
-            updateTaskList()
-        }
+        updateTask()
+        (requireActivity() as MainActivity).changeHeader(taskViewModel.getUserData())
     }
 
     override fun onPause() {
@@ -96,22 +98,37 @@ class TaskFragment : Fragment(R.layout.fragment_task) {
         super.onPause()
     }
 
-    override fun onStop() {
-        removeObserver()
-        super.onStop()
+
+    @ExperimentalSerializationApi
+    private fun updateTask(showProgress: Boolean = false) {
+        coroutineScope.launch {
+            if (showProgress) visibleProgressBar()
+            taskViewModel.updateTask()
+            invisibleProgressBar()
+        }
     }
 
+    private suspend fun visibleProgressBar() = withContext(Dispatchers.Main) {
+        binding?.taskLoadProgress?.isVisible = true
+        binding?.recyclerView?.adapter = null
+    }
+
+    private suspend fun invisibleProgressBar() = withContext(Dispatchers.Main) {
+        binding?.taskLoadProgress?.isGone = true
+    }
+
+    @ExperimentalSerializationApi
     private fun createObserver() {
         /**Создает слушателей*/
         observerSelectorDay = Observer {
             if (taskViewModel.ldUserData.value?.id != null) {
-                taskViewModel.getTask()
+                updateTask(true)
             }
         }
 
         observerSelectorState = Observer {
             if (taskViewModel.ldUserData.value?.id != null) {
-                taskViewModel.getTask()
+                updateTask(true)
             }
         }
 
@@ -128,7 +145,6 @@ class TaskFragment : Fragment(R.layout.fragment_task) {
             selectorState.removeObserver(observerSelectorState)
             arrayTask.removeObserver(observerArrayTask)
         }
-
     }
 
     private fun radioButtonListener() {
@@ -137,7 +153,7 @@ class TaskFragment : Fragment(R.layout.fragment_task) {
         binding?.radioGroupData?.setOnCheckedChangeListener { _, id_rad_btn ->
             when (id_rad_btn) {
                 R.id.r_btn_yesterday -> taskViewModel.setSelectorDay(YESTERDAY)
-                R.id.r_btn_today -> taskViewModel.setSelectorDay(TODAY)
+                R.id.r_btn_today ->  taskViewModel.setSelectorDay(TODAY)
                 R.id.r_btn_tomorrow -> taskViewModel.setSelectorDay(TOMORROW)
             }
         }
@@ -164,8 +180,6 @@ class TaskFragment : Fragment(R.layout.fragment_task) {
             // Показываем RecyclerView как только получили заявки с сервера
             arrayTask.observe(viewLifecycleOwner, observerArrayTask)
         }
-
-
     }
 
     private fun getUserDataFromSharedPref() {
@@ -206,6 +220,7 @@ class TaskFragment : Fragment(R.layout.fragment_task) {
         }
     }
 
+    @ExperimentalSerializationApi
     private fun detectFirstInput() {
         //  Если первое включение то выставляем заначения по умолчанию
         taskViewModel.apply {
@@ -216,31 +231,17 @@ class TaskFragment : Fragment(R.layout.fragment_task) {
         //  Если первый вход и нет данных пользователя в liveData получаем их из хранилища
         if (taskViewModel.ldUserData.value == null) {
             getUserDataFromSharedPref()
-          //  mainActivity.changeHeader(taskViewModel.getUserData())  //
+
         } else {
             if (savedStateHandle.get<Boolean>(FIRST) == true) {
                 getUserDataFromSharedPref()
-
-           //     mainActivity.changeHeader(taskViewModel.getUserData())  //
-                taskViewModel.getTaskDef()  // Обновляем список зявок
+                updateTask(true)  // Обновляем список зявок
                 savedStateHandle.set<Boolean>(FIRST, false)  // Убираем индикатор первой авторизации
-            } else {
-                taskViewModel.getTaskDef()  // Обновляем список зявок
             }
         }
     }
 
-    private fun updateTaskList() {
-        /**Функция обновляет список заявок*/
-        if (taskViewModel.getSelectorState() == TASK_APPOINTED &&
-            taskViewModel.getSelectorDay() == taskViewModel.getDateTime(TODAY)) {
-            taskViewModel.getTaskDef()  // Если значени я по умолч. то обнов. с пармет. по умолч.
-        } else {
-            taskViewModel.getTask()  // Иначе обновляем с выставленными точками.
-        }
-    }
-
-    private fun createRecyclerView(dataSet: ArrayList<TaskList>) {
+    private fun createRecyclerView(dataSet: ArrayList<TaskModel>) {
         /**RecyclerView для назначеных заявок*/
         viewAdapter = MainAdapter(dataSet, findNavController(), taskViewModel)
         val viewManager = LinearLayoutManager(requireContext())
@@ -316,10 +317,10 @@ class TaskFragment : Fragment(R.layout.fragment_task) {
             savedSumm = null
             selectMaterial.value = arrayListOf()
         }
-
     }
 
     override fun onDestroyView() {
+        removeObserver()
         binding = null
         super.onDestroyView()
     }

@@ -21,6 +21,7 @@ class NetworkModule {
     private val json = Json {
         prettyPrint = true  // Читабельные отступы при показе json
         ignoreUnknownKeys = true  // Игнорировать неизвестные поля в Json объекте
+        isLenient = true
     }
     private val httpClient =  OkHttpClient.Builder()
         .addInterceptor(BasicAuthInterceptor(AUTH_USER, AUTH_PASS))  // Базовая авторизация
