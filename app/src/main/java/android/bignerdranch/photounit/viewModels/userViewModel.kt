@@ -3,7 +3,6 @@ package android.bignerdranch.photounit.viewModels
 import android.bignerdranch.photounit.model.TokenFirebase
 import android.bignerdranch.photounit.model.User
 import android.bignerdranch.photounit.network.NetworkModule
-import android.bignerdranch.photounit.utilits.DataBaseCommunication
 import android.bignerdranch.photounit.utilits.USERS
 import android.widget.EditText
 import androidx.lifecycle.ViewModel
@@ -19,7 +18,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-class UserViewModel: ViewModel(), DataBaseCommunication {
+class UserViewModel: ViewModel() {
 
     var mAuth: FirebaseAuth
 

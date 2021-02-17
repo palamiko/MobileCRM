@@ -81,7 +81,11 @@
             tools:layout="@layout/fragment_close_task">
             <action
                 android:id="@+id/action_closeTaskFragment_to_taskFragment"
-                app:destination="@id/taskFragment" />
+                app:destination="@id/taskFragment" >
+                <argument
+                    android:name="resultСloseTask"
+                    android:defaultValue="@null" />
+            </action>
             <action
                 android:id="@+id/action_closeTaskFragment_to_selectMaterialFragment"
                 app:destination="@id/selectMaterialFragment" />
@@ -99,6 +103,11 @@
                 app:exitAnim="@anim/nav_default_exit_anim"
                 app:popEnterAnim="@anim/nav_default_pop_enter_anim"
                 app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+            <argument
+                android:name="resultСloseTask"
+                app:argType="string"
+                app:nullable="true"
+                android:defaultValue="@null" />
         </fragment>
 
         <action

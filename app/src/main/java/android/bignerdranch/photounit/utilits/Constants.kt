@@ -21,6 +21,7 @@ const val POST_LOAD_PHOTO = "uploadImg"
 const val AUTH_IN_APP = "register"
 const val GET_AUTHORIZATION = "authorization"
 const val CLOSE_TASK = "close_task"
+const val NEW_CLOSE_TASK = "new_close_task"
 const val GET_MATERIAL_LIST = "get_list_material"
 
 // Состояния заявки  //

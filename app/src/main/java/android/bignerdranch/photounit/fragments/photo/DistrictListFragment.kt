@@ -3,7 +3,6 @@ package android.bignerdranch.photounit.fragments.photo
 import android.bignerdranch.photounit.R
 import android.bignerdranch.photounit.databinding.FragmentDistricListBinding
 import android.bignerdranch.photounit.fragments.BaseFragment
-import android.bignerdranch.photounit.utilits.DataBaseCommunication
 import android.bignerdranch.photounit.utilits.districtArray
 import android.bignerdranch.photounit.viewModels.SharedViewModel
 import android.os.Bundle
@@ -14,7 +13,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 
 
-class DistrictListFragment : BaseFragment( R.layout.fragment_distric_list), DataBaseCommunication {
+class DistrictListFragment : BaseFragment( R.layout.fragment_distric_list) {
 
     private val sharedModel: SharedViewModel by activityViewModels()
     private var binding: FragmentDistricListBinding? = null

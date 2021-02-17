@@ -11,12 +11,9 @@ import retrofit2.HttpException
 
 open class BaseFragment(layout: Int) : Fragment(layout) {
 
-
-
-
     var coroutineScope = createCoroutineScope()
 
-    fun createCoroutineScope() = CoroutineScope(Job() + Dispatchers.IO)
+    private fun createCoroutineScope() = CoroutineScope(Job() + Dispatchers.IO)
 
     fun getText(editText: EditText): String = editText.text.toString()
 

@@ -3,7 +3,10 @@ package android.bignerdranch.photounit.activity
 import android.bignerdranch.photounit.R
 import android.bignerdranch.photounit.databinding.ActivityMainBinding
 import android.bignerdranch.photounit.model.User
-import android.bignerdranch.photounit.utilits.*
+import android.bignerdranch.photounit.utilits.SHARED_PREF_NAME
+import android.bignerdranch.photounit.utilits.VERSION_APP
+import android.bignerdranch.photounit.utilits.detectUserIcon
+import android.bignerdranch.photounit.utilits.detectUserStatus
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
@@ -17,8 +20,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.jakewharton.threetenabp.AndroidThreeTen
 
 
-
-class MainActivity : AppCompatActivity(), DataBaseCommunication {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration

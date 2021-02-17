@@ -4,7 +4,6 @@ import android.bignerdranch.photounit.model.Photo
 import android.bignerdranch.photounit.model.modelsDB.District
 import android.bignerdranch.photounit.model.modelsDB.Home
 import android.bignerdranch.photounit.model.modelsDB.Street
-import android.bignerdranch.photounit.utilits.DataBaseCommunication
 import android.bignerdranch.photounit.utilits.districtMap
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -14,7 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 
-class SharedViewModel : ViewModel(), DataBaseCommunication {
+class SharedViewModel : ViewModel() {
     var photoLiveData = MutableLiveData<Bitmap>() // Содержит сфотографироанное изображение .bmp
     var filePhoto = MutableLiveData<Photo>() // Содержит класс Photo
 

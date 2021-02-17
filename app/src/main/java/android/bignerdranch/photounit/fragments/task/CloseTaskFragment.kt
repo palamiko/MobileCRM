@@ -3,22 +3,28 @@ package android.bignerdranch.photounit.fragments.task
 import android.bignerdranch.photounit.R
 import android.bignerdranch.photounit.databinding.FragmentCloseTaskBinding
 import android.bignerdranch.photounit.fragments.BaseFragment
-import android.bignerdranch.photounit.model.DataCloseTask
 import android.bignerdranch.photounit.model.MaterialUsed
 import android.bignerdranch.photounit.model.modelsDB.TaskModel
-import android.bignerdranch.photounit.utilits.*
+import android.bignerdranch.photounit.utilits.SwipeRemoveItemBinder
 import android.bignerdranch.photounit.utilits.helpers.MyTextWatcher
+import android.bignerdranch.photounit.utilits.hideKeyboard
+import android.bignerdranch.photounit.utilits.showKeyboard
 import android.bignerdranch.photounit.utilits.viewHolder.ItemViewHolderLite
 import android.bignerdranch.photounit.viewModels.TaskViewModel
 import android.os.Bundle
 import android.text.Editable
 import android.view.View
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.ExperimentalSerializationApi
 import smartadapter.SmartRecyclerAdapter
 import smartadapter.viewevent.listener.OnClickEventListener
 
@@ -38,6 +44,7 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
         view.showKeyboard()
     }
 
+    @ExperimentalSerializationApi
     override fun onStart() {
         super.onStart()
         initView()
@@ -83,6 +90,7 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
         } else "${item.name_ru} ${item.building_number}-${item.flat}"
     }
 
+    @ExperimentalSerializationApi
     private fun initView() {
         binding?.tvAddressCloseTask?.text = detectAddress(taskVM.singleTask.value!!)
         binding?.tvCommentCloseTask?.text = taskVM.singleTask.value!!.comments
@@ -112,29 +120,31 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
         }
     }
 
-    private fun sendCloseTask() {
-        val dataCloseTask = DataCloseTask (
-            id_task = taskVM.singleTask.value!!.id_task,
-            state_task = TASK_COMPLETED,
-            id_user = taskVM.getUserId(),
-            comment = getText(binding?.teCommentClose!!),
-            finish = FINISH_OK,
-            summ = getText(binding?.teSumm!!),
-            material = taskVM.selectMaterial.value!!
-        )
-        taskVM.closeTask (dataCloseTask = dataCloseTask)
+    @ExperimentalSerializationApi
+    private suspend fun closeTask(): String {
+        return taskVM.closeTask(getText(binding?.teCommentClose!!), getText(binding?.teSumm!!))
+
     }
 
+    @ExperimentalSerializationApi
     private fun initializationBtnClickListener() {
         /**Инициализация слушателей нажатий кнопок*/
         binding?.btnCloseTask?.setOnClickListener {
-            sendCloseTask()
-            findNavController().navigate(R.id.action_closeTaskFragment_to_taskFragment)
+            coroutineScope.launch {
+                val messageResult: String = closeTask()
+                navigateToTaskFragment(messageResult)
+            }
         }
 
         binding?.btnAddMaterial?.setOnClickListener {
             findNavController().navigate(R.id.action_closeTaskFragment_to_selectMaterialFragment)
         }
+    }
+
+    private suspend fun navigateToTaskFragment(message: String) = withContext(Dispatchers.Main) {
+        /**Функция производит навигацую к TaskFragment и передает туда результат закрытия заявки*/
+        val bundle  = bundleOf(RESULT_CLOSE to message)  // Ложим результат в Bundle
+        findNavController().navigate(R.id.action_closeTaskFragment_to_taskFragment, bundle)
     }
 
     private fun detectPayTask() {
@@ -176,5 +186,6 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
     companion object {
         const val TEXT_COMMENT = "text_edit_comment"
         const val TEXT_SUMM = "text_edit_summ"
+        const val RESULT_CLOSE = "result_close"
     }
 }

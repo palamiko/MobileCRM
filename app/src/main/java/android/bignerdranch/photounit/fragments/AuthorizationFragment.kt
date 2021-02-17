@@ -5,7 +5,6 @@ import android.bignerdranch.photounit.R
 import android.bignerdranch.photounit.databinding.FragmentAuthorizationBinding
 import android.bignerdranch.photounit.fragments.task.TaskFragment.Companion.FIRST
 import android.bignerdranch.photounit.model.TokenFirebase
-import android.bignerdranch.photounit.utilits.DataBaseCommunication
 import android.bignerdranch.photounit.utilits.KEY_USER_DATA
 import android.bignerdranch.photounit.utilits.SHARED_PREF_NAME
 import android.bignerdranch.photounit.utilits.hideKeyboard
@@ -28,7 +27,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 
 
-class AuthorizationFragment : BaseFragment(R.layout.fragment_authorization), DataBaseCommunication {
+class AuthorizationFragment : BaseFragment(R.layout.fragment_authorization) {
 
     private val userViewModel: UserViewModel by viewModels()
     private lateinit var savedStateHandle: SavedStateHandle

@@ -1,6 +1,8 @@
 package android.bignerdranch.photounit.network
 
+import android.bignerdranch.photounit.model.DataCloseTask
 import android.bignerdranch.photounit.model.MaterialUsed
+import android.bignerdranch.photounit.model.ResponseCloseTask
 import android.bignerdranch.photounit.model.TokenFirebase
 import android.bignerdranch.photounit.model.modelsDB.Home
 import android.bignerdranch.photounit.model.modelsDB.Street
@@ -8,7 +10,9 @@ import android.bignerdranch.photounit.model.modelsDB.TaskModel
 import android.bignerdranch.photounit.utilits.*
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 
@@ -41,6 +45,9 @@ interface NetworkApiService {
     /**Получить список материалов*/
     @GET(GET_MATERIAL_LIST)
     suspend fun getMaterial(): ArrayList<MaterialUsed>
+
+    @POST(NEW_CLOSE_TASK)
+    suspend fun postCloseTask(@Body dataCloseTask: DataCloseTask): ResponseCloseTask
 
 
     companion object {

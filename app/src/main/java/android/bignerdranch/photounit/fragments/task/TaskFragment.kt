@@ -27,6 +27,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -74,6 +75,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task) {
             restoreStateRadioButton()
             createObserver()
             startObservers()
+            showSnackBar(view)
         }
     }
 
@@ -115,6 +117,15 @@ class TaskFragment : BaseFragment(R.layout.fragment_task) {
 
     private suspend fun invisibleProgressBar() = withContext(Dispatchers.Main) {
         binding?.taskLoadProgress?.isGone = true
+    }
+
+    private fun showSnackBar(view: View) {
+        val bundle: Bundle = this.requireArguments()
+        if (!bundle.isEmpty) {
+            val message: String = bundle.getString(RESULT_CLOSE) ?: "Ошибка TaskFragment.."
+            val snackBar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT)
+            snackBar.show()
+        }
     }
 
     @ExperimentalSerializationApi
@@ -320,7 +331,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task) {
     }
 
     override fun onDestroyView() {
-        removeObserver()
+        //removeObserver()
         binding = null
         super.onDestroyView()
     }
@@ -328,5 +339,6 @@ class TaskFragment : BaseFragment(R.layout.fragment_task) {
     companion object {
         // Индикатор первого включения
         const val FIRST = "FIRST"
+        private const val RESULT_CLOSE = "result_close"
     }
 }

@@ -1,12 +1,15 @@
 package android.bignerdranch.photounit.viewModels
 
+import android.bignerdranch.photounit.model.DataCloseTask
 import android.bignerdranch.photounit.model.MaterialUsed
+import android.bignerdranch.photounit.model.ResponseCloseTask
 import android.bignerdranch.photounit.model.User
 import android.bignerdranch.photounit.model.modelsDB.TaskModel
 import android.bignerdranch.photounit.network.NetworkApiService
 import android.bignerdranch.photounit.network.NetworkModule
-import android.bignerdranch.photounit.utilits.DataBaseCommunication
+import android.bignerdranch.photounit.utilits.FINISH_OK
 import android.bignerdranch.photounit.utilits.TASK_APPOINTED
+import android.bignerdranch.photounit.utilits.TASK_COMPLETED
 import android.bignerdranch.photounit.utilits.TODAY
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,7 +18,7 @@ import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
 
 
-class TaskViewModel: ViewModel(), DataBaseCommunication {
+class TaskViewModel: ViewModel() {
 
     @ExperimentalSerializationApi
     private val networkApi: NetworkApiService = NetworkModule().networkApiService
@@ -64,13 +67,30 @@ class TaskViewModel: ViewModel(), DataBaseCommunication {
         if (arrayMaterialList.value != result) arrayMaterialList.postValue(result)
     }
 
+    @ExperimentalSerializationApi
+    suspend fun closeTask(comment: String, summ: String): String {
+        val dataCloseTask = DataCloseTask (
+            id_task = getSingleTask().id_task,
+            state_task = TASK_COMPLETED,
+            id_user = getUserId(),
+            comment = comment,
+            finish = FINISH_OK,
+            summ = summ,
+            material = getSelectMaterial()
+        )
+        val result = networkApi.postCloseTask(dataCloseTask)
+        return resultToString(result)
+    }
+
     fun getUserData(): User = ldUserData.value ?: User()
 
-    fun getUserId(): String = ldUserData.value?.id.toString()
+    private fun getUserId(): String = ldUserData.value?.id.toString()
 
     fun getSelectorState(): Char = selectorState.value ?: TASK_APPOINTED
 
     fun getSelectorDay(): String = selectorDay.value ?: getDateTime(TODAY)
+
+    private fun getSingleTask(): TaskModel = singleTask.value ?: TaskModel()
 
 
     fun setSelectorDay(day: Int) {
@@ -89,6 +109,10 @@ class TaskViewModel: ViewModel(), DataBaseCommunication {
 
     fun getSelectMaterial(): ArrayList<MaterialUsed> = selectMaterial.value ?: ArrayList()
 
+
+    suspend fun resultToString(result: ResponseCloseTask): String {
+        return if (result.result) "Успешно закрыта" else "Ошибка закрытия заявки"
+    }
 
     private fun getDateTime(day: Int): String {
         val today: LocalDate = LocalDate.now()
