@@ -50,24 +50,27 @@ class TaskViewModel: ViewModel() {
 
 
     @ExperimentalSerializationApi
-    suspend fun newGetTask(id_master: String, state_task: Char = TASK_APPOINTED,
-                           date_making: String ): ArrayList<TaskModel> {
+    suspend fun getTask(id_master: String, state_task: Char = TASK_APPOINTED,
+                        date_making: String ): ArrayList<TaskModel> {
         return networkApi.getTaskMaster(id_master, state_task, date_making)
     }
 
     @ExperimentalSerializationApi
     suspend fun updateTask() {
-        val responseTask = newGetTask(getUserId(), getSelectorState(), getSelectorDay())
+        /**Обновление списка заявок*/
+        val responseTask = getTask(getUserId(), getSelectorState(), getSelectorDay())
         if (arrayTask.value != responseTask) arrayTask.postValue(responseTask)
     }
 
     @ExperimentalSerializationApi
     suspend fun getMaterial() {
+        /**Запрос списка материалов*/
         val result = networkApi.getMaterial()
         if (arrayMaterialList.value != result) arrayMaterialList.postValue(result)
     }
 
     @ExperimentalSerializationApi
+    /**Закрывает заявку. возвращает результат в виде String*/
     suspend fun closeTask(comment: String, summ: String): String {
         val dataCloseTask = DataCloseTask (
             id_task = getSingleTask().id_task,
@@ -110,7 +113,7 @@ class TaskViewModel: ViewModel() {
     fun getSelectMaterial(): ArrayList<MaterialUsed> = selectMaterial.value ?: ArrayList()
 
 
-    suspend fun resultToString(result: ResponseCloseTask): String {
+    private fun resultToString(result: ResponseCloseTask): String {
         return if (result.result) "Успешно закрыта" else "Ошибка закрытия заявки"
     }
 

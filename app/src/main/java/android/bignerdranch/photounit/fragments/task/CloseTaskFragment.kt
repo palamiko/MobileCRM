@@ -143,7 +143,7 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
 
     private suspend fun navigateToTaskFragment(message: String) = withContext(Dispatchers.Main) {
         /**Функция производит навигацую к TaskFragment и передает туда результат закрытия заявки*/
-        val bundle  = bundleOf(RESULT_CLOSE to message)  // Ложим результат в Bundle
+        val bundle  = bundleOf(KEY_RESULT_CLOSE to message, KEY_IS_CLOSE_FRAGMENT to true)  // Ложим результат в Bundle
         findNavController().navigate(R.id.action_closeTaskFragment_to_taskFragment, bundle)
     }
 
@@ -186,6 +186,7 @@ class CloseTaskFragment : BaseFragment(R.layout.fragment_close_task) {
     companion object {
         const val TEXT_COMMENT = "text_edit_comment"
         const val TEXT_SUMM = "text_edit_summ"
-        const val RESULT_CLOSE = "result_close"
+        const val KEY_RESULT_CLOSE = "result_close"
+        private const val KEY_IS_CLOSE_FRAGMENT = "from_close_fragment"
     }
 }

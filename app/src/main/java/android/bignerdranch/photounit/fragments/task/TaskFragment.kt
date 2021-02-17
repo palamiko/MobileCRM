@@ -21,7 +21,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -39,19 +38,12 @@ import kotlinx.serialization.json.Json
 class TaskFragment : BaseFragment(R.layout.fragment_task) {
 
     private val taskViewModel: TaskViewModel by activityViewModels()
-
     private var binding: FragmentTaskBinding? = null
 
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var savedStateHandle: SavedStateHandle
 
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
-
-
-    private lateinit var observerSelectorDay: Observer<String>
-    private lateinit var observerSelectorState: Observer<Char>
-    private lateinit var observerArrayTask: Observer<ArrayList<TaskModel>>
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,14 +63,15 @@ class TaskFragment : BaseFragment(R.layout.fragment_task) {
         else {
             val fragmentTaskBinding = FragmentTaskBinding.bind(view)
             binding = fragmentTaskBinding
+
             detectFirstInput()
             restoreStateRadioButton()
-            createObserver()
-            startObservers()
+            startObserverArrayTask()
             showSnackBar(view)
         }
     }
 
+    @ExperimentalSerializationApi
     override fun onStart() {
         super.onStart()
 
@@ -91,6 +84,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task) {
     override fun onResume() {
         super.onResume()
 
+        println("ON RESUME")
         updateTask()
         (requireActivity() as MainActivity).changeHeader(taskViewModel.getUserData())
     }
@@ -100,9 +94,14 @@ class TaskFragment : BaseFragment(R.layout.fragment_task) {
         super.onPause()
     }
 
-
     @ExperimentalSerializationApi
-    private fun updateTask(showProgress: Boolean = false) {
+    private fun updateTask(_showProgress: Boolean = false) {
+        var showProgress = _showProgress
+        val bundle: Bundle = this.requireArguments()
+        if (!bundle.isEmpty) {
+            val isFromCloseTask: Boolean = bundle.getBoolean(KEY_IS_CLOSE_FRAGMENT)
+            showProgress =  if (isFromCloseTask) isFromCloseTask else false
+        }
         coroutineScope.launch {
             if (showProgress) visibleProgressBar()
             taskViewModel.updateTask()
@@ -119,86 +118,65 @@ class TaskFragment : BaseFragment(R.layout.fragment_task) {
         binding?.taskLoadProgress?.isGone = true
     }
 
+    @ExperimentalSerializationApi
     private fun showSnackBar(view: View) {
         val bundle: Bundle = this.requireArguments()
         if (!bundle.isEmpty) {
-            val message: String = bundle.getString(RESULT_CLOSE) ?: "Ошибка TaskFragment.."
+            val message: String = bundle.getString(KEY_RESULT_CLOSE) ?: "Ошибка TaskFragment.."
             val snackBar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT)
             snackBar.show()
         }
     }
 
     @ExperimentalSerializationApi
-    private fun createObserver() {
-        /**Создает слушателей*/
-        observerSelectorDay = Observer {
-            if (taskViewModel.ldUserData.value?.id != null) {
-                updateTask(true)
-            }
-        }
-
-        observerSelectorState = Observer {
-            if (taskViewModel.ldUserData.value?.id != null) {
-                updateTask(true)
-            }
-        }
-
-        observerArrayTask = Observer {
+    private fun startObserverArrayTask() {
+        /**Показываем RecyclerView как только получили заявки с сервера*/
+        taskViewModel.arrayTask.observe(viewLifecycleOwner) {
             createRecyclerView(it)
         }
-
     }
 
-    private fun removeObserver() {
-        /**Функция отключает слушателей*/
-        taskViewModel.apply {
-            selectorDay.removeObserver(observerSelectorDay)
-            selectorState.removeObserver(observerSelectorState)
-            arrayTask.removeObserver(observerArrayTask)
-        }
-    }
-
+    @ExperimentalSerializationApi
     private fun radioButtonListener() {
         /** Функция слушает переключения RadioButton и изменяет LiveData дня и состояния
          * заявки на выбранные */
         binding?.radioGroupData?.setOnCheckedChangeListener { _, id_rad_btn ->
             when (id_rad_btn) {
-                R.id.r_btn_yesterday -> taskViewModel.setSelectorDay(YESTERDAY)
-                R.id.r_btn_today ->  taskViewModel.setSelectorDay(TODAY)
-                R.id.r_btn_tomorrow -> taskViewModel.setSelectorDay(TOMORROW)
+                R.id.r_btn_yesterday -> {
+                    taskViewModel.setSelectorDay(YESTERDAY)
+                    updateTask(true)
+                }
+                R.id.r_btn_today -> {
+                    taskViewModel.setSelectorDay(TODAY)
+                    updateTask(true)
+                }
+                R.id.r_btn_tomorrow -> {
+                    taskViewModel.setSelectorDay(TOMORROW)
+                    updateTask(true)
+                }
             }
         }
 
         binding?.radioGroupState?.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
-                R.id.r_btn_appointed -> taskViewModel.setSelectorState(TASK_APPOINTED)
-                R.id.r_btn_closed -> taskViewModel.setSelectorState(TASK_CLOSED)
+                R.id.r_btn_appointed -> {
+                    taskViewModel.setSelectorState(TASK_APPOINTED)
+                    updateTask(true)
+                }
+                R.id.r_btn_closed -> {
+                    taskViewModel.setSelectorState(TASK_CLOSED)
+                    updateTask(true)
+                }
             }
-        }
-    }
-
-    private fun startObservers() {
-        /**Функция подключает слушатели к переключателю даты заявки и (назначена/закрыта)
-         * и производит запрос данных если эти переключали менются*/
-
-        taskViewModel.apply {
-            // Слушатель состояния переключателей даты заявок
-            selectorDay.observe(viewLifecycleOwner, observerSelectorDay)
-
-            // Слушатель состояния переключателей состояния заявки
-            selectorState.observe(viewLifecycleOwner, observerSelectorState)
-
-            // Показываем RecyclerView как только получили заявки с сервера
-            arrayTask.observe(viewLifecycleOwner, observerArrayTask)
         }
     }
 
     private fun getUserDataFromSharedPref() {
         /**Получаем данные польззователя из SharedPreference*/
+
         sharedPreferences = requireActivity().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE)  // Получаем настройки сохраненые в Authorization
         val userData = sharedPreferences.getString(KEY_USER_DATA, null)
         if (userData != null) {
-            println("Данные в таск фрагменте: $userData")
             taskViewModel.ldUserData.value = Json.decodeFromString(User.serializer(), userData)
         } else Toast.makeText(
             requireContext(),
@@ -209,6 +187,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task) {
 
     private fun saveStateRadioButton() {
         /**Сохраняем положение RadioButton перед onPause*/
+
         taskViewModel.apply {
             radioButtonDay.value = binding?.radioGroupData?.checkedRadioButtonId
             radioButtonState.value = binding?.radioGroupState?.checkedRadioButtonId
@@ -246,6 +225,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task) {
         } else {
             if (savedStateHandle.get<Boolean>(FIRST) == true) {
                 getUserDataFromSharedPref()
+                println("FIRST INPUT on view created")
                 updateTask(true)  // Обновляем список зявок
                 savedStateHandle.set<Boolean>(FIRST, false)  // Убираем индикатор первой авторизации
             }
@@ -331,7 +311,6 @@ class TaskFragment : BaseFragment(R.layout.fragment_task) {
     }
 
     override fun onDestroyView() {
-        //removeObserver()
         binding = null
         super.onDestroyView()
     }
@@ -339,6 +318,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task) {
     companion object {
         // Индикатор первого включения
         const val FIRST = "FIRST"
-        private const val RESULT_CLOSE = "result_close"
+        private const val KEY_RESULT_CLOSE = "result_close"
+        private const val KEY_IS_CLOSE_FRAGMENT = "from_close_fragment"
     }
 }
