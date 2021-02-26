@@ -1,4 +1,4 @@
-package android.bignerdranch.photounit.model
+package android.bignerdranch.photounit.model.networkModel
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

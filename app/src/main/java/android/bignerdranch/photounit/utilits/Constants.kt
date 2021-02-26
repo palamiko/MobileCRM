@@ -18,11 +18,12 @@ const val GET_STREET = "get-street"
 const val GET_HOME = "get-home"
 const val GET_TASK_FOR_MASTER = "get_task_for_master_period"
 const val POST_LOAD_PHOTO = "uploadImg"
-const val AUTH_IN_APP = "register"
 const val GET_AUTHORIZATION = "authorization"
-const val CLOSE_TASK = "close_task"
-const val NEW_CLOSE_TASK = "new_close_task"
+const val CLOSE_TASK = "new_close_task"
 const val GET_MATERIAL_LIST = "get_list_material"
+const val GET_CLIENT_CARD = "get_client_card"
+const val GET_CLIENT_CARD_BILLING = "get_client_card_billing"
+const val GET_CABLE_TEST = "get_cable_test"
 
 // Состояния заявки  //
 

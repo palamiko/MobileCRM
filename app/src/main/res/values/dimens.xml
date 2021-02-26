@@ -2,4 +2,7 @@
 <resources>
     <dimen name="small_text_ver_app">10sp</dimen>
     <dimen name="margin_small">4dp</dimen>
+    <dimen name="margin_normal">8dp</dimen>
+    <dimen name="margin_12dp">12dp</dimen>
+    <dimen name="size_text_16sp">16sp</dimen>
 </resources>

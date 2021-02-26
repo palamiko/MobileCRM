@@ -2,7 +2,7 @@ package android.bignerdranch.photounit.activity
 
 import android.bignerdranch.photounit.R
 import android.bignerdranch.photounit.databinding.ActivityMainBinding
-import android.bignerdranch.photounit.model.User
+import android.bignerdranch.photounit.model.otherModel.User
 import android.bignerdranch.photounit.utilits.SHARED_PREF_NAME
 import android.bignerdranch.photounit.utilits.VERSION_APP
 import android.bignerdranch.photounit.utilits.detectUserIcon

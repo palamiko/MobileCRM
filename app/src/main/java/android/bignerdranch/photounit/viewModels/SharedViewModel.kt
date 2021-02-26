@@ -1,9 +1,9 @@
 package android.bignerdranch.photounit.viewModels
 
-import android.bignerdranch.photounit.model.Photo
 import android.bignerdranch.photounit.model.modelsDB.District
 import android.bignerdranch.photounit.model.modelsDB.Home
 import android.bignerdranch.photounit.model.modelsDB.Street
+import android.bignerdranch.photounit.model.otherModel.Photo
 import android.bignerdranch.photounit.utilits.districtMap
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory

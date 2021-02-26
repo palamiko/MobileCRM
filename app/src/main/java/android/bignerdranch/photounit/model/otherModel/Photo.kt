@@ -1,4 +1,4 @@
-package android.bignerdranch.photounit.model
+package android.bignerdranch.photounit.model.otherModel
 
 import android.net.Uri
 import java.io.File

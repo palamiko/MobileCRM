@@ -3,13 +3,13 @@ package android.bignerdranch.photounit.fragments.task
 import android.bignerdranch.photounit.R
 import android.bignerdranch.photounit.databinding.FragmentCloseTaskBinding
 import android.bignerdranch.photounit.fragments.BaseFragment
-import android.bignerdranch.photounit.model.MaterialUsed
 import android.bignerdranch.photounit.model.modelsDB.TaskModel
+import android.bignerdranch.photounit.model.networkModel.MaterialUsed
 import android.bignerdranch.photounit.utilits.SwipeRemoveItemBinder
 import android.bignerdranch.photounit.utilits.helpers.MyTextWatcher
 import android.bignerdranch.photounit.utilits.hideKeyboard
+import android.bignerdranch.photounit.utilits.recyclerView.ItemViewHolderLite
 import android.bignerdranch.photounit.utilits.showKeyboard
-import android.bignerdranch.photounit.utilits.viewHolder.ItemViewHolderLite
 import android.bignerdranch.photounit.viewModels.TaskViewModel
 import android.os.Bundle
 import android.text.Editable

@@ -1,12 +1,11 @@
 package android.bignerdranch.photounit.network
 
-import android.bignerdranch.photounit.model.DataCloseTask
-import android.bignerdranch.photounit.model.MaterialUsed
-import android.bignerdranch.photounit.model.ResponseCloseTask
-import android.bignerdranch.photounit.model.TokenFirebase
-import android.bignerdranch.photounit.model.modelsDB.Home
-import android.bignerdranch.photounit.model.modelsDB.Street
-import android.bignerdranch.photounit.model.modelsDB.TaskModel
+import android.bignerdranch.photounit.model.modelsDB.*
+import android.bignerdranch.photounit.model.networkModel.DataCloseTask
+import android.bignerdranch.photounit.model.networkModel.MaterialUsed
+import android.bignerdranch.photounit.model.networkModel.ResponseCloseTask
+import android.bignerdranch.photounit.model.networkModel.ResultCableTest
+import android.bignerdranch.photounit.model.otherModel.TokenFirebase
 import android.bignerdranch.photounit.utilits.*
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
@@ -46,20 +45,40 @@ interface NetworkApiService {
     @GET(GET_MATERIAL_LIST)
     suspend fun getMaterial(): ArrayList<MaterialUsed>
 
-    @POST(NEW_CLOSE_TASK)
+    /**Закрыть заявку*/
+    @POST(CLOSE_TASK)
     suspend fun postCloseTask(@Body dataCloseTask: DataCloseTask): ResponseCloseTask
+
+    /**Получить карточку абонента*/
+    @GET(GET_CLIENT_CARD)
+    suspend fun getClientCard(@Query(ID_CLIENT) id_client: String): ClientCard?
+
+    /** Получить карточку абонента, данные с биллинга*/
+    @GET(GET_CLIENT_CARD_BILLING)
+    suspend fun getClientCardBilling(@Query(NUMBER_CONTRACT) number_contract: String): ClientCardBilling
+
+    /**Выполнить кабель тест*/
+    @GET(GET_CABLE_TEST)
+    suspend fun getCableTest(@Query(IP_SWITCH) ipSwitch: String,
+                             @Query(NUMBER_PORT) port: String,
+                             @Query(SWITCH_TYPE) switchType: String): ResultCableTest
 
 
     companion object {
         /**Параметры запросов*/
 
-        const val DISTRICT_ID = "district_id"
-        const val STREET_ID = "street_id"
-        const val LOGIN = "login_auth"
-        const val PASSWORD = "password_auth"
-        const val MASTER_ID = "master_id"
-        const val STATE_TASK = "state_task"
-        const val DATE_MAKING = "date_making"
+        private const val DISTRICT_ID = "district_id"
+        private const val STREET_ID = "street_id"
+        private const val LOGIN = "login_auth"
+        private const val PASSWORD = "password_auth"
+        private const val MASTER_ID = "master_id"
+        private const val STATE_TASK = "state_task"
+        private const val DATE_MAKING = "date_making"
+        private const val ID_CLIENT = "id_client"
+        private const val NUMBER_CONTRACT = "number_contract"
+        private const val IP_SWITCH = "ip_commutator"
+        private const val NUMBER_PORT = "number_port"
+        private const val SWITCH_TYPE = "switch_type"
 
 
         private fun getDateTime(day: Int): String {

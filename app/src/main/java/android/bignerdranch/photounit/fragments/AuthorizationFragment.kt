@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.bignerdranch.photounit.R
 import android.bignerdranch.photounit.databinding.FragmentAuthorizationBinding
 import android.bignerdranch.photounit.fragments.task.TaskFragment.Companion.FIRST
-import android.bignerdranch.photounit.model.TokenFirebase
+import android.bignerdranch.photounit.model.otherModel.TokenFirebase
 import android.bignerdranch.photounit.utilits.KEY_USER_DATA
 import android.bignerdranch.photounit.utilits.SHARED_PREF_NAME
 import android.bignerdranch.photounit.utilits.hideKeyboard

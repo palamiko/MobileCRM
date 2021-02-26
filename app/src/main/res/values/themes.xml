@@ -57,4 +57,22 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:ems">10</item>
     </style>
+
+    <!-- Стиль для TextView в ClientCardFragment-->
+    <style name="Theme.PhotoUnit.ClientCard.TextView" parent="Theme.PhotoUnit">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/size_text_16sp</item>
+        <item name="android:layout_marginStart">@dimen/margin_normal</item>
+        <item name="android:layout_marginTop">@dimen/margin_12dp</item>
+        <item name="android:textColor">@color/secondaryLightColor</item>
+    </style>
+
+    <!-- Стиль для TextViewValue в ClientCardFragment-->
+    <style name="Theme.PhotoUnit.ClientCard.TextViewValue" parent="Theme.PhotoUnit">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/size_text_16sp</item>
+    </style>
+
 </resources>

@@ -1,7 +1,7 @@
-package android.bignerdranch.photounit.utilits.viewHolder
+package android.bignerdranch.photounit.utilits.recyclerView
 
 import android.bignerdranch.photounit.R
-import android.bignerdranch.photounit.model.MaterialUsed
+import android.bignerdranch.photounit.model.networkModel.MaterialUsed
 import android.view.ViewGroup
 import android.widget.TextView
 import smartadapter.viewholder.SmartViewHolder

@@ -1,7 +1,7 @@
 package android.bignerdranch.photounit.viewModels
 
-import android.bignerdranch.photounit.model.TokenFirebase
-import android.bignerdranch.photounit.model.User
+import android.bignerdranch.photounit.model.otherModel.TokenFirebase
+import android.bignerdranch.photounit.model.otherModel.User
 import android.bignerdranch.photounit.network.NetworkModule
 import android.bignerdranch.photounit.utilits.USERS
 import android.widget.EditText

@@ -55,4 +55,21 @@
     <string name="empty_text" />
     <string name="input_login_password">Введите логин/пароль</string>
     <string name="allowed_latin">Разрешены латинские символы и цифры</string>
+    <string name="text_tv_number_agreement">Номер договора:</string>
+    <string name="text_tv_state_account">Учетная запись:</string>
+    <string name="text_tv_balance">Баланс:</string>
+    <string name="text_tv_tariff">Тариф:</string>
+    <string name="text_tv_address">Адрес:</string>
+    <string name="text_tv_phone_client_card">Телефон:</string>
+    <string name="text_tv_port">Номер порта:</string>
+    <string name="text_tv_node">Адрес узла:</string>
+    <string name="text_tv_cable">Кабель тест:</string>
+    <string name="text_tv_error_port">Ошибки на порту:</string>
+    <string name="text_tv_session">Активная сессия:</string>
+    <string name="text_tv_port_link">Линк:</string>
+    <string name="text_tv_mac_address">MAC:</string>
+    <string name="fragment_title_card_client">Карта абонента</string>
+    <string name="text_tv_tools">Инструменты</string>
+    <string name="text_btn_run_vct">Test</string>
+    <string name="text_for_money">только за $</string>
 </resources>

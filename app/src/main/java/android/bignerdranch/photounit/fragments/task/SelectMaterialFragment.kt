@@ -3,8 +3,8 @@ package android.bignerdranch.photounit.fragments.task
 import android.bignerdranch.photounit.R
 import android.bignerdranch.photounit.databinding.FragmentSelectMaterialBinding
 import android.bignerdranch.photounit.fragments.BaseFragment
-import android.bignerdranch.photounit.model.MaterialUsed
-import android.bignerdranch.photounit.utilits.viewHolder.ItemViewHolderExtraLite
+import android.bignerdranch.photounit.model.networkModel.MaterialUsed
+import android.bignerdranch.photounit.utilits.recyclerView.ItemViewHolderExtraLite
 import android.bignerdranch.photounit.viewModels.TaskViewModel
 import android.os.Bundle
 import android.view.View

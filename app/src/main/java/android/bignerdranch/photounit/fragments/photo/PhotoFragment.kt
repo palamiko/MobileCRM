@@ -5,7 +5,7 @@ import android.app.Activity
 import android.bignerdranch.photounit.R
 import android.bignerdranch.photounit.databinding.FragmentPhotoBinding
 import android.bignerdranch.photounit.fragments.BaseFragment
-import android.bignerdranch.photounit.model.Photo
+import android.bignerdranch.photounit.model.otherModel.Photo
 import android.bignerdranch.photounit.utilits.UploadUtility
 import android.bignerdranch.photounit.viewModels.SharedViewModel
 import android.content.pm.PackageManager

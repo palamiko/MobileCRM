@@ -1,10 +1,10 @@
 package android.bignerdranch.photounit.viewModels
 
-import android.bignerdranch.photounit.model.DataCloseTask
-import android.bignerdranch.photounit.model.MaterialUsed
-import android.bignerdranch.photounit.model.ResponseCloseTask
-import android.bignerdranch.photounit.model.User
 import android.bignerdranch.photounit.model.modelsDB.TaskModel
+import android.bignerdranch.photounit.model.networkModel.DataCloseTask
+import android.bignerdranch.photounit.model.networkModel.MaterialUsed
+import android.bignerdranch.photounit.model.networkModel.ResponseCloseTask
+import android.bignerdranch.photounit.model.otherModel.User
 import android.bignerdranch.photounit.network.NetworkApiService
 import android.bignerdranch.photounit.network.NetworkModule
 import android.bignerdranch.photounit.utilits.FINISH_OK
