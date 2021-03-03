@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="android.bignerdranch.photounit">
+    package="android.bignerdranch.mobilecrm">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -17,7 +17,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="android.bignerdranch.photounit.fileprovider"
+            android:authorities="android.bignerdranch.mobilecrm.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -26,7 +26,7 @@
         </provider>
 
         <activity
-            android:name=".activity.MainActivity"
+            android:name="android.bignerdranch.mobilecrm.activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

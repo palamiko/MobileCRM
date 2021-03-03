@@ -63,6 +63,7 @@
         android:id="@+id/tv_phone"
         android:layout_width="wrap_content"
         android:layout_marginStart="4dp"
+        android:autoLink="phone"
         app:layout_constraintStart_toEndOf="@+id/tv_phone_text"
         app:layout_constraintTop_toTopOf="@+id/tv_phone_text" />
 

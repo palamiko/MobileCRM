@@ -19,8 +19,6 @@
     <TextView
         android:id="@+id/tv_address_value"
         style="@style/Theme.PhotoUnit.ClientCard.TextViewValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text=""
         app:layout_constraintStart_toEndOf="@+id/tv_address"
@@ -30,10 +28,9 @@
     <TextView
         android:id="@+id/tv_phone_client_card_value"
         style="@style/Theme.PhotoUnit.ClientCard.TextViewValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text=""
+        android:autoLink="phone"
         app:layout_constraintStart_toEndOf="@+id/tv_phone_client_card"
         app:layout_constraintTop_toTopOf="@+id/tv_phone_client_card"
         tools:text="87779876321" />
@@ -57,8 +54,6 @@
     <TextView
         android:id="@+id/tv_number_agreement_value"
         style="@style/Theme.PhotoUnit.ClientCard.TextViewValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text=""
         app:layout_constraintStart_toEndOf="@+id/tv_number_agreement"
@@ -105,13 +100,22 @@
         android:text=""
         app:layout_constraintBaseline_toBaselineOf="@+id/btn_get_link"
         app:layout_constraintStart_toStartOf="@+id/tv_cable_test_value"
-        tools:text="@string/text_for_money"/>
+        tools:text="Up"/>
 
     <TextView
         android:id="@+id/tv_node"
         style="@style/Theme.PhotoUnit.ClientCard.TextView"
         android:layout_marginStart="8dp"
         android:text="@string/text_tv_node"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+
+    <TextView
+        android:id="@+id/textView"
+        style="@style/Theme.PhotoUnit.ClientCard.TextView"
+        android:layout_marginTop="12dp"
+        android:text="@string/text_tv_model_sw"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_port" />
 
@@ -126,8 +130,6 @@
     <TextView
         style="@style/Theme.PhotoUnit.ClientCard.TextViewValue"
         android:id="@+id/tv_state_account_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text=""
         tools:text="Активна"
@@ -137,8 +139,6 @@
     <TextView
         style="@style/Theme.PhotoUnit.ClientCard.TextViewValue"
         android:id="@+id/tv_balance_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text=""
         tools:text="1156"
@@ -148,8 +148,6 @@
     <TextView
         style="@style/Theme.PhotoUnit.ClientCard.TextViewValue"
         android:id="@+id/tv_tariff_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text=""
         tools:text="Космос 28"
@@ -159,23 +157,11 @@
     <TextView
         style="@style/Theme.PhotoUnit.ClientCard.TextViewValue"
         android:id="@+id/tv_session_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text=""
         tools:text="87.76.54.125"
         app:layout_constraintStart_toEndOf="@+id/tv_session"
         app:layout_constraintTop_toTopOf="@+id/tv_session" />
-
-    <TextView
-        android:id="@+id/tv_error_port_value"
-        style="@style/Theme.PhotoUnit.ClientCard.TextViewValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        app:layout_constraintBaseline_toBaselineOf="@+id/btn_get_error"
-        app:layout_constraintStart_toStartOf="@+id/tv_link_port_value"
-        tools:text="@string/text_for_money" />
 
     <TextView
         style="@style/Theme.PhotoUnit.ClientCard.TextViewValue"
@@ -203,23 +189,11 @@
     <TextView
         style="@style/Theme.PhotoUnit.ClientCard.TextViewValue"
         android:id="@+id/tv_number_port_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text=""
         tools:text="15"
         app:layout_constraintStart_toEndOf="@+id/tv_port"
         app:layout_constraintTop_toTopOf="@+id/tv_port" />
-
-    <TextView
-        android:id="@+id/tv_mac_address_value"
-        style="@style/Theme.PhotoUnit.ClientCard.TextViewValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        app:layout_constraintBaseline_toBaselineOf="@+id/btn_get_mac"
-        app:layout_constraintStart_toStartOf="@+id/tv_error_port_value"
-        tools:text="@string/text_for_money" />
 
     <Button
         android:id="@+id/btn_cable_test"
@@ -245,8 +219,6 @@
     <TextView
         android:id="@+id/tv_tools"
         style="@style/Theme.PhotoUnit.ClientCard.TextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/text_tv_tools"
         app:layout_constraintEnd_toEndOf="parent"
@@ -259,26 +231,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Link"
+        android:drawableLeft="@drawable/ic_ethernet_netral1"
         app:layout_constraintStart_toStartOf="@+id/btn_cable_test"
         app:layout_constraintTop_toBottomOf="@+id/btn_cable_test" />
-
-    <Button
-        android:id="@+id/btn_get_error"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Error"
-        app:layout_constraintStart_toStartOf="@+id/btn_get_link"
-        app:layout_constraintTop_toBottomOf="@+id/btn_get_link" />
-
-    <Button
-        android:id="@+id/btn_get_mac"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="mac"
-        app:layout_constraintStart_toStartOf="@+id/btn_get_error"
-        app:layout_constraintTop_toBottomOf="@+id/btn_get_error" />
 
     <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/load_cable_test"
@@ -289,6 +244,25 @@
         android:visibility="gone"
         app:layout_constraintStart_toEndOf="@+id/btn_cable_test"
         app:layout_constraintTop_toTopOf="@+id/btn_cable_test" />
+
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/load_link_test"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@+id/btn_get_link"
+        app:layout_constraintTop_toTopOf="@+id/btn_get_link" />
+
+    <TextView
+        style="@style/Theme.PhotoUnit.ClientCard.TextViewValue"
+        android:id="@+id/tv_model_sw_value"
+        android:layout_marginStart="8dp"
+        android:text=""
+        tools:text="SNR-2960-24G"
+        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintTop_toTopOf="@+id/textView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

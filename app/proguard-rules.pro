@@ -23,10 +23,10 @@
 -dontnote kotlinx.serialization.AnnotationsKt # core serialization annotations
 
 # Change here com.yourcompany.yourpackage
--keep,includedescriptorclasses class android.bignerdranch.photounit.**$$serializer { *; } # <-- change package name to your app's
--keepclassmembers class android.bignerdranch.photounit.** { # <-- change package name to your app's
+-keep,includedescriptorclasses class android.bignerdranch.mobilecrm.**$$serializer { *; } # <-- change package name to your app's
+-keepclassmembers class android.bignerdranch.mobilecrm.** { # <-- change package name to your app's
     *** Companion;
 }
--keepclasseswithmembers class android.bignerdranch.photounit.** { # <-- change package name to your app's
+-keepclasseswithmembers class android.bignerdranch.mobilecrm.** { # <-- change package name to your app's
     kotlinx.serialization.KSerializer serializer(...);
 }
