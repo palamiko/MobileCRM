@@ -32,7 +32,6 @@ class CountMaterialFragment : BaseFragment(R.layout.fragment_count_material) {
                     taskViewModel.getSelectMaterial().last().count = binding?.teCountMaterial?.text.toString()  // Добавляем колличество выбаного материала
                     findNavController().navigate(R.id.action_countMaterialFragment_to_closeTaskFragment)
                 } else Toast.makeText(requireContext(), "Укажите колличество материала", Toast.LENGTH_SHORT).show()
-
             }
         }
     }

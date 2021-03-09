@@ -105,10 +105,8 @@ class MainAdapter(
     override fun getItemCount() = taskArray.size
 
     fun removeItem(position: Int) {  //, viewHolder: RecyclerView.ViewHolder было аргументом
-        println("В адаптере: $taskArray")
 
-        removedItem =taskArray[position]
-        //removedPosition = position
+        removedItem = taskArray[position]
         taskViewModel.singleTask.value = taskArray[position] // Помещаем данные выбраной заявки в VM
 
         taskArray.removeAt(position)  // Удалить элемент

@@ -4,14 +4,15 @@ import android.bignerdranch.mobilecrm.BuildConfig
 
 // Основная информация
 const val VERSION_APP =   "ver ${BuildConfig.VERSION_NAME}"
-
 const val SERVER_PORT = "20136"
 const val SERVER_ADDRESS = "http://87.76.32.43:$SERVER_PORT"
 const val BASE_URL = "$SERVER_ADDRESS/"
 
+
 // Базовая http авторизация для запросов
 const val AUTH_USER = "Mobile-CRM_User"
 const val AUTH_PASS = "vtufnhjY-124"
+
 
 // Названия запростов
 const val GET_STREET = "get-street"
@@ -25,9 +26,11 @@ const val GET_CLIENT_CARD = "get_client_card"
 const val GET_CLIENT_CARD_BILLING = "get_client_card_billing"
 const val GET_CABLE_TEST = "get_cable_test"
 const val GET_LINK_STATUS = "get_link_status"
+const val GET_ERRORS_COUNT = "get_errors"
+const val GET_SPEED_PORT = "get_speed_port"
+
 
 // Состояния заявки  //
-
 const val TASK_RECEIVED = '1'  // Принята
 const val TASK_APPOINTED = '2'  // Назначена
 const val TASK_COMPLETED = '3'  // Выполнена
@@ -36,13 +39,16 @@ const val TASK_CLOSED = '4'  // Закрыта
 const val FINISH_OK = "true"
 const val FINISH_NO = "false"
 
+
 // Ноды Firebase //
 const val USERS = "users"
+
 
 // Выбор дня отображения заявок //
 const val YESTERDAY = -1
 const val TODAY = 0
 const val TOMORROW = 1
+
 
 // SharedPreference
 const val SHARED_PREF_NAME = "USER_DATA_FIREBASE"  // Название файла настроек

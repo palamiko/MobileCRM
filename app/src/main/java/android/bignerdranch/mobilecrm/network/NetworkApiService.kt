@@ -66,6 +66,16 @@ interface NetworkApiService {
                               @Query(NUMBER_PORT) port: String,
                               @Query(SWITCH_TYPE) switchType: String): ResultLinkStatus
 
+    @GET(GET_ERRORS_COUNT)
+    suspend fun getErrors(@Query(IP_SWITCH) ipSwitch: String,
+                          @Query(NUMBER_PORT) port: String,
+                          @Query(SWITCH_TYPE) switchType: String): ResultErrorTest
+
+    @GET(GET_SPEED_PORT)
+    suspend fun getSpeedPort(@Query(IP_SWITCH) ipSwitch: String,
+                             @Query(NUMBER_PORT) port: String,
+                             @Query(SWITCH_TYPE) switchType: String): ResultSpeedPort
+
     companion object {
         /**Параметры запросов*/
 

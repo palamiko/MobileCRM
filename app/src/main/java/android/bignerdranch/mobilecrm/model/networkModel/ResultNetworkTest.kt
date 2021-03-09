@@ -31,3 +31,19 @@ data class ResultLinkStatus(
     @SerialName("result")
     val state: String?
 )
+
+@Serializable
+data class ResultErrorTest(
+    /**Содержит результат теста на ошибки на порту*/
+    @SerialName("crc")
+    val CRCError: String?,
+    @SerialName("drop")
+    val dropError: String?
+)
+
+@Serializable
+data class ResultSpeedPort(
+    /**Содержит скорость на которой поднят порт*/
+    @SerialName("speed")
+    val speedPort: String?
+)

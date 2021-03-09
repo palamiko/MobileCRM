@@ -63,5 +63,4 @@ open class BaseFragment(layout: Int) : Fragment(layout) {
             //Toast.makeText(requireContext(), errorTextId, Toast.LENGTH_SHORT).show()
         }
     }
-
 }

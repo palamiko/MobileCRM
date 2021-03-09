@@ -30,11 +30,15 @@ class ClientCardFragment : BaseFragment(R.layout.fragment_client_card) {
     var binding: FragmentClientCardBinding? = null
 
 
-    @SuppressLint("SetTextI18n")
     @ExperimentalSerializationApi
     override fun onStart() {
         super.onStart()
+        setObservers()
+    }
 
+    @SuppressLint("SetTextI18n")
+    @ExperimentalSerializationApi
+    private fun setObservers() {
         clientViewModel.clientCard.observe(viewLifecycleOwner){
             initViewFromCRM(it)
             getDataClientCardBilling(it.agreement_number)
@@ -43,7 +47,6 @@ class ClientCardFragment : BaseFragment(R.layout.fragment_client_card) {
             initViewFromBilling(it)
         }
         clientViewModel.cableTest.observe(viewLifecycleOwner) {
-            //println(it)
             if (it.state == true) {
                 binding?.loadCableTest?.isGone = true
                 val re = Regex("[^A-Za-z0-9 ]")
@@ -58,6 +61,13 @@ class ClientCardFragment : BaseFragment(R.layout.fragment_client_card) {
                 ContextCompat.getDrawable(requireContext(), changeIcon(it)), null, null, null)
             binding?.loadLinkTest?.isGone = true
             binding?.tvLinkPortValue?.text = it.state
+        }
+        clientViewModel.countErrors.observe(viewLifecycleOwner) {
+            binding?.tvCrcErrorsValue?.text = "CRC: ${it.CRCError}"
+            binding?.tvDropErrorsValue?.text = "Drop: ${it.dropError}"
+        }
+        clientViewModel.speedPort.observe(viewLifecycleOwner) {
+            binding?.tvSpeedValue?.text = "${it.speedPort} M/bits"
         }
     }
 
@@ -129,9 +139,14 @@ class ClientCardFragment : BaseFragment(R.layout.fragment_client_card) {
             clientViewModel.getLinkStatus()
         }
 
+        binding?.btnErrrors?.setOnClickListener {
+            clientViewModel.getCountErrors()
+        }
+
+        binding?.btnSpeed?.setOnClickListener {
+            clientViewModel.getSpeedPort()
+        }
     }
-
-
 
     override fun onDestroyView() {
         binding = null

@@ -230,7 +230,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Link"
+        android:text="Link "
         android:drawableLeft="@drawable/ic_ethernet_netral1"
         app:layout_constraintStart_toStartOf="@+id/btn_cable_test"
         app:layout_constraintTop_toBottomOf="@+id/btn_cable_test" />
@@ -263,6 +263,57 @@
         tools:text="SNR-2960-24G"
         app:layout_constraintStart_toEndOf="@+id/textView"
         app:layout_constraintTop_toTopOf="@+id/textView" />
+
+    <Button
+        android:id="@+id/btn_errrors"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:drawableLeft="@drawable/ic_error_btn"
+        android:text="@string/btn_errors_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btn_get_link" />
+
+    <TextView
+        android:id="@+id/tv_crc_errors_value"
+        style="@style/Theme.PhotoUnit.ClientCard.TextViewValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text=""
+        app:layout_constraintStart_toStartOf="@+id/btn_errrors"
+        app:layout_constraintTop_toBottomOf="@+id/btn_errrors"
+        tools:text="177" />
+
+    <Button
+        android:id="@+id/btn_speed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/btn_text_speed"
+        android:drawableLeft="@drawable/ic_speed_port"
+        app:layout_constraintStart_toStartOf="@+id/btn_get_link"
+        app:layout_constraintTop_toBottomOf="@+id/btn_get_link" />
+
+    <TextView
+        style="@style/Theme.PhotoUnit.ClientCard.TextViewValue"
+        android:id="@+id/tv_speed_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        tools:text="100 M/bits"
+        app:layout_constraintBaseline_toBaselineOf="@+id/btn_speed"
+        app:layout_constraintStart_toStartOf="@+id/tv_link_port_value" />
+
+    <TextView
+        android:id="@+id/tv_drop_errors_value"
+        style="@style/Theme.PhotoUnit.ClientCard.TextViewValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        app:layout_constraintStart_toStartOf="@+id/tv_crc_errors_value"
+        app:layout_constraintTop_toBottomOf="@+id/tv_crc_errors_value"
+        tools:text="1569" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

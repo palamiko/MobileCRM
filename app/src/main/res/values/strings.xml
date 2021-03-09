@@ -80,6 +80,8 @@
     <string name="text_btn_run_vct">Test</string>
     <string name="text_for_money">только за $</string>
     <string name="text_tv_model_sw">Модель свитча:</string>
+    <string name="btn_errors_text">ошибки</string>
+    <string name="btn_text_speed">port</string>
 
 
 </resources>

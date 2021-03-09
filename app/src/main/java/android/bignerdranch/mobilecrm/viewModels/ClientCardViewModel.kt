@@ -4,7 +4,9 @@ import android.bignerdranch.mobilecrm.fragments.BaseFragment.Companion.exception
 import android.bignerdranch.mobilecrm.model.modelsDB.ClientCard
 import android.bignerdranch.mobilecrm.model.modelsDB.ClientCardBilling
 import android.bignerdranch.mobilecrm.model.networkModel.ResultCableTest
+import android.bignerdranch.mobilecrm.model.networkModel.ResultErrorTest
 import android.bignerdranch.mobilecrm.model.networkModel.ResultLinkStatus
+import android.bignerdranch.mobilecrm.model.networkModel.ResultSpeedPort
 import android.bignerdranch.mobilecrm.network.NetworkApiService
 import android.bignerdranch.mobilecrm.network.NetworkModule
 import android.bignerdranch.mobilecrm.network.NetworkModule2
@@ -20,6 +22,8 @@ class ClientCardViewModel: ViewModel() {
     val clientCardBilling = MutableLiveData<ClientCardBilling>()
     val cableTest = MutableLiveData<ResultCableTest>()
     val linkStatus = MutableLiveData<ResultLinkStatus>()
+    val countErrors = MutableLiveData<ResultErrorTest>()
+    val speedPort = MutableLiveData<ResultSpeedPort>()
 
     @ExperimentalSerializationApi
     private val networkApi: NetworkApiService = NetworkModule().networkApiService
@@ -55,6 +59,24 @@ class ClientCardViewModel: ViewModel() {
         this.viewModelScope.launch(exceptionHandler) {
             linkStatus.postValue(
                 networkApi.getLinkStatus(getIpSwitch(), getPortSwitch(), getTypeSwitch())
+            )
+        }
+    }
+
+    @ExperimentalSerializationApi
+    fun getCountErrors() {
+        this.viewModelScope.launch(exceptionHandler) {
+            countErrors.postValue(
+                networkApi.getErrors(getIpSwitch(), getPortSwitch(), getTypeSwitch())
+            )
+        }
+    }
+
+    @ExperimentalSerializationApi
+    fun getSpeedPort() {
+        this.viewModelScope.launch(exceptionHandler) {
+            speedPort.postValue(
+                networkApi.getSpeedPort(getIpSwitch(), getPortSwitch(), getTypeSwitch())
             )
         }
     }
