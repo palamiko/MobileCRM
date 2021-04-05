@@ -356,7 +356,7 @@ fun HistoryItem(
             Text(text = "Комментарий: ", color = MaterialTheme.colors.secondaryVariant)
             Text(
                 text = comment,
-                maxLines = 2,
+                maxLines = 3,
                 overflow = TextOverflow.Ellipsis,
                 color = if (isSystemInDarkTheme()) Color.White else Color.Black
             )
