@@ -13,6 +13,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import smartadapter.extension.SmartViewHolderBinder
 import smartadapter.viewevent.model.ViewEvent
@@ -241,15 +242,15 @@ class SwipeRemoveItemBinder(
     }
 }
 
-fun ClientCardFragment.returnDateStart(card: ClientCardBilling): String {
+fun Fragment.returnDateStart(card: ClientCardBilling): String {
     return if (card.dateStart != "") "\n${card.dateStart}" else ""
 }
 
-fun ClientCardFragment.returnMAC(card: ClientCardBilling): String {
+fun Fragment.returnMAC(card: ClientCardBilling): String {
     return if (card.mac != "") "\n${card.mac}" else ""
 }
 
-fun ClientCardFragment.translateState(state: String?): String {
+fun Fragment.translateState(state: String?): String {
     return when (state) {
         "4" -> "Недостаточно средств"
         "0" -> "Активна"

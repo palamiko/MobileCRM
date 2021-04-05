@@ -36,11 +36,11 @@ data class TaskModel (
     @SerialName("comments")
     var comments: String? = "",
     @SerialName("id_u")
-    var id_master: String? = "",  // ИД мастера
+    var id_master: String = "",  // ИД мастера
     @SerialName("ispayable")
     var ispayable: Boolean? = false,
     @SerialName("id_u_r")
-    var id_dispatcher: String? = "", // ИД менеджера
+    var id_dispatcher: String = "", // ИД менеджера
     @SerialName("comments2")
     var recommended_time: String? = "",  // Рекомендуемое время выполнения
     @SerialName("id_parent")

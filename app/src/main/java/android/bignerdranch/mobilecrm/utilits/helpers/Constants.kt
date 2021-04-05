@@ -28,6 +28,8 @@ const val GET_CABLE_TEST = "get_cable_test"
 const val GET_LINK_STATUS = "get_link_status"
 const val GET_ERRORS_COUNT = "get_errors"
 const val GET_SPEED_PORT = "get_speed_port"
+const val GET_HISTORY_TASK_LIST = "get_task_history"
+const val GET_ACTION_FOR_TASK = "get_action_for_task"
 
 
 // Состояния заявки  //

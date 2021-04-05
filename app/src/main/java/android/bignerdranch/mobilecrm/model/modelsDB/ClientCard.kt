@@ -24,7 +24,7 @@ data class ClientCard (
     @SerialName("id_switch")
     val id_switch: Int?,
     @SerialName("ip_switch")
-    val ip_switch: String?,
+    var ip_switch: String?,
     @SerialName("type_switch")
     val type_switch: String?,
     @SerialName("model_switch")

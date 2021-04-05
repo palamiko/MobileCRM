@@ -76,6 +76,14 @@ interface NetworkApiService {
                              @Query(NUMBER_PORT) port: String,
                              @Query(SWITCH_TYPE) switchType: String): ResultSpeedPort
 
+    /** Получить историю заявок абонента */
+    @GET(GET_HISTORY_TASK_LIST)
+    suspend fun getHistoryListTask(@Query(ID_CLIENT) id_client: String): List<HistoryTask>
+
+    /** Все действия для данной заявки */
+    @GET(GET_ACTION_FOR_TASK)
+    suspend fun getActionForTask(@Query(ID_TASK) id_task: String): List<ActionTask>
+
     companion object {
         /**Параметры запросов*/
 
@@ -91,6 +99,7 @@ interface NetworkApiService {
         private const val IP_SWITCH = "ip_commutator"
         private const val NUMBER_PORT = "number_port"
         private const val SWITCH_TYPE = "switch_type"
+        private const val ID_TASK = "id_task"
 
 
         private fun getDateTime(day: Int): String {

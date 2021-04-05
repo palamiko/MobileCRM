@@ -13,17 +13,13 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.jakewharton.threetenabp.AndroidThreeTen
 
 
 class MainActivity : AppCompatActivity() {
-
-    private lateinit var navController: NavController
-    private lateinit var appBarConfiguration: AppBarConfiguration
 
     private lateinit var binding: ActivityMainBinding
 
@@ -32,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var headerUserStatus: TextView
     private lateinit var headerUserName: TextView
     private lateinit var headerUserIcon: ImageView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,30 +39,26 @@ class MainActivity : AppCompatActivity() {
         sharedPref = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE)
     }
 
-
     override fun onStart() {
         super.onStart()
+
         initNavigationComponent()
+        changeListenerNavigateDestination()
+        findNavigationView()
     }
 
     private fun initNavigationComponent() {
 
-        navController = (supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment).navController  // Инициализируем NavController
-        appBarConfiguration = AppBarConfiguration(navController.graph, binding.drawerLayout)
-        appBarConfiguration.topLevelDestinations.addAll(
-            setOf(
-                R.id.taskFragment,
-                R.id.photoFragment
-            )
-        )  // Указываем "верхние" уровни навирации. То где будет гамбургер.
+        val navController = this.findNavController(R.id.nav_host_fragment_container)
+        val appBarConfiguration = AppBarConfiguration(navController.graph, binding.drawerLayout)
+        appBarConfiguration.topLevelDestinations.addAll(  // Указываем "верхние" уровни навигации. То где будет гамбургер.
+            setOf(R.id.taskFragment, R.id.photoFragment)
+        )
 
         binding.apply {
             toolbar.setupWithNavController(navController, appBarConfiguration)
             navView.setupWithNavController(navController)
         }
-
-        changeListenerNavigateDestination()
-        findNavigationView()
     }
 
     fun changeHeader(user: User) {
@@ -77,7 +70,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun findNavigationView() {
         if (binding.navView.headerCount > 0) {
-            // avoid NPE by first checking if there is at least one Header View available
+
             val headerView: View = binding.navView.getHeaderView(0)
             headerUserStatus = headerView.findViewById(R.id.status_user)
             headerUserName = headerView.findViewById(R.id.name_user)
@@ -89,6 +82,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun changeListenerNavigateDestination() {
         /**Функция отключает кнопку назад на authorizationFragment*/
+        val navController = this.findNavController(R.id.nav_host_fragment_container)
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.authorizationFragment) {
                 sharedPref.edit().clear().apply()

@@ -122,11 +122,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
+        android:contentDescription="@string/text_cont_desc_pay_task"
+        app:layout_constraintEnd_toStartOf="@+id/img_share_task"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_money_true" />
+
+    <ImageButton
+        android:id="@+id/img_share_task"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
+        android:background="@null"
+        android:contentDescription="@string/text_cont_desc_pay_task"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_money_true"
-        android:contentDescription="@string/text_cont_desc_pay_task" />
+        app:srcCompat="@drawable/ic_share" />
 
     <TextView
         android:id="@+id/tv_problem"
@@ -137,6 +149,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tv_problem_text"
         app:layout_constraintTop_toTopOf="@+id/tv_problem_text" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

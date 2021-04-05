@@ -1,8 +1,10 @@
 package android.bignerdranch.mobilecrm.viewModels
 
 import android.bignerdranch.mobilecrm.fragments.BaseFragment.Companion.exceptionHandler
+import android.bignerdranch.mobilecrm.model.modelsDB.ActionTask
 import android.bignerdranch.mobilecrm.model.modelsDB.ClientCard
 import android.bignerdranch.mobilecrm.model.modelsDB.ClientCardBilling
+import android.bignerdranch.mobilecrm.model.modelsDB.HistoryTask
 import android.bignerdranch.mobilecrm.model.networkModel.ResultCableTest
 import android.bignerdranch.mobilecrm.model.networkModel.ResultErrorTest
 import android.bignerdranch.mobilecrm.model.networkModel.ResultLinkStatus
@@ -18,12 +20,18 @@ import kotlinx.serialization.ExperimentalSerializationApi
 
 class ClientCardViewModel: ViewModel() {
 
-    val clientCard = MutableLiveData<ClientCard>()  // Хранит карту абонента
-    val clientCardBilling = MutableLiveData<ClientCardBilling>()
-    val cableTest = MutableLiveData<ResultCableTest>()
-    val linkStatus = MutableLiveData<ResultLinkStatus>()
-    val countErrors = MutableLiveData<ResultErrorTest>()
-    val speedPort = MutableLiveData<ResultSpeedPort>()
+    val clientCard = MutableLiveData<ClientCard>()                // Карта абонента из CRM
+    val clientCardBilling = MutableLiveData<ClientCardBilling>()  // Карта абонента из billing
+    val cableTest = MutableLiveData<ResultCableTest>()            // Результат кабель теста
+    val linkStatus = MutableLiveData<ResultLinkStatus>()          // Результат линк теста
+    val countErrors = MutableLiveData<ResultErrorTest>()          // Результат колличества ошибок
+    val speedPort = MutableLiveData<ResultSpeedPort>()            // Результат скорости порта
+    val historyTaskList = MutableLiveData<List<HistoryTask>>()    // Список истории заявок
+    val actionTaskList = MutableLiveData<List<ActionTask>>()
+    val itemsCard = listOf("Адрес:", "Телефон:", "Номер договора:",
+                           "Учетная запись:", "Баланс:", "Тариф:",
+                           "Активная сессия:", "Номер порта:",
+                           "Модель свитча:", "Адрес узла:")
 
     @ExperimentalSerializationApi
     private val networkApi: NetworkApiService = NetworkModule().networkApiService
@@ -81,8 +89,27 @@ class ClientCardViewModel: ViewModel() {
         }
     }
 
+    @ExperimentalSerializationApi
+    fun getHistoryTaskList() {
+        this.viewModelScope.launch(exceptionHandler) {
+            historyTaskList.postValue(
+                networkApi.getHistoryListTask(getIdClient())
+            )
+        }
+    }
+
+    @ExperimentalSerializationApi
+    fun getActionForTask(id_task: String) {
+        this.viewModelScope.launch() {
+            actionTaskList.postValue(
+                networkApi.getActionForTask(id_task)
+            )
+        }
+    }
+
     private fun getIpSwitch(): String = clientCard.value?.ip_switch.toString()
     private fun getTypeSwitch(): String = clientCard.value?.type_switch.toString()
     private fun getPortSwitch(): String = clientCard.value?.number_port.toString()
+    private fun getIdClient(): String = clientCard.value?.id_client.toString()
 
 }

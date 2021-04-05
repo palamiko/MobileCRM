@@ -19,7 +19,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -35,6 +34,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import java.util.*
 
 
 class TaskFragment : BaseFragment(R.layout.fragment_task), OnItemLongClickListener {
@@ -42,11 +42,12 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), OnItemLongClickListen
     private val taskViewModel: TaskViewModel by activityViewModels()
     private var binding: FragmentTaskBinding? = null
 
+
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var savedStateHandle: SavedStateHandle
-
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
 
+    //private lateinit var messageFromCloseTask: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +56,6 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), OnItemLongClickListen
         val currentBackStackEntry = navController.currentBackStackEntry!!
         savedStateHandle = currentBackStackEntry.savedStateHandle
     }
-
 
     @ExperimentalSerializationApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -239,19 +239,14 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), OnItemLongClickListen
     override fun onItemLongClicked(task: TaskModel, address: String) {
         /**Слушатель динных нажатий RecyclerView*/
         if (task.isInternet == true) {
-            //  Передаем данные в ClientCardFragment
-            val bundle = bundleOf(
-                KEY_ID_CLIENT to task.id_client,
-                KEY_ADDRESS_CLIENT to address,
-                KEY_PHONE_CLIENT to task.phones
-            )
-            findNavController().navigate(R.id.action_taskFragment_to_clientCardFragment, bundle)
+            findNavController().navigate(TaskFragmentDirections
+                .actionTaskFragmentToComposeClientCard(task.id_client, address, task.phones))
         } else showToast("Только для интернета")
     }
 
     private fun createRecyclerView(dataSet: ArrayList<TaskModel>) {
         /**RecyclerView для назначеных заявок*/
-        viewAdapter = MainAdapter(dataSet,this , findNavController(), taskViewModel)
+        viewAdapter = MainAdapter(dataSet,this , findNavController(), taskViewModel, requireContext())
         val viewManager = LinearLayoutManager(requireContext())
         val colorDrawableBackground = ColorDrawable(Color.parseColor("#718792"))
         val deleteIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_compited_task)!!
@@ -338,8 +333,8 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), OnItemLongClickListen
         const val FIRST = "FIRST"
         private const val KEY_RESULT_CLOSE = "result_close"
         private const val KEY_IS_CLOSE_FRAGMENT = "from_close_fragment"
-        const val KEY_ID_CLIENT = "id_client"
-        const val KEY_ADDRESS_CLIENT = "address_client"
-        const val KEY_PHONE_CLIENT = "phone_client"
+        //const val KEY_ID_CLIENT = "id_client"
+        //const val KEY_ADDRESS_CLIENT = "address_client"
+        //const val KEY_PHONE_CLIENT = "phone_client"
     }
 }

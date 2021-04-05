@@ -4,9 +4,6 @@ import android.annotation.SuppressLint
 import android.bignerdranch.mobilecrm.R
 import android.bignerdranch.mobilecrm.databinding.FragmentClientCardBinding
 import android.bignerdranch.mobilecrm.fragments.BaseFragment
-import android.bignerdranch.mobilecrm.fragments.task.TaskFragment.Companion.KEY_ADDRESS_CLIENT
-import android.bignerdranch.mobilecrm.fragments.task.TaskFragment.Companion.KEY_ID_CLIENT
-import android.bignerdranch.mobilecrm.fragments.task.TaskFragment.Companion.KEY_PHONE_CLIENT
 import android.bignerdranch.mobilecrm.model.modelsDB.ClientCard
 import android.bignerdranch.mobilecrm.model.modelsDB.ClientCardBilling
 import android.bignerdranch.mobilecrm.utilits.helpers.changeIcon
@@ -21,19 +18,33 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import kotlinx.serialization.ExperimentalSerializationApi
 
 
 class ClientCardFragment : BaseFragment(R.layout.fragment_client_card) {
 
     private val clientViewModel: ClientCardViewModel by viewModels()
+    private val args: ClientCardFragmentArgs by navArgs()
     var binding: FragmentClientCardBinding? = null
+
 
 
     @ExperimentalSerializationApi
     override fun onStart() {
         super.onStart()
         setObservers()
+    }
+
+    @ExperimentalSerializationApi
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val idClient: String = args.idClient ?: "0"
+        val fragmentClientBinding = FragmentClientCardBinding.bind(view)
+        binding = fragmentClientBinding
+        initButton()
+        getDataClientCard(idClient)
     }
 
     @SuppressLint("SetTextI18n")
@@ -71,17 +82,6 @@ class ClientCardFragment : BaseFragment(R.layout.fragment_client_card) {
         }
     }
 
-    @ExperimentalSerializationApi
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        val idClient: String = requireArguments().getString(KEY_ID_CLIENT).toString()
-        val fragmentClientBinding = FragmentClientCardBinding.bind(view)
-        binding = fragmentClientBinding
-        initButton()
-        getDataClientCard(idClient)
-    }
-
 
     @ExperimentalSerializationApi
     private fun getDataClientCard(id_client: String?) {
@@ -100,8 +100,8 @@ class ClientCardFragment : BaseFragment(R.layout.fragment_client_card) {
     @SuppressLint("SetTextI18n")
     private fun initViewFromCRM(card: ClientCard) {
         /**Функция заполняет вьюшки данными с CRM*/
-        val clientAddress: String = requireArguments().getString(KEY_ADDRESS_CLIENT).toString()
-        val clientPhone: String = requireArguments().getString(KEY_PHONE_CLIENT).toString()
+        val clientAddress: String = args.addressClient
+        val clientPhone: String = args.phoneClient!!
 
         binding?.apply {
             tvAddressValue.text = clientAddress
@@ -118,7 +118,7 @@ class ClientCardFragment : BaseFragment(R.layout.fragment_client_card) {
 
     @SuppressLint("SetTextI18n")
     private fun initViewFromBilling(card:ClientCardBilling) {
-        /**Функция заполняет вьюшки данными с биллинга*/
+        /** Функция заполняет вьюшки данными с биллинга */
         binding?.apply {
             tvStateAccountValue.text = translateState(card.stateAccount)
             tvBalanceValue.text = card.balance
@@ -146,6 +146,14 @@ class ClientCardFragment : BaseFragment(R.layout.fragment_client_card) {
         binding?.btnSpeed?.setOnClickListener {
             clientViewModel.getSpeedPort()
         }
+/**
+        binding?.goCompose?.setOnClickListener {
+            findNavController().navigate(ClientCardFragmentDirections
+                .actionClientCardFragmentToComposeClientCard(
+                    args.idClient, args.addressClient, args.phoneClient
+                )
+            )
+        }*/
     }
 
     override fun onDestroyView() {
