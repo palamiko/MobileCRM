@@ -1,4 +1,4 @@
-package android.bignerdranch.mobilecrm.viewModels
+package android.bignerdranch.mobilecrm.model.viewModels
 
 import android.bignerdranch.mobilecrm.model.otherModel.TokenFirebase
 import android.bignerdranch.mobilecrm.model.otherModel.User

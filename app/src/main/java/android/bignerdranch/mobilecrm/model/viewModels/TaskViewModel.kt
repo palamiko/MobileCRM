@@ -1,5 +1,6 @@
-package android.bignerdranch.mobilecrm.viewModels
+package android.bignerdranch.mobilecrm.model.viewModels
 
+import android.bignerdranch.mobilecrm.model.modelsDB.ResponseOfToken
 import android.bignerdranch.mobilecrm.model.modelsDB.TaskModel
 import android.bignerdranch.mobilecrm.model.networkModel.DataCloseTask
 import android.bignerdranch.mobilecrm.model.networkModel.MaterialUsed
@@ -13,12 +14,14 @@ import android.bignerdranch.mobilecrm.utilits.helpers.TASK_COMPLETED
 import android.bignerdranch.mobilecrm.utilits.helpers.TODAY
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
 
 
-class TaskViewModel: ViewModel() {
+class TaskViewModel : ViewModel() {
 
     @ExperimentalSerializationApi
     private val networkApi: NetworkApiService = NetworkModule().networkApiService
@@ -27,10 +30,13 @@ class TaskViewModel: ViewModel() {
     val singleTask = MutableLiveData<TaskModel>()  // Данные одной заявки
 
 
-    val selectMaterial = MutableLiveData<ArrayList<MaterialUsed>>()  // Здесь содержатся выбранные для списания материалы
-    val arrayMaterialList = MutableLiveData<ArrayList<MaterialUsed>>()  // Сюда загружается список доступных материалов с сервера
+    val selectMaterial =
+        MutableLiveData<ArrayList<MaterialUsed>>()  // Здесь содержатся выбранные для списания материалы
+    val arrayMaterialList =
+        MutableLiveData<ArrayList<MaterialUsed>>()  // Сюда загружается список доступных материалов с сервера
 
     val ldUserData = MutableLiveData<User>()  // Данные пользователя из Firebase
+    val resultSendToken = MutableLiveData<ResponseOfToken>()
 
 
     // Состояния View
@@ -48,10 +54,25 @@ class TaskViewModel: ViewModel() {
         selectMaterial.value = arrayListOf()  // Инициализируем масив
     }
 
+    @ExperimentalSerializationApi
+    fun sendTokenToServ(
+        /** Отправляет токен мастера на сервер */
+        id_master: String,
+        login_master: String,
+        token: String
+    ) {
+        viewModelScope.launch {
+            resultSendToken.postValue(
+                networkApi.sendTokenFirebase(id_master, login_master, token)
+            )
+        }
+    }
 
     @ExperimentalSerializationApi
-    suspend fun getTask(id_master: String, state_task: Char = TASK_APPOINTED,
-                        date_making: String ): ArrayList<TaskModel> {
+    suspend fun getTask(
+        id_master: String, state_task: Char = TASK_APPOINTED,
+        date_making: String
+    ): ArrayList<TaskModel> {
         return networkApi.getTaskMaster(id_master, state_task, date_making)
     }
 
@@ -72,7 +93,7 @@ class TaskViewModel: ViewModel() {
     @ExperimentalSerializationApi
     /**Закрывает заявку. возвращает результат в виде String*/
     suspend fun closeTask(comment: String, summ: String): String {
-        val dataCloseTask = DataCloseTask (
+        val dataCloseTask = DataCloseTask(
             id_task = getSingleTask().id_task,
             state_task = TASK_COMPLETED,
             id_user = getUserId(),

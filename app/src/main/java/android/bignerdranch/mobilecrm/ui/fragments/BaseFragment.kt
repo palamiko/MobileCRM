@@ -1,4 +1,4 @@
-package android.bignerdranch.mobilecrm.fragments
+package android.bignerdranch.mobilecrm.ui.fragments
 
 import android.system.ErrnoException
 import android.util.Log
@@ -19,25 +19,6 @@ open class BaseFragment(layout: Int) : Fragment(layout) {
     private fun createCoroutineScope() = CoroutineScope(Job() + Dispatchers.IO)
 
     fun getText(editText: EditText): String = editText.text.toString()
-
-    val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Log.e(
-            "WS02SolutionFragment",
-            "Coroutine exception, scope active:${coroutineScope.isActive}",
-            throwable
-        )
-        coroutineScope = createCoroutineScope()
-
-        val errorTextId = when (throwable) {
-            is ConnectException, is ErrnoException -> "Нет интернета"
-            is IOException, is HttpException -> "Ошибка интернет соединения"
-            is SerializationException -> "Ошибка сериализации"
-            else -> "Неизвестная ошибка"
-        }
-
-        Log.d("Coroutine Fail", errorTextId)
-        //Toast.makeText(requireContext(), errorTextId, Toast.LENGTH_SHORT).show()
-    }
 
     fun showToast(message: String){
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()

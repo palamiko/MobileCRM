@@ -1,16 +1,16 @@
-package android.bignerdranch.mobilecrm.fragments.task
+package android.bignerdranch.mobilecrm.ui.fragments.task
 
 import android.bignerdranch.mobilecrm.R
 import android.bignerdranch.mobilecrm.databinding.FragmentCloseTaskBinding
-import android.bignerdranch.mobilecrm.fragments.BaseFragment
 import android.bignerdranch.mobilecrm.model.modelsDB.TaskModel
 import android.bignerdranch.mobilecrm.model.networkModel.MaterialUsed
+import android.bignerdranch.mobilecrm.model.viewModels.TaskViewModel
+import android.bignerdranch.mobilecrm.ui.fragments.BaseFragment
 import android.bignerdranch.mobilecrm.utilits.helpers.MyTextWatcher
 import android.bignerdranch.mobilecrm.utilits.helpers.SwipeRemoveItemBinder
 import android.bignerdranch.mobilecrm.utilits.helpers.hideKeyboard
 import android.bignerdranch.mobilecrm.utilits.helpers.showKeyboard
 import android.bignerdranch.mobilecrm.utilits.recyclerView.ItemViewHolderLite
-import android.bignerdranch.mobilecrm.viewModels.TaskViewModel
 import android.os.Bundle
 import android.text.Editable
 import android.view.View

@@ -1,4 +1,4 @@
-package android.bignerdranch.mobilecrm.utilits
+package android.bignerdranch.mobilecrm.model.modelsDB
 
 
 val districtMap: Map<String, Int> = mapOf(
@@ -18,7 +18,7 @@ val districtMap: Map<String, Int> = mapOf(
     "19 микрорайон" to 15,
     "20 микрорайон" to 16,
     "22 микрорайон" to 34,
-    "24 Микрорайон" to 17,
+    "24 микрорайон" to 17,
     "26 микрорайон" to 35,
     "WiFi вне города" to 18,
     "WiFi по городу" to 19,
@@ -36,6 +36,7 @@ val districtMap: Map<String, Int> = mapOf(
     "р-н Автовокзала" to 32,
     "Старый город" to 33,
 )
+
 val districtArray = arrayListOf(
     "01 микрорайон",
     "02 микрорайон",

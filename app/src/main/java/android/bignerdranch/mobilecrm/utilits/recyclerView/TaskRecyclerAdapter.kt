@@ -1,10 +1,11 @@
 package android.bignerdranch.mobilecrm.utilits.recyclerView
 
 import android.bignerdranch.mobilecrm.R
-import android.bignerdranch.mobilecrm.fragments.task.TaskFragmentDirections
 import android.bignerdranch.mobilecrm.model.modelsDB.TaskModel
+import android.bignerdranch.mobilecrm.model.viewModels.TaskViewModel
+import android.bignerdranch.mobilecrm.ui.fragments.task.TaskFragmentDirections
 import android.bignerdranch.mobilecrm.utilits.helpers.detectProblem
-import android.bignerdranch.mobilecrm.viewModels.TaskViewModel
+import android.bignerdranch.mobilecrm.utilits.helpers.detectService
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
@@ -73,16 +74,7 @@ class MainViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         } else "${task.name_ru} ${task.building_number}-${task.flat}"
     }
 
-    private fun detectService(map: Map<String, Boolean>): String {
-        /** Проверяет на какой услуге в базе стоит true и возвращает ее имя */
-        var i = ""
-        map.forEach {
-            if (it.value) {
-                i = it.key
-            }
-        }
-        return i
-    }
+
 
     private fun detectPayable(pay: Boolean): Int {
         return if (!pay) View.INVISIBLE else View.VISIBLE

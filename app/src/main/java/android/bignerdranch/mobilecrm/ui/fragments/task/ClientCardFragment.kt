@@ -1,16 +1,16 @@
-package android.bignerdranch.mobilecrm.fragments.task
+package android.bignerdranch.mobilecrm.ui.fragments.task
 
 import android.annotation.SuppressLint
 import android.bignerdranch.mobilecrm.R
 import android.bignerdranch.mobilecrm.databinding.FragmentClientCardBinding
-import android.bignerdranch.mobilecrm.fragments.BaseFragment
 import android.bignerdranch.mobilecrm.model.modelsDB.ClientCard
 import android.bignerdranch.mobilecrm.model.modelsDB.ClientCardBilling
+import android.bignerdranch.mobilecrm.model.viewModels.ClientCardViewModel
+import android.bignerdranch.mobilecrm.ui.fragments.BaseFragment
 import android.bignerdranch.mobilecrm.utilits.helpers.changeIcon
 import android.bignerdranch.mobilecrm.utilits.helpers.returnDateStart
 import android.bignerdranch.mobilecrm.utilits.helpers.returnMAC
 import android.bignerdranch.mobilecrm.utilits.helpers.translateState
-import android.bignerdranch.mobilecrm.viewModels.ClientCardViewModel
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast

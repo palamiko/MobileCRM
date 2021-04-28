@@ -10,7 +10,8 @@ data class User (
     var login: String = "",
     var pass: String = "",
     var name: String = "",
-    var status: String = ""
+    var status: String = "",
+    var token: String = ""
 )
 
 @Serializable

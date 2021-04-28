@@ -1,10 +1,10 @@
-package android.bignerdranch.mobilecrm.fragments.photo
+package android.bignerdranch.mobilecrm.ui.fragments.photo
 
 import android.bignerdranch.mobilecrm.R
 import android.bignerdranch.mobilecrm.databinding.FragmentDistricListBinding
-import android.bignerdranch.mobilecrm.fragments.BaseFragment
-import android.bignerdranch.mobilecrm.utilits.districtArray
-import android.bignerdranch.mobilecrm.viewModels.SharedViewModel
+import android.bignerdranch.mobilecrm.model.modelsDB.districtArray
+import android.bignerdranch.mobilecrm.model.viewModels.SharedViewModel
+import android.bignerdranch.mobilecrm.ui.fragments.BaseFragment
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView

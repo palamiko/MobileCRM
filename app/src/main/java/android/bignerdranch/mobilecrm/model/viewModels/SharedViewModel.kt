@@ -1,10 +1,10 @@
-package android.bignerdranch.mobilecrm.viewModels
+package android.bignerdranch.mobilecrm.model.viewModels
 
 import android.bignerdranch.mobilecrm.model.modelsDB.District
 import android.bignerdranch.mobilecrm.model.modelsDB.Home
 import android.bignerdranch.mobilecrm.model.modelsDB.Street
+import android.bignerdranch.mobilecrm.model.modelsDB.districtMap
 import android.bignerdranch.mobilecrm.model.otherModel.Photo
-import android.bignerdranch.mobilecrm.utilits.districtMap
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.lifecycle.MutableLiveData

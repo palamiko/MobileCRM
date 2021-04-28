@@ -1,6 +1,5 @@
-package android.bignerdranch.mobilecrm.viewModels
+package android.bignerdranch.mobilecrm.model.viewModels
 
-import android.bignerdranch.mobilecrm.fragments.BaseFragment.Companion.exceptionHandler
 import android.bignerdranch.mobilecrm.model.modelsDB.ActionTask
 import android.bignerdranch.mobilecrm.model.modelsDB.ClientCard
 import android.bignerdranch.mobilecrm.model.modelsDB.ClientCardBilling
@@ -12,6 +11,7 @@ import android.bignerdranch.mobilecrm.model.networkModel.ResultSpeedPort
 import android.bignerdranch.mobilecrm.network.NetworkApiService
 import android.bignerdranch.mobilecrm.network.NetworkModule
 import android.bignerdranch.mobilecrm.network.NetworkModule2
+import android.bignerdranch.mobilecrm.ui.fragments.BaseFragment.Companion.exceptionHandler
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -1,15 +1,15 @@
-package android.bignerdranch.mobilecrm.fragments.auth
+package android.bignerdranch.mobilecrm.ui.fragments.auth
 
 import android.annotation.SuppressLint
 import android.bignerdranch.mobilecrm.R
 import android.bignerdranch.mobilecrm.databinding.FragmentAuthorizationBinding
-import android.bignerdranch.mobilecrm.fragments.BaseFragment
-import android.bignerdranch.mobilecrm.fragments.task.TaskFragment.Companion.FIRST
 import android.bignerdranch.mobilecrm.model.otherModel.TokenFirebase
+import android.bignerdranch.mobilecrm.model.viewModels.UserViewModel
+import android.bignerdranch.mobilecrm.ui.fragments.BaseFragment
+import android.bignerdranch.mobilecrm.ui.fragments.task.TaskFragment.Companion.FIRST
 import android.bignerdranch.mobilecrm.utilits.helpers.KEY_USER_DATA
 import android.bignerdranch.mobilecrm.utilits.helpers.SHARED_PREF_NAME
 import android.bignerdranch.mobilecrm.utilits.helpers.hideKeyboard
-import android.bignerdranch.mobilecrm.viewModels.UserViewModel
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.os.Bundle

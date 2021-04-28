@@ -1,9 +1,10 @@
 package android.bignerdranch.mobilecrm.utilits.helpers
 
 import android.bignerdranch.mobilecrm.R
-import android.bignerdranch.mobilecrm.fragments.task.ClientCardFragment
 import android.bignerdranch.mobilecrm.model.modelsDB.ClientCardBilling
+import android.bignerdranch.mobilecrm.model.modelsDB.ClientsEntrance
 import android.bignerdranch.mobilecrm.model.networkModel.ResultLinkStatus
+import android.bignerdranch.mobilecrm.ui.fragments.task.ClientCardFragment
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -185,6 +186,31 @@ fun forPoolInternet(pool1: String, pool2: String, pool3: String): String {
     }
     return param1 + param2 + param3
 
+}
+
+fun getStateClients(client: ClientsEntrance): String {
+    var state: String = ""
+    when (client.status) {
+        0 -> if (client.expired != null) state = "Отключен"
+        1 -> if (client.expired == null) state = "Подключен"
+        2 -> state = "В проц. подкл."
+        3 -> state = "Откл. по заяв."
+        4 -> if (client.tv) state = "Откл. за долг"
+        5 -> state = "Подключен"
+        6 -> state = "Откл. физич"
+    }
+    return state
+}
+
+fun detectService(map: Map<String, Boolean>): String {
+    /** Проверяет на какой услуге в базе стоит true и возвращает ее имя */
+    var i = ""
+    map.forEach {
+        if (it.value) {
+            i = it.key
+        }
+    }
+    return i
 }
 
 class SwipeRemoveItemBinder(

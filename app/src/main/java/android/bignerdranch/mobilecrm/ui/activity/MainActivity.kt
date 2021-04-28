@@ -1,22 +1,27 @@
-package android.bignerdranch.mobilecrm.activity
+package android.bignerdranch.mobilecrm.ui.activity
 
 import android.bignerdranch.mobilecrm.R
 import android.bignerdranch.mobilecrm.databinding.ActivityMainBinding
 import android.bignerdranch.mobilecrm.model.otherModel.User
-import android.bignerdranch.mobilecrm.utilits.helpers.SHARED_PREF_NAME
-import android.bignerdranch.mobilecrm.utilits.helpers.VERSION_APP
-import android.bignerdranch.mobilecrm.utilits.helpers.detectUserIcon
-import android.bignerdranch.mobilecrm.utilits.helpers.detectUserStatus
+import android.bignerdranch.mobilecrm.model.viewModels.TaskViewModel
+import android.bignerdranch.mobilecrm.utilits.helpers.*
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.Constants.TAG
+import com.google.firebase.messaging.FirebaseMessaging
 import com.jakewharton.threetenabp.AndroidThreeTen
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
 
 
 class MainActivity : AppCompatActivity() {
@@ -30,6 +35,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var headerUserIcon: ImageView
 
 
+    @ExperimentalSerializationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -37,6 +43,7 @@ class MainActivity : AppCompatActivity() {
 
         AndroidThreeTen.init(this)  // Включает подержку новых методов для старых тел.
         sharedPref = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE)
+        sendToken()  // Получет личный токен в FB
     }
 
     override fun onStart() {
@@ -45,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         initNavigationComponent()
         changeListenerNavigateDestination()
         findNavigationView()
+
     }
 
     private fun initNavigationComponent() {
@@ -81,7 +89,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun changeListenerNavigateDestination() {
-        /**Функция отключает кнопку назад на authorizationFragment*/
+        /** Функция отключает кнопку назад на authorizationFragment */
         val navController = this.findNavController(R.id.nav_host_fragment_container)
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.authorizationFragment) {
@@ -89,5 +97,44 @@ class MainActivity : AppCompatActivity() {
                 binding.toolbar.navigationIcon = null
             }
         }
+    }
+
+    @ExperimentalSerializationApi
+    private fun sendToken() {
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+            // Получаем модель User из SharedPref если пользователь до этого авторизовывался
+            val user = getUserFromSharedPref()
+            // Получаем токен из FireBase
+            val token = task.result
+            // Отправляем токен на сервер CRM
+            if (token != null && user != null) {
+                sendTokenToServer(user.id.toString(), user.login, token)
+                Log.d(TAG, token.toString())
+            }
+        })
+    }
+
+    @ExperimentalSerializationApi
+    private fun sendTokenToServer(id_master: String, login_master: String, token: String) {
+        /** Отправляет данные пользователя на сервер СРМ */
+        val taskViewModel: TaskViewModel by viewModels()
+        taskViewModel.sendTokenToServ(id_master, login_master, token)
+    }
+
+    private fun getUserFromSharedPref(): User? {
+        var user: User? = null
+        // Получаем настройки сохраненые в Authorization
+        sharedPref = this.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE)
+
+        val userDataString = sharedPref.getString(KEY_USER_DATA, null)
+        if (userDataString != null) {
+            user = Json.decodeFromString(User.serializer(), userDataString)
+        }
+        return user
     }
 }

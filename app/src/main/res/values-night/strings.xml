@@ -76,4 +76,7 @@
     <string name="btn_errors_text">ошибки</string>
     <string name="btn_text_speed">port</string>
     <string name="fragment_title_details_task">История действий</string>
+    <string name="title_drawer_clients">Клиенты</string>
+    <string name="fragment_title_entrance">Номер подъезда</string>
+    <string name="fragment_title_clients_entrance">Клиенты в подъезде</string>
 </resources>

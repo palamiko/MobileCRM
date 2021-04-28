@@ -1,16 +1,13 @@
-package android.bignerdranch.mobilecrm.fragments.task
+package android.bignerdranch.mobilecrm.ui.fragments.task
 
+import android.bignerdranch.mobilecrm.model.viewModels.ClientCardViewModel
 import android.bignerdranch.mobilecrm.ui.theme.MyTestComposeTheme
-import android.bignerdranch.mobilecrm.viewModels.ClientCardViewModel
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
@@ -51,7 +48,7 @@ class DetailsHistoryTask : Fragment() {
 @ExperimentalSerializationApi
 @Composable
 fun DetailsHistoryTaskFragment(id_task: String) {
-    MyTestComposeTheme() {
+    MyTestComposeTheme {
         DetailsTask(id_task = id_task)
     }
 }
@@ -65,7 +62,7 @@ fun DetailsTask(clientCardViewModel: ClientCardViewModel = viewModel(), id_task:
 
     LazyColumn(Modifier.padding(8.dp)) {
         items(historyTaskList ?: listOf()) { item ->
-            Spacer(modifier = Modifier.padding(top = 16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             Row(Modifier.fillMaxWidth()) {
 

@@ -42,3 +42,9 @@ data class ClientCard (
     @SerialName("name_ru")
     val street_name: String?
 )
+
+@Serializable
+data class ResponseOfToken(
+    @SerialName("successful")
+    var successful: Boolean = false
+)

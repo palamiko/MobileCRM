@@ -8,7 +8,7 @@
     android:id="@+id/constrainLayoutTask"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.task.TaskFragment">
+    tools:context=".ui.fragments.task.TaskFragment">
 
     <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/taskLoadProgress"

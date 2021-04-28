@@ -5,7 +5,7 @@
     android:id="@+id/client_card_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.task.ClientCardFragment">
+    tools:context=".ui.fragments.task.ClientCardFragment">
 
     <TextView
         android:id="@+id/tv_number_agreement"

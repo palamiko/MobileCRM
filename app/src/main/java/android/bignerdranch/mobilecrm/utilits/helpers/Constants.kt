@@ -17,6 +17,8 @@ const val AUTH_PASS = "vtufnhjY-124"
 // Названия запростов
 const val GET_STREET = "get-street"
 const val GET_HOME = "get-home"
+const val GET_ENTRANCES = "get-entrances"
+const val GET_CLIENTS_IN_ENTRANCE = "get-clients-in-entrance"
 const val GET_TASK_FOR_MASTER = "get_task_for_master_period"
 const val POST_LOAD_PHOTO = "uploadImg"
 const val GET_AUTHORIZATION = "authorization"
@@ -30,6 +32,7 @@ const val GET_ERRORS_COUNT = "get_errors"
 const val GET_SPEED_PORT = "get_speed_port"
 const val GET_HISTORY_TASK_LIST = "get_task_history"
 const val GET_ACTION_FOR_TASK = "get_action_for_task"
+const val GET_SEND_TOKEN = "send_token_master"
 
 
 // Состояния заявки  //

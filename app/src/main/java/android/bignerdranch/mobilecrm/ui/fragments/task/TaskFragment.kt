@@ -1,15 +1,15 @@
-package android.bignerdranch.mobilecrm.fragments.task
+package android.bignerdranch.mobilecrm.ui.fragments.task
 
 import android.bignerdranch.mobilecrm.R
-import android.bignerdranch.mobilecrm.activity.MainActivity
 import android.bignerdranch.mobilecrm.databinding.FragmentTaskBinding
-import android.bignerdranch.mobilecrm.fragments.BaseFragment
 import android.bignerdranch.mobilecrm.model.modelsDB.TaskModel
 import android.bignerdranch.mobilecrm.model.otherModel.User
+import android.bignerdranch.mobilecrm.model.viewModels.TaskViewModel
+import android.bignerdranch.mobilecrm.ui.activity.MainActivity
+import android.bignerdranch.mobilecrm.ui.fragments.BaseFragment
 import android.bignerdranch.mobilecrm.utilits.helpers.*
 import android.bignerdranch.mobilecrm.utilits.recyclerView.MainAdapter
 import android.bignerdranch.mobilecrm.utilits.recyclerView.OnItemLongClickListener
-import android.bignerdranch.mobilecrm.viewModels.TaskViewModel
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.graphics.Canvas
@@ -134,7 +134,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), OnItemLongClickListen
 
     @ExperimentalSerializationApi
     private fun startObserverArrayTask() {
-        /**Показываем RecyclerView как только получили заявки с сервера*/
+        /** Показываем RecyclerView как только получили заявки с сервера */
         taskViewModel.arrayTask.observe(viewLifecycleOwner) {
             createRecyclerView(it)
         }
@@ -176,7 +176,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), OnItemLongClickListen
     }
 
     private fun getUserDataFromSharedPref() {
-        /**Получаем данные польззователя из SharedPreference*/
+        /** Получаем данные пользователя из SharedPreference */
 
         sharedPreferences = requireActivity().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE)  // Получаем настройки сохраненые в Authorization
         val userData = sharedPreferences.getString(KEY_USER_DATA, null)
@@ -190,7 +190,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), OnItemLongClickListen
     }
 
     private fun saveStateRadioButton() {
-        /**Сохраняем положение RadioButton перед onPause*/
+        /** Сохраняем положение RadioButton перед onPause */
 
         taskViewModel.apply {
             radioButtonDay.value = binding?.radioGroupData?.checkedRadioButtonId
@@ -199,7 +199,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), OnItemLongClickListen
     }
 
     private fun restoreStateRadioButton() {
-        /**Восстанавливаем положение RadioButton в onResume*/
+        /** Восстанавливаем положение RadioButton в onResume */
 
         if (taskViewModel.radioButtonDay.value != null) {
             binding?.radioGroupData?.check(taskViewModel.radioButtonDay.value!!)
@@ -237,7 +237,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), OnItemLongClickListen
     }
 
     override fun onItemLongClicked(task: TaskModel, address: String) {
-        /**Слушатель динных нажатий RecyclerView*/
+        /** Слушатель динных нажатий RecyclerView */
         if (task.isInternet == true) {
             findNavController().navigate(TaskFragmentDirections
                 .actionTaskFragmentToComposeClientCard(task.id_client, address, task.phones))
@@ -245,7 +245,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), OnItemLongClickListen
     }
 
     private fun createRecyclerView(dataSet: ArrayList<TaskModel>) {
-        /**RecyclerView для назначеных заявок*/
+        /** RecyclerView для назначеных заявок */
         viewAdapter = MainAdapter(dataSet,this , findNavController(), taskViewModel, requireContext())
         val viewManager = LinearLayoutManager(requireContext())
         val colorDrawableBackground = ColorDrawable(Color.parseColor("#718792"))
@@ -315,7 +315,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), OnItemLongClickListen
     }
 
     private fun clearSavedTextFromTextEdit() {
-        /**Отчищает сохраненые в liveData значения полей TextEdit, коментарии и смму*/
+        /** Отчищает сохраненые в liveData значения полей TextEdit, коментарии и смму */
         taskViewModel.apply {
             savedComment = null
             savedSumm = null

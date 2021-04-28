@@ -1,11 +1,11 @@
-package android.bignerdranch.mobilecrm.fragments.task
+package android.bignerdranch.mobilecrm.ui.fragments.task
 
 import android.bignerdranch.mobilecrm.R
 import android.bignerdranch.mobilecrm.databinding.FragmentSelectMaterialBinding
-import android.bignerdranch.mobilecrm.fragments.BaseFragment
 import android.bignerdranch.mobilecrm.model.networkModel.MaterialUsed
+import android.bignerdranch.mobilecrm.model.viewModels.TaskViewModel
+import android.bignerdranch.mobilecrm.ui.fragments.BaseFragment
 import android.bignerdranch.mobilecrm.utilits.recyclerView.ItemViewHolderExtraLite
-import android.bignerdranch.mobilecrm.viewModels.TaskViewModel
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.SearchView

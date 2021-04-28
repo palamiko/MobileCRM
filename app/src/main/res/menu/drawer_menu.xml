@@ -13,9 +13,15 @@
             android:title="@string/title_drawer_my_task" />
 
         <item
+            android:id="@+id/navigationClients"
+            android:icon="@drawable/ic_clients"
+            android:title="@string/title_drawer_clients" />
+
+        <item
             android:id="@+id/navigationPhoto"
             android:icon="@drawable/ic_drawer_photo_unit_fragment"
             android:title="@string/fragment_title_photo_unit" />
+
     </group>
 
     <group
