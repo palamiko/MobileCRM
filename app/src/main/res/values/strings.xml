@@ -42,6 +42,9 @@
     <string name="password_te_hint_text">Пароль</string>
     <string name="btn_sign_in_text">Войти</string>
     <string name="text_tv_type_service">Интернет</string>
+    <string name="text_tv_type_tv">Телевидение</string>
+    <string name="text_tv_type_domofon">Домофон</string>
+    <string name="text_tv_type_all">Все</string>
     <string name="text_tv_address_task">Адрес:</string>
     <string name="text_tv_comment_text">Комментарий:</string>
     <string name="text_tv_date_of_completion">Дата выполнения:</string>

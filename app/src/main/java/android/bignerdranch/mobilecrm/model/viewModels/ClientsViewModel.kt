@@ -14,7 +14,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 
-class ClientsViewModel: ViewModel() {
+class ClientsViewModel : ViewModel() {
 
     private val _streetList = MutableLiveData<List<Street>>()
     val streetList: LiveData<List<Street>> = _streetList
@@ -25,8 +25,22 @@ class ClientsViewModel: ViewModel() {
     private val _entrance = MutableLiveData<List<Entrance>>()
     val entranceList: LiveData<List<Entrance>> = _entrance
 
+    private val _selectableService = MutableLiveData<List<ClientsEntrance>>()
+    var selectableService: LiveData<List<ClientsEntrance>> = _selectableService
+
     private val _clientsEntrance = MutableLiveData<List<ClientsEntrance>>()
     val clientsEntrance: LiveData<List<ClientsEntrance>> = _clientsEntrance
+
+    private val _clientsEntranceInternet = MutableLiveData<List<ClientsEntrance>>()
+    val clientsEntranceInternet: LiveData<List<ClientsEntrance>> = _clientsEntrance
+
+    private val _clientsEntranceTv = MutableLiveData<List<ClientsEntrance>>()
+    val clientsEntranceTv: LiveData<List<ClientsEntrance>> = _clientsEntrance
+
+    private val _clientsEntranceDomofon = MutableLiveData<List<ClientsEntrance>>()
+    val clientsEntranceDomofon: LiveData<List<ClientsEntrance>> = _clientsEntrance
+
+
 
 
     @ExperimentalSerializationApi
@@ -66,14 +80,19 @@ class ClientsViewModel: ViewModel() {
     }
 
     @ExperimentalSerializationApi
-    fun getClientsEntrance(entrance_id: Int) {
+    fun getClientsEntrance(entrance_id: Int, service_name: String) {
         /** Получает клиентов в данном подъезде */
 
         viewModelScope.launch(exceptionHandler) {
             _clientsEntrance.postValue(
-                networkApi.getClientsInEntrance(entrance_id = entrance_id)
+                networkApi.getClientsInEntrance(entrance_id = entrance_id, service_name = service_name)
             )
         }
     }
+
+
+
+
+
 
 }

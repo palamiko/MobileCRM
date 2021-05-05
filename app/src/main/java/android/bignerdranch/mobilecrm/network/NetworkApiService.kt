@@ -31,7 +31,10 @@ interface NetworkApiService {
 
     /** Получает список абонентов в подъезде */
     @GET(GET_CLIENTS_IN_ENTRANCE)
-    suspend fun getClientsInEntrance(@Query(ENTRANCE_ID) entrance_id: Int): List<ClientsEntrance>
+    suspend fun getClientsInEntrance(
+        @Query(ENTRANCE_ID) entrance_id: Int,
+        @Query(SERVICE_NAME) service_name: String): List<ClientsEntrance>
+
 
     /** Авторизация на сервере CRM */
     @GET(GET_AUTHORIZATION)
@@ -42,9 +45,11 @@ interface NetworkApiService {
 
     /** Получить список заявок на данного мастера */
     @GET(GET_TASK_FOR_MASTER)
-    suspend fun getTaskMaster(@Query(MASTER_ID) id_master: String,
-                              @Query (STATE_TASK) state_task: Char = TASK_APPOINTED,
-                              @Query (DATE_MAKING) date_making: String = getDateTime(TODAY)): ArrayList<TaskModel>
+    suspend fun getTaskMaster(
+        @Query(MASTER_ID) id_master: String,
+        @Query(STATE_TASK) state_task: Char = TASK_APPOINTED,
+        @Query(DATE_MAKING) date_making: String = getDateTime(TODAY)
+    ): ArrayList<TaskModel>
 
     /** Получить список материалов */
     @GET(GET_MATERIAL_LIST)
@@ -64,25 +69,33 @@ interface NetworkApiService {
 
     /**Выполнить кабель тест*/
     @GET(GET_CABLE_TEST)
-    suspend fun getCableTest(@Query(IP_SWITCH) ipSwitch: String,
-                             @Query(NUMBER_PORT) port: String,
-                             @Query(SWITCH_TYPE) switchType: String): ResultCableTest
+    suspend fun getCableTest(
+        @Query(IP_SWITCH) ipSwitch: String,
+        @Query(NUMBER_PORT) port: String,
+        @Query(SWITCH_TYPE) switchType: String
+    ): ResultCableTest
 
     /**Получить статус линка на порту*/
     @GET(GET_LINK_STATUS)
-    suspend fun getLinkStatus(@Query(IP_SWITCH) ipSwitch: String,
-                              @Query(NUMBER_PORT) port: String,
-                              @Query(SWITCH_TYPE) switchType: String): ResultLinkStatus
+    suspend fun getLinkStatus(
+        @Query(IP_SWITCH) ipSwitch: String,
+        @Query(NUMBER_PORT) port: String,
+        @Query(SWITCH_TYPE) switchType: String
+    ): ResultLinkStatus
 
     @GET(GET_ERRORS_COUNT)
-    suspend fun getErrors(@Query(IP_SWITCH) ipSwitch: String,
-                          @Query(NUMBER_PORT) port: String,
-                          @Query(SWITCH_TYPE) switchType: String): ResultErrorTest
+    suspend fun getErrors(
+        @Query(IP_SWITCH) ipSwitch: String,
+        @Query(NUMBER_PORT) port: String,
+        @Query(SWITCH_TYPE) switchType: String
+    ): ResultErrorTest
 
     @GET(GET_SPEED_PORT)
-    suspend fun getSpeedPort(@Query(IP_SWITCH) ipSwitch: String,
-                             @Query(NUMBER_PORT) port: String,
-                             @Query(SWITCH_TYPE) switchType: String): ResultSpeedPort
+    suspend fun getSpeedPort(
+        @Query(IP_SWITCH) ipSwitch: String,
+        @Query(NUMBER_PORT) port: String,
+        @Query(SWITCH_TYPE) switchType: String
+    ): ResultSpeedPort
 
     /** Получить историю заявок абонента */
     @GET(GET_HISTORY_TASK_LIST)
@@ -94,9 +107,11 @@ interface NetworkApiService {
 
     /** Отправить токен пользователя, его ID и логин */
     @GET(GET_SEND_TOKEN)
-    suspend fun sendTokenFirebase(@Query(MASTER_ID) id_master: String,
-                                  @Query(MASTER_LOGIN) login_master: String,
-                                  @Query(TOKEN_MASTER) token: String): ResponseOfToken
+    suspend fun sendTokenFirebase(
+        @Query(MASTER_ID) id_master: String,
+        @Query(MASTER_LOGIN) login_master: String,
+        @Query(TOKEN_MASTER) token: String
+    ): ResponseOfToken
 
     companion object {
         /**Параметры запросов*/
@@ -118,6 +133,7 @@ interface NetworkApiService {
         private const val NUMBER_PORT = "number_port"
         private const val SWITCH_TYPE = "switch_type"
         private const val ID_TASK = "id_task"
+        private const val SERVICE_NAME = "service_name"
 
 
         private fun getDateTime(day: Int): String {

@@ -1,0 +1,19 @@
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <!-- "Mark Favorite", should appear as action button if possible -->
+    <item
+        android:id="@+id/only_internet"
+        android:title="@string/text_tv_type_service" />
+
+    <!-- Settings, should always be in the overflow -->
+    <item android:id="@+id/only_tv"
+        android:title="@string/text_tv_type_tv" />
+
+    <item android:id="@+id/only_domofon"
+        android:title="@string/text_tv_type_domofon" />
+
+    <item android:id="@+id/all"
+        android:title="@string/text_tv_type_all" />
+
+</menu>

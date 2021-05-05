@@ -19,7 +19,16 @@ data class Entrance(
     val number: String,
 
     @SerialName("flat_area")
-    val flatRange: String
+    val flatRange: String,
+
+    @SerialName("cmnt")
+    val comment: String,
+
+    @SerialName("node_entrance")
+    val nodeEntrance: Int,  // Подъезд с узлом
+
+    @SerialName("node_floor")
+    val nodeFlor: Int       // Узловой этаж
 )
 
 @Serializable

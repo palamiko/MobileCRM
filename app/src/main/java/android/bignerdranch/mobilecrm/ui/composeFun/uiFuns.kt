@@ -1,6 +1,7 @@
 package android.bignerdranch.mobilecrm.ui.composeFun
 
 import android.bignerdranch.mobilecrm.model.modelsDB.ClientsEntrance
+import android.bignerdranch.mobilecrm.model.modelsDB.Entrance
 import android.bignerdranch.mobilecrm.utilits.helpers.detectService
 import android.bignerdranch.mobilecrm.utilits.helpers.getStateClients
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -31,6 +32,52 @@ fun SmallListItem(text: String) {
 }
 
 @Composable
+fun EntranceListItem(entrance: Entrance) {
+    /** Один item из списка подъездов */
+
+    Divider(
+        thickness = 1.dp,
+        modifier = Modifier.fillMaxWidth(),
+        color = Color.Gray
+    )
+    Row(Modifier.fillMaxWidth()) {
+        Spacer(modifier = Modifier.width(32.dp))
+
+        // Номер подъезда
+        Column(Modifier.requiredWidth(28.dp)) {
+            Text(
+                text = entrance.number,
+                modifier = Modifier.padding(top = 12.dp),
+                color = adaptiveColor()
+            )
+        }
+
+        Spacer(modifier = Modifier.width(32.dp))
+
+        // Где узел для данного подъезда
+        Column() {
+            Text(
+                text = "${entrance.nodeEntrance} п.",
+                modifier = Modifier.padding(top = 12.dp),
+                color = adaptiveColor()
+            )
+        }
+
+        // Горизонт отступ
+        Spacer(modifier = Modifier.width(32.dp))
+
+        // Коментарий подъезда
+        Column(Modifier.requiredWidth(160.dp)) {
+            Text(
+                text = entrance.comment,
+                modifier = Modifier.padding( top = 12.dp),
+                color = adaptiveColor()
+            )
+        }
+    }
+}
+
+@Composable
 fun ClientListItem(client: ClientsEntrance) {
     val service = mapOf(
         "Интернет" to client.internet,
@@ -43,32 +90,39 @@ fun ClientListItem(client: ClientsEntrance) {
         modifier = Modifier.fillMaxWidth(),
         color = Color.Gray
     )
-    Row(Modifier.fillMaxWidth()) {
-        Column(Modifier.requiredWidth(43.dp)) {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        //Spacer(modifier = Modifier.width(16.dp))
+        Column(Modifier.requiredWidth(27.dp)) {
             Text(
                 text = client.numberFlat.toString(),
-                modifier = Modifier.padding(start = 16.dp, top = 12.dp),
+                modifier = Modifier.padding( top = 12.dp),
                 color = adaptiveColor()
             )
         }
-        Column(Modifier.requiredWidth(107.dp)) {
+        //Spacer(modifier = Modifier.width(8.dp))
+        Column(Modifier.requiredWidth(100.dp)) {
             Text(text = detectService(service),
-                modifier = Modifier.padding(start = 8.dp, top = 12.dp),
+                modifier = Modifier.padding(top = 12.dp),
                 color = adaptiveColor()
             )
         }
-        Column(Modifier.requiredWidth(140.dp)) {
+        //Spacer(modifier = Modifier.width(8.dp))
+        Column(Modifier.requiredWidth(108.dp)) {
             Text(
                 text = getStateClients(client),
-                modifier = Modifier.padding(start = 8.dp, top = 12.dp),
+                modifier = Modifier.padding(top = 12.dp),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 color = adaptiveColor()
             )
         }
-        Column(Modifier.requiredWidth(40.dp)) {
+        //Spacer(modifier = Modifier.width(8.dp))
+        Column(Modifier.requiredWidth(32.dp)) {
             Text(text = client.numberFloor.toString(),
-                modifier = Modifier.padding(start = 8.dp, top = 12.dp),
+                modifier = Modifier.padding(top = 12.dp),
                 color = adaptiveColor()
             )
         }

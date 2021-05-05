@@ -55,6 +55,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), OnItemLongClickListen
         val navController = findNavController()
         val currentBackStackEntry = navController.currentBackStackEntry!!
         savedStateHandle = currentBackStackEntry.savedStateHandle
+
     }
 
     @ExperimentalSerializationApi

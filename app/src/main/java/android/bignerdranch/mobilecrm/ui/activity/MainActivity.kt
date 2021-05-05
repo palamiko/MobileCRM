@@ -3,6 +3,7 @@ package android.bignerdranch.mobilecrm.ui.activity
 import android.bignerdranch.mobilecrm.R
 import android.bignerdranch.mobilecrm.databinding.ActivityMainBinding
 import android.bignerdranch.mobilecrm.model.otherModel.User
+import android.bignerdranch.mobilecrm.model.viewModels.ClientsViewModel
 import android.bignerdranch.mobilecrm.model.viewModels.TaskViewModel
 import android.bignerdranch.mobilecrm.utilits.helpers.*
 import android.content.SharedPreferences
@@ -27,6 +28,7 @@ import kotlinx.serialization.json.Json
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private val clientsViewModel: ClientsViewModel by viewModels()
 
     lateinit var sharedPref: SharedPreferences
     private lateinit var headerVerApp: TextView
@@ -88,6 +90,7 @@ class MainActivity : AppCompatActivity() {
         } else println("Ошибка в MainActivity")
     }
 
+    @ExperimentalSerializationApi
     private fun changeListenerNavigateDestination() {
         /** Функция отключает кнопку назад на authorizationFragment */
         val navController = this.findNavController(R.id.nav_host_fragment_container)
@@ -98,6 +101,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
 
     @ExperimentalSerializationApi
     private fun sendToken() {
