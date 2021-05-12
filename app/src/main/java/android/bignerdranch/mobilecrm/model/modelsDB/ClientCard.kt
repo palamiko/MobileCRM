@@ -8,23 +8,27 @@ data class ClientCard (
     @SerialName("id_client")
     val id_client: String?,
     @SerialName("id_entrance")
-    val id_entrance: Int?,
+    val id_entrance: Int,
+    @SerialName("flat")
+    val flat: Int,
+    @SerialName("phones")
+    val phones: String?,
     @SerialName("agreement_number")
-    val agreement_number: String?,
+    val agreement_number: String,
     @SerialName("is_internet")
-    val is_internet: Boolean?,
+    val is_internet: Boolean,
     @SerialName("is_domofon")
-    val is_domofon: Boolean?,
+    val is_domofon: Boolean,
     @SerialName("is_tv")
-    val is_tv: Boolean?,
+    val is_tv: Boolean,
     @SerialName("id_port")
     val id_port: Int?,
     @SerialName("number_port")
-    val number_port: Int?,
+    val number_port: String?,
     @SerialName("id_switch")
     val id_switch: Int?,
     @SerialName("ip_switch")
-    var ip_switch: String?,
+    val ip_switch: String?,
     @SerialName("type_switch")
     val type_switch: String?,
     @SerialName("model_switch")

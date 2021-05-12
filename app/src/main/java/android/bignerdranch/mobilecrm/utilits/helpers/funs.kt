@@ -1,10 +1,10 @@
 package android.bignerdranch.mobilecrm.utilits.helpers
 
 import android.bignerdranch.mobilecrm.R
+import android.bignerdranch.mobilecrm.model.modelsDB.ClientCard
 import android.bignerdranch.mobilecrm.model.modelsDB.ClientCardBilling
 import android.bignerdranch.mobilecrm.model.modelsDB.ClientsEntrance
 import android.bignerdranch.mobilecrm.model.networkModel.ResultLinkStatus
-import android.bignerdranch.mobilecrm.ui.fragments.task.ClientCardFragment
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -14,12 +14,12 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import smartadapter.extension.SmartViewHolderBinder
 import smartadapter.viewevent.model.ViewEvent
 import smartadapter.viewevent.swipe.BasicSwipeEventBinder
 import smartadapter.viewevent.swipe.SwipeFlags
+import java.util.*
 
 
 fun detectUserStatus(status: String): String =
@@ -189,7 +189,7 @@ fun forPoolInternet(pool1: String, pool2: String, pool3: String): String {
 }
 
 fun getStateClients(client: ClientsEntrance): String {
-    var state: String = ""
+    var state = ""
     when (client.status) {
         0 -> if (client.expired != null) state = "Отключен"
         1 -> if (client.expired == null) state = "Подключен"
@@ -268,15 +268,15 @@ class SwipeRemoveItemBinder(
     }
 }
 
-fun Fragment.returnDateStart(card: ClientCardBilling): String {
+fun returnDateStart(card: ClientCardBilling): String {
     return if (card.dateStart != "") "\n${card.dateStart}" else ""
 }
 
-fun Fragment.returnMAC(card: ClientCardBilling): String {
+fun returnMAC(card: ClientCardBilling): String {
     return if (card.mac != "") "\n${card.mac}" else ""
 }
 
-fun Fragment.translateState(state: String?): String {
+fun translateState(state: String?): String {
     return when (state) {
         "4" -> "Недостаточно средств"
         "0" -> "Активна"
@@ -285,13 +285,19 @@ fun Fragment.translateState(state: String?): String {
     }
 }
 
-fun ClientCardFragment.changeIcon(link: ResultLinkStatus): Int {
+fun changeIcon(link: ResultLinkStatus): Int {
     return when (link.state) {
         "Up" -> R.drawable.ic_ethernet_up1
         "Down" -> R.drawable.ic_ethernet_down1
         else -> R.drawable.ic_ethernet_netral1
     }
 }
+
+fun getAddress(client: ClientCard?, streetName: String, build_number: String) =
+    "${client?.street_name ?: streetName} ${client?.building_number ?: build_number}-${client?.flat}".apply {
+        toLowerCase(Locale.ROOT)
+        capitalize(Locale.ROOT)
+    }
 
 
 

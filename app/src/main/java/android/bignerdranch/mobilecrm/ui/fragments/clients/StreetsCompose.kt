@@ -74,15 +74,15 @@ class StreetsCompose : Fragment() {
             modifier = Modifier
                 .fillMaxWidth()
                 .requiredHeight(44.dp)
-                .clickable { navigateToHomes(args.districtId, street.id)}
+                .clickable { navigateToHomes(args.districtId, street.id, street.name)}
         ) { SmallListItem(text = street.name) }
     }
 
-    private fun navigateToHomes(district_id: Int, street_id: Int) {
+    private fun navigateToHomes(district_id: Int, street_id: Int, street_name: String) {
         val navController = findNavController()
         navController.navigate(
             StreetsComposeDirections.actionStreetsComposeToHomesCompose(
-                districtId = district_id, streetId = street_id
+                districtId = district_id, streetId = street_id, streetName = street_name
             )
         )
     }

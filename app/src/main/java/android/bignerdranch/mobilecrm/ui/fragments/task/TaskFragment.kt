@@ -267,7 +267,6 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), OnItemLongClickListen
                 (viewAdapter as MainAdapter).removeItem(viewHolder.adapterPosition)
             }
 
-
             override fun isItemViewSwipeEnabled(): Boolean {
                 /**Данная функция переопределяет доступность смахивания!!*/
                 return taskViewModel.selectorState.value == TASK_APPOINTED

@@ -12,6 +12,7 @@ import android.bignerdranch.mobilecrm.network.NetworkApiService
 import android.bignerdranch.mobilecrm.network.NetworkModule
 import android.bignerdranch.mobilecrm.network.NetworkModule2
 import android.bignerdranch.mobilecrm.ui.fragments.BaseFragment.Companion.exceptionHandler
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,18 +21,38 @@ import kotlinx.serialization.ExperimentalSerializationApi
 
 class ClientCardViewModel: ViewModel() {
 
-    val clientCard = MutableLiveData<ClientCard>()                // Карта абонента из CRM
-    val clientCardBilling = MutableLiveData<ClientCardBilling>()  // Карта абонента из billing
-    val cableTest = MutableLiveData<ResultCableTest>()            // Результат кабель теста
-    val linkStatus = MutableLiveData<ResultLinkStatus>()          // Результат линк теста
-    val countErrors = MutableLiveData<ResultErrorTest>()          // Результат колличества ошибок
-    val speedPort = MutableLiveData<ResultSpeedPort>()            // Результат скорости порта
-    val historyTaskList = MutableLiveData<List<HistoryTask>>()    // Список истории заявок
-    val actionTaskList = MutableLiveData<List<ActionTask>>()
-    val itemsCard = listOf("Адрес:", "Телефон:", "Номер договора:",
-                           "Учетная запись:", "Баланс:", "Тариф:",
-                           "Активная сессия:", "Номер порта:",
-                           "Модель свитча:", "Адрес узла:")
+    // Карта абонента из CRM
+    private val _clientCard = MutableLiveData<ClientCard>()
+    val clientCard: LiveData<ClientCard> = _clientCard
+
+    // Карта абонента из billing
+    private val _clientCardBilling = MutableLiveData<ClientCardBilling>()
+    val clientCardBilling: LiveData<ClientCardBilling> = _clientCardBilling
+
+    // Результат кабель теста
+    private val _cableTest = MutableLiveData<ResultCableTest>()
+    val cableTest: LiveData<ResultCableTest> = _cableTest
+
+    // Результат линк теста
+    private val _linkStatus = MutableLiveData<ResultLinkStatus>()
+    val linkStatus: LiveData<ResultLinkStatus> = _linkStatus
+
+    // Результат колличества ошибок
+    private val _countErrors = MutableLiveData<ResultErrorTest>()
+    val countErrors: LiveData<ResultErrorTest> = _countErrors
+
+    // Результат скорости порта
+    private val _speedPort = MutableLiveData<ResultSpeedPort>()
+    val speedPort: LiveData<ResultSpeedPort> = _speedPort
+
+    // Список истории заявок
+    private val _historyTaskList = MutableLiveData<List<HistoryTask>>()
+    val historyTaskList: LiveData<List<HistoryTask>> = _historyTaskList
+
+    // Список действий на заявке
+    private val _actionTaskList = MutableLiveData<List<ActionTask>>()
+    val actionTaskList: LiveData<List<ActionTask>> = _actionTaskList
+
 
     @ExperimentalSerializationApi
     private val networkApi: NetworkApiService = NetworkModule().networkApiService
@@ -42,21 +63,21 @@ class ClientCardViewModel: ViewModel() {
     @ExperimentalSerializationApi
     fun getClientCardCRM(id_client: String) {
         this.viewModelScope.launch(exceptionHandler) {
-            clientCard.postValue(networkApi2.getClientCard(id_client))
+            _clientCard.postValue(networkApi2.getClientCard(id_client))
         }
     }
 
     @ExperimentalSerializationApi
     fun getClientCardBilling(number_contract: String) {
         this.viewModelScope.launch(exceptionHandler) {
-            clientCardBilling.postValue(networkApi.getClientCardBilling(number_contract))
+            _clientCardBilling.postValue(networkApi.getClientCardBilling(number_contract))
         }
     }
 
     @ExperimentalSerializationApi
     fun getCableTest() {
         this.viewModelScope.launch(exceptionHandler) {
-            cableTest.postValue (
+            _cableTest.postValue (
                 networkApi.getCableTest(getIpSwitch(), getPortSwitch(), getTypeSwitch())
             )
         }
@@ -65,7 +86,7 @@ class ClientCardViewModel: ViewModel() {
     @ExperimentalSerializationApi
     fun getLinkStatus() {
         this.viewModelScope.launch(exceptionHandler) {
-            linkStatus.postValue(
+            _linkStatus.postValue(
                 networkApi.getLinkStatus(getIpSwitch(), getPortSwitch(), getTypeSwitch())
             )
         }
@@ -74,7 +95,7 @@ class ClientCardViewModel: ViewModel() {
     @ExperimentalSerializationApi
     fun getCountErrors() {
         this.viewModelScope.launch(exceptionHandler) {
-            countErrors.postValue(
+            _countErrors.postValue(
                 networkApi.getErrors(getIpSwitch(), getPortSwitch(), getTypeSwitch())
             )
         }
@@ -83,7 +104,7 @@ class ClientCardViewModel: ViewModel() {
     @ExperimentalSerializationApi
     fun getSpeedPort() {
         this.viewModelScope.launch(exceptionHandler) {
-            speedPort.postValue(
+            _speedPort.postValue(
                 networkApi.getSpeedPort(getIpSwitch(), getPortSwitch(), getTypeSwitch())
             )
         }
@@ -92,7 +113,7 @@ class ClientCardViewModel: ViewModel() {
     @ExperimentalSerializationApi
     fun getHistoryTaskList() {
         this.viewModelScope.launch(exceptionHandler) {
-            historyTaskList.postValue(
+            _historyTaskList.postValue(
                 networkApi.getHistoryListTask(getIdClient())
             )
         }
@@ -100,8 +121,8 @@ class ClientCardViewModel: ViewModel() {
 
     @ExperimentalSerializationApi
     fun getActionForTask(id_task: String) {
-        this.viewModelScope.launch() {
-            actionTaskList.postValue(
+        this.viewModelScope.launch(exceptionHandler) {
+            _actionTaskList.postValue(
                 networkApi.getActionForTask(id_task)
             )
         }
@@ -112,4 +133,12 @@ class ClientCardViewModel: ViewModel() {
     private fun getPortSwitch(): String = clientCard.value?.number_port.toString()
     private fun getIdClient(): String = clientCard.value?.id_client.toString()
 
+
+
+    companion object {
+        val itemsCard = listOf("Адрес:", "Телефон:", "Номер договора:",
+            "Учетная запись:", "Баланс:", "Тариф:",
+            "Активная сессия:", "Номер порта:",
+            "Модель свитча:", "Адрес узла:")
+    }
 }

@@ -119,7 +119,7 @@ class EntranceCompose : Fragment() {
         val navController = findNavController()
         navController.navigate(
             EntranceComposeDirections.actionEntranceComposeToClientsInEntranceCompose(
-                entranceId = entrance.id
+                entranceId = entrance.id, buildNumber = args.buildNumber, streetName = args.streetName
             )
         )
     }

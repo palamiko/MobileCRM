@@ -18,6 +18,26 @@
             app:popUpToInclusive="true" />
     </fragment>
 
+    <fragment
+        android:id="@+id/clientCardFragment"
+        android:name="android.bignerdranch.mobilecrm.ui.fragments.task.ClientCardFragment"
+        android:label="@string/fragment_title_card_client"
+        tools:layout="@layout/fragment_client_card" >
+        <argument
+            android:name="id_client"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="address_client"
+            app:argType="string"
+            android:defaultValue="-" />
+        <argument
+            android:name="phone_client"
+            app:argType="string"
+            android:defaultValue="-"
+            app:nullable="true" />
+    </fragment>
+
 
     <navigation
         android:id="@+id/navigationPhoto"
@@ -143,25 +163,9 @@
                 app:popUpTo="@id/closeTaskFragment"
                 app:popUpToInclusive="true" />
         </fragment>
-        <fragment
-            android:id="@+id/clientCardFragment"
-            android:name="android.bignerdranch.mobilecrm.ui.fragments.task.ClientCardFragment"
-            android:label="@string/fragment_title_card_client"
-            tools:layout="@layout/fragment_client_card" >
-            <argument
-                android:name="id_client"
-                app:argType="string"
-                app:nullable="true" />
-            <argument
-                android:name="address_client"
-                app:argType="string"
-                android:defaultValue="-" />
-            <argument
-                android:name="phone_client"
-                app:argType="string"
-                android:defaultValue="-"
-                app:nullable="true" />
-        </fragment>
+
+
+
         <fragment
             android:id="@+id/composeClientCard"
             android:name="android.bignerdranch.mobilecrm.ui.fragments.task.ComposeClientCard"
@@ -232,6 +236,10 @@
             <action
                 android:id="@+id/action_homesCompose_to_entranceCompose"
                 app:destination="@id/entranceCompose" />
+            <argument
+                android:name="street_name"
+                app:argType="string"
+                android:defaultValue="-" />
         </fragment>
         <fragment
             android:id="@+id/entranceCompose"
@@ -244,6 +252,12 @@
             <action
                 android:id="@+id/action_entranceCompose_to_clientsInEntranceCompose"
                 app:destination="@id/clientsInEntranceCompose" />
+            <argument
+                android:name="build_number"
+                app:argType="string" />
+            <argument
+                android:name="street_name"
+                app:argType="string" />
         </fragment>
         <fragment
             android:id="@+id/clientsInEntranceCompose"
@@ -253,6 +267,33 @@
                 android:name="entrance_id"
                 app:argType="integer"
                 android:defaultValue="1" />
+            <action
+                android:id="@+id/action_clientsInEntranceCompose_to_clientCardCompose"
+                app:destination="@id/clientCardCompose" />
+            <argument
+                android:name="street_name"
+                app:argType="string" />
+            <argument
+                android:name="build_number"
+                app:argType="string" />
+        </fragment>
+        <action
+            android:id="@+id/action_clientsInEntranceCompose_navigationTask"
+            app:destination="@id/navigationTask" />
+        <fragment
+            android:id="@+id/clientCardCompose"
+            android:name="android.bignerdranch.mobilecrm.ui.fragments.clients.ClientCardCompose"
+            android:label="@string/fragment_title_card_client">
+            <argument
+                android:name="id_client"
+                android:defaultValue="1"
+                app:argType="integer" />
+            <argument
+                android:name="street_name"
+                app:argType="string" />
+            <argument
+                android:name="build_number"
+                app:argType="string" />
         </fragment>
     </navigation>
 

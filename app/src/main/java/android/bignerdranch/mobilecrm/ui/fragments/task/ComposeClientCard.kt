@@ -8,6 +8,7 @@ import android.bignerdranch.mobilecrm.model.networkModel.ResultErrorTest
 import android.bignerdranch.mobilecrm.model.networkModel.ResultLinkStatus
 import android.bignerdranch.mobilecrm.model.networkModel.ResultSpeedPort
 import android.bignerdranch.mobilecrm.model.viewModels.ClientCardViewModel
+import android.bignerdranch.mobilecrm.model.viewModels.ClientCardViewModel.Companion.itemsCard
 import android.bignerdranch.mobilecrm.ui.theme.LightPrimaryLightColor
 import android.bignerdranch.mobilecrm.ui.theme.MyTestComposeTheme
 import android.bignerdranch.mobilecrm.ui.theme.SecondaryDarkColor
@@ -92,11 +93,11 @@ fun ClientCardView(
     val resultCountError by clientCardViewModel.countErrors.observeAsState()
     val resultSpeedPort by clientCardViewModel.speedPort.observeAsState()
     val historyTaskList by clientCardViewModel.historyTaskList.observeAsState()
-    val itemsCard = clientCardViewModel.itemsCard
+    val itemsCard = itemsCard
 
     clientCardViewModel.getClientCardCRM(args.idClient.toString())
     clientCardViewModel.clientCard.observe(lifecycleOwner) {
-        clientCardViewModel.getClientCardBilling(it.agreement_number.toString())
+        clientCardViewModel.getClientCardBilling(it.agreement_number)
         clientCardViewModel.getHistoryTaskList()
     }
 
@@ -148,7 +149,7 @@ fun ClientCardView(
         }
         /** Тело раздела инструменты */
         item {
-            ToolsItems(
+            ToolsItemsPart(
                 resultCableTest,
                 resultLinkStatus,
                 resultCountError,
@@ -220,7 +221,7 @@ fun CardItem(itemName: String, value: String) {
 
 @ExperimentalSerializationApi
 @Composable
-fun ToolsItems(
+fun ToolsItemsPart(
     /** Бок значений полученных от утилит */
 
     resultCableTest: ResultCableTest?,
@@ -435,12 +436,18 @@ private fun returnCabTestString(resultCableTest: ResultCableTest?, context: Cont
     }
 }
 
-private fun returnAddressNode(card: ClientCard?): String {
+fun returnAddressNode(card: ClientCard?): String {
     /** Возвращает форматированую стоку с адресом узла */
-    return "${card?.street_name} ${card?.building_number} д. ${card?.entrance_node} п. ${card?.flor_node} эт."
+
+    return if (card?.street_name != null) {
+        "${card.street_name} ${card.building_number} д. ${card.entrance_node} п. ${card.flor_node} эт."
+    } else {
+        "Не выбран"
+    }
+
 }
 
-private fun returnSessionInfo(card: ClientCardBilling?): String {
+fun returnSessionInfo(card: ClientCardBilling?): String {
     /** Возвращает форматированую строку с информацией о сессии */
     return "${card?.ip}${returnDateStart(card)}${returnMAC(card)}"
 }
@@ -453,7 +460,7 @@ private fun returnMAC(card: ClientCardBilling?): String {
     return if (card?.mac != "") "\n${card?.mac}" else ""
 }
 
-private fun translateState(card: ClientCardBilling?): String {
+fun translateState(card: ClientCardBilling?): String {
     return when (card?.stateAccount.toString()
     ) {
         "4" -> "Недостаточно средств"

@@ -24,10 +24,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.serialization.ExperimentalSerializationApi
 
@@ -86,7 +86,9 @@ class ClientsInEntranceCompose : Fragment() {
         Box(
             modifier = Modifier
                 .requiredHeight(44.dp)
-                .clickable { }
+                .clickable {
+                    navigateToClientsCard(clients = clients)
+                }
         ) {
             ClientListItem(clients)
         }
@@ -119,9 +121,13 @@ class ClientsInEntranceCompose : Fragment() {
                         onClick = { if (expanded) !expanded else expanded = true },
                         modifier = Modifier.height(34.dp),
                         colors = ButtonDefaults.textButtonColors(
-                            backgroundColor =if (isSystemInDarkTheme()) SecondaryLightColor else MaterialTheme.colors.secondaryVariant)
+                            backgroundColor = if (isSystemInDarkTheme()) SecondaryLightColor else MaterialTheme.colors.secondaryVariant
+                        )
                     ) {
-                        Text("Услуга", color = if (isSystemInDarkTheme()) Color.White else Color.Black)
+                        Text(
+                            "Услуга",
+                            color = if (isSystemInDarkTheme()) Color.White else Color.Black
+                        )
                         DropdownDemo(modifier, entrance_id = entrance_id, expended = expanded,
                             onExpandedChange = { expanded = it })
                     }
@@ -180,7 +186,10 @@ class ClientsInEntranceCompose : Fragment() {
                     .background(if (isSystemInDarkTheme()) SecondaryLightColor else MaterialTheme.colors.secondaryVariant)
             ) {
                 items.forEach { serviceName ->
-                    Column(modifier = Modifier.height(38.dp),verticalArrangement = Arrangement.SpaceEvenly) {
+                    Column(
+                        modifier = Modifier.height(38.dp),
+                        verticalArrangement = Arrangement.SpaceEvenly
+                    ) {
                         Row(
                             Modifier
                                 .fillMaxWidth()
@@ -200,7 +209,10 @@ class ClientsInEntranceCompose : Fragment() {
                                 selected = (serviceName.key == selectedOption),
                                 onClick = {
                                     onOptionSelected(serviceName.key)
-                                    clientsViewModel.getClientsEntrance(entrance_id, serviceName.value)
+                                    clientsViewModel.getClientsEntrance(
+                                        entrance_id,
+                                        serviceName.value
+                                    )
                                     onExpandedChange(false)
                                 }
                             )
@@ -215,35 +227,17 @@ class ClientsInEntranceCompose : Fragment() {
                     }
 
 
-
-
                 }
             }
         }
     }
 
-
-    @Preview
-    @Composable
-    fun HelloScreen() {
-        var name by rememberSaveable { mutableStateOf("Ilya") }
-
-        HelloContent(name = name, onNameChange = { name = it })
-    }
-
-    @Composable
-    fun HelloContent(name: String, onNameChange: (String) -> Unit) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = "Hello, $name",
-                modifier = Modifier.padding(bottom = 8.dp),
-                style = MaterialTheme.typography.h5
+    private fun navigateToClientsCard(clients: ClientsEntrance) {
+        val navController = findNavController()
+        navController.navigate(
+            ClientsInEntranceComposeDirections.actionClientsInEntranceComposeToClientCardCompose(
+                idClient = clients.id_client, buildNumber = args.buildNumber, streetName = args.streetName
             )
-            OutlinedTextField(
-                value = name,
-                onValueChange = onNameChange,
-                label = { Text("Name") }
-            )
-        }
+        )
     }
 }

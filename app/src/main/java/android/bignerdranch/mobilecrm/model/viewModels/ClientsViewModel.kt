@@ -25,26 +25,20 @@ class ClientsViewModel : ViewModel() {
     private val _entrance = MutableLiveData<List<Entrance>>()
     val entranceList: LiveData<List<Entrance>> = _entrance
 
-    private val _selectableService = MutableLiveData<List<ClientsEntrance>>()
-    var selectableService: LiveData<List<ClientsEntrance>> = _selectableService
-
     private val _clientsEntrance = MutableLiveData<List<ClientsEntrance>>()
     val clientsEntrance: LiveData<List<ClientsEntrance>> = _clientsEntrance
 
-    private val _clientsEntranceInternet = MutableLiveData<List<ClientsEntrance>>()
-    val clientsEntranceInternet: LiveData<List<ClientsEntrance>> = _clientsEntrance
+    //private val _clientCard = MutableLiveData<ClientCard>()
+    //val clientCard: LiveData<ClientCard> = _clientCard
 
-    private val _clientsEntranceTv = MutableLiveData<List<ClientsEntrance>>()
-    val clientsEntranceTv: LiveData<List<ClientsEntrance>> = _clientsEntrance
-
-    private val _clientsEntranceDomofon = MutableLiveData<List<ClientsEntrance>>()
-    val clientsEntranceDomofon: LiveData<List<ClientsEntrance>> = _clientsEntrance
-
+    //private val _clientBillingCard = MutableLiveData<ClientCardBilling>()
+    //val clientBillingCard: LiveData<ClientCardBilling> = _clientBillingCard
 
 
 
     @ExperimentalSerializationApi
     private val networkApi: NetworkApiService = NetworkModule().networkApiService
+
 
     @ExperimentalSerializationApi
     fun getStreet(district_id: Int) {
@@ -91,8 +85,25 @@ class ClientsViewModel : ViewModel() {
     }
 
 
+    /**
+    @ExperimentalSerializationApi
+    fun getClientCardCRM(id_client: Int) {
+        /** Получает карточку абонента с данными CRM */
 
+        viewModelScope.launch(exceptionHandler) {
+            _clientCard.postValue(networkApi2.getClientCard(id_client.toString()))
+        }
+    }
 
+    @ExperimentalSerializationApi
+    fun getBillingCard(num_agreement: String) {
+        /** Получает карточку абонента с данными Billing */
 
-
+        viewModelScope.launch(exceptionHandler) {
+            _clientBillingCard.postValue(
+                networkApi.getClientCardBilling(number_contract = num_agreement)
+            )
+        }
+    }
+     */
 }
