@@ -35,6 +35,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import java.util.*
+import kotlin.time.ExperimentalTime
 
 
 class TaskFragment : BaseFragment(R.layout.fragment_task), OnItemLongClickListener {
@@ -84,9 +85,11 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), OnItemLongClickListen
         radioButtonListener()
     }
 
+    @ExperimentalTime
     @ExperimentalSerializationApi
     override fun onResume() {
         super.onResume()
+        //println(getDateTimeBeta())
 
         updateTask()
         (requireActivity() as MainActivity).changeHeader(taskViewModel.getUserData())
@@ -239,10 +242,9 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), OnItemLongClickListen
 
     override fun onItemLongClicked(task: TaskModel, address: String) {
         /** Слушатель динных нажатий RecyclerView */
-        if (task.isInternet == true) {
-            findNavController().navigate(TaskFragmentDirections
-                .actionTaskFragmentToComposeClientCard(task.id_client, address, task.phones))
-        } else showToast("Только для интернета")
+
+           findNavController().navigate(TaskFragmentDirections
+              .actionTaskFragmentToComposeClientCard(task.id_client, address, task.phones))
     }
 
     private fun createRecyclerView(dataSet: ArrayList<TaskModel>) {

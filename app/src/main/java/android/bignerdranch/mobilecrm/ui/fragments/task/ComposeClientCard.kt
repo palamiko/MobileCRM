@@ -1,40 +1,31 @@
 package android.bignerdranch.mobilecrm.ui.fragments.task
 
-import android.bignerdranch.mobilecrm.model.modelsDB.ClientCard
-import android.bignerdranch.mobilecrm.model.modelsDB.ClientCardBilling
-import android.bignerdranch.mobilecrm.model.modelsDB.HistoryTask
-import android.bignerdranch.mobilecrm.model.networkModel.ResultCableTest
-import android.bignerdranch.mobilecrm.model.networkModel.ResultErrorTest
-import android.bignerdranch.mobilecrm.model.networkModel.ResultLinkStatus
-import android.bignerdranch.mobilecrm.model.networkModel.ResultSpeedPort
 import android.bignerdranch.mobilecrm.model.viewModels.ClientCardViewModel
-import android.bignerdranch.mobilecrm.model.viewModels.ClientCardViewModel.Companion.itemsCard
+import android.bignerdranch.mobilecrm.ui.composeFun.*
 import android.bignerdranch.mobilecrm.ui.theme.LightPrimaryLightColor
 import android.bignerdranch.mobilecrm.ui.theme.MyTestComposeTheme
 import android.bignerdranch.mobilecrm.ui.theme.SecondaryDarkColor
 import android.bignerdranch.mobilecrm.ui.theme.SecondaryLightColor
-import android.content.Context
+import android.bignerdranch.mobilecrm.utilits.helpers.detectArgType
+import android.bignerdranch.mobilecrm.utilits.helpers.getAddress
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
@@ -43,7 +34,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.serialization.ExperimentalSerializationApi
-import java.util.*
 
 
 class ComposeClientCard : Fragment() {
@@ -54,15 +44,17 @@ class ComposeClientCard : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val lifecycleOwner = this.viewLifecycleOwner
+        val lifecycleOwner = viewLifecycleOwner
         val navController = findNavController()
+
         return ComposeView(requireContext()).apply {
             setContent {
                 ComposeFragment {
-                    ClientCardView(
+                    ClientCardView (
                         args = args,
                         lifecycleOwner = lifecycleOwner,
-                        navController = navController
+                        navController = navController,
+                        graphName = "taskGraph"
                     )
                 }
             }
@@ -82,23 +74,34 @@ fun ComposeFragment(container: @Composable () -> Unit) {
 @Composable
 fun ClientCardView(
     clientCardViewModel: ClientCardViewModel = viewModel(),
-    args: ComposeClientCardArgs,
+    args: Any,
     lifecycleOwner: LifecycleOwner,
-    navController: NavController
+    navController: NavController,
+    graphName: String
 ) {
     val crmCard by clientCardViewModel.clientCard.observeAsState()
     val billingCard by clientCardViewModel.clientCardBilling.observeAsState()
+
     val resultCableTest by clientCardViewModel.cableTest.observeAsState()
     val resultLinkStatus by clientCardViewModel.linkStatus.observeAsState()
     val resultCountError by clientCardViewModel.countErrors.observeAsState()
     val resultSpeedPort by clientCardViewModel.speedPort.observeAsState()
     val historyTaskList by clientCardViewModel.historyTaskList.observeAsState()
-    val itemsCard = itemsCard
+    val arg = detectArgType(args)  // Возвращаем универсалныйе аргументы для двух фрагментов
 
-    clientCardViewModel.getClientCardCRM(args.idClient.toString())
+
+
+
+    // Запрос данных CRM
+    clientCardViewModel.getClientCardCRM(arg.id_client.toString())
+
+    // Слушает ClientCard, если абон интернет то запрашивает данные из биллинга
     clientCardViewModel.clientCard.observe(lifecycleOwner) {
-        clientCardViewModel.getClientCardBilling(it.agreement_number)
-        clientCardViewModel.getHistoryTaskList()
+        clientCardViewModel.getHistoryTaskList()  // Запрос истории заявок
+
+        if (it.is_internet) {
+            clientCardViewModel.getClientCardBilling(it.agreement_number)
+        }
     }
 
 
@@ -108,79 +111,67 @@ fun ClientCardView(
 
         /** Поля данных абонента */
         item {
-            Column(
-                modifier = Modifier
-                    .padding(start = 8.dp, end = 8.dp)
-            ) {
-                CardItem(
-                    itemName = itemsCard[0],
-                    args.addressClient.toLowerCase(Locale.ROOT).capitalize(Locale.ROOT)
-                )
-                CardItem(itemName = itemsCard[1], args.phoneClient ?: "-")
-                CardItem(itemName = itemsCard[2], crmCard?.agreement_number.toString())
-                CardItem(itemName = itemsCard[3], translateState(billingCard))
-                CardItem(itemName = itemsCard[4], billingCard?.balance.toString())
-                CardItem(itemName = itemsCard[5], billingCard?.tariff.toString())
-                CardItem(itemName = itemsCard[6], returnSessionInfo(billingCard))
-                CardItem(itemName = itemsCard[7], crmCard?.number_port.toString())
-                CardItem(itemName = itemsCard[8], crmCard?.model_switch.toString())
-                CardItem(
-                    itemName = itemsCard[9],
-                    returnAddressNode(crmCard).toLowerCase(Locale.ROOT).capitalize(Locale.ROOT)
-                )
-            }
+            when {
+                crmCard?.is_internet == true -> {
+                    BlockInternet(
+                        client = crmCard,
+                        billingCard = billingCard,
+                        nameStreet = arg.nameStreet,
+                        buildNumber = arg.buildNumber,
+                        fullAddress = arg.fullAddress
+                    )
+                }
 
+                crmCard?.is_tv == true -> {
+                    BlockTv(
+                        client = crmCard,
+                        nameStreet = arg.nameStreet,
+                        buildNumber = arg.buildNumber,
+                        fullAddress = arg.fullAddress
+                    )
+
+                }
+                crmCard?.is_domofon == true -> {
+                    BlockTv(
+                        client = crmCard,
+                        nameStreet = arg.nameStreet,
+                        buildNumber = arg.buildNumber,
+                        fullAddress = arg.fullAddress
+                    )
+                }
+            }
         }
 
         /** Заголовок раздела инструменты */
+        item { if (crmCard?.is_internet == true) TitlePart("Инструменты") }
+
+        /** Тело раздела инструменты */
+
         item {
-            Column(
-                modifier = Modifier
-                    .padding(top = 16.dp)
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Инструменты",
-                    color = if (isSystemInDarkTheme()) SecondaryLightColor else MaterialTheme.colors.secondaryVariant,
-                    style = MaterialTheme.typography.h6
+            if (crmCard?.is_internet == true) {
+                ToolsItemsPart(
+                    resultCableTest,
+                    resultLinkStatus,
+                    resultCountError,
+                    resultSpeedPort,
+                    cardViewModel = clientCardViewModel,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp)
                 )
             }
-        }
-        /** Тело раздела инструменты */
-        item {
-            ToolsItemsPart(
-                resultCableTest,
-                resultLinkStatus,
-                resultCountError,
-                resultSpeedPort,
-                cardViewModel = clientCardViewModel,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-            )
         }
         /** Заголовок истории заявок */
-        item {
-            Column(
-                modifier = Modifier
-                    .padding(top = 16.dp)
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "История заявок",
-                    color = if (isSystemInDarkTheme()) SecondaryLightColor else MaterialTheme.colors.secondaryVariant,
-                    style = MaterialTheme.typography.h6
-                )
-            }
-        }
+        item { TitlePart("История заявок") }
+
+
         /** Блок истории заявок */
         item {
             HistoryTaskBlock(
                 historyTaskList = historyTaskList,
                 navController = navController,
-                address = args.addressClient
+                address = arg.fullAddress ?: getAddress(client = crmCard, arg.nameStreet, arg.buildNumber),
+                navTo = graphName
             )
         }
     }
@@ -217,259 +208,3 @@ fun CardItem(itemName: String, value: String) {
         }
     }
 }
-
-
-@ExperimentalSerializationApi
-@Composable
-fun ToolsItemsPart(
-    /** Бок значений полученных от утилит */
-
-    resultCableTest: ResultCableTest?,
-    resultLinkStatus: ResultLinkStatus?,
-    resultCountError: ResultErrorTest?,
-    resultSpeedPort: ResultSpeedPort?,
-    cardViewModel: ClientCardViewModel,
-    context: Context = LocalContext.current,
-    modifier: Modifier,
-    modifierButton: Modifier = Modifier.width(113.dp)
-) {
-    Column(Modifier.padding(start = 8.dp, top = 8.dp, end = 8.dp)) {
-
-
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
-            Button(modifier = modifierButton,
-                onClick = { cardViewModel.getCableTest() }
-            ) {
-                Text(text = "Cab Test")
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = returnCabTestString(resultCableTest, context),
-                color = if (isSystemInDarkTheme()) Color.White else Color.Black,
-            )
-
-        }
-
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
-            Button(modifier = modifierButton,
-                onClick = { cardViewModel.getLinkStatus() }
-            ) {
-                Text(text = "Link")
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = resultLinkStatus?.state ?: "",
-                color = if (isSystemInDarkTheme()) Color.White else Color.Black
-            )
-        }
-
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
-            Button(modifier = modifierButton,
-                onClick = { cardViewModel.getSpeedPort() }
-            ) {
-                Text(text = "PortSpeed")
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = if (resultSpeedPort?.speedPort != null) "${resultSpeedPort.speedPort} M/bits" else "",
-                color = if (isSystemInDarkTheme()) Color.White else Color.Black
-            )
-        }
-
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
-            Button(modifier = modifierButton,
-                onClick = { cardViewModel.getCountErrors() }
-            ) {
-                Text(text = "Errors")
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = returnErrorPortsString(resultCountError),
-                color = if (isSystemInDarkTheme()) Color.White else Color.Black
-            )
-        }
-    }
-}
-
-@Composable
-fun HistoryTaskBlock(
-    historyTaskList: List<HistoryTask>?,
-    navController: NavController,
-    address: String
-) {
-    Column(
-        Modifier
-            .padding(start = 8.dp, top = 8.dp, end = 8.dp)
-    ) {
-        if (historyTaskList != null) {
-            for (task in historyTaskList) {
-                Box(Modifier.clickable(onClick = {
-                    navController.navigate(
-                        ComposeClientCardDirections.actionComposeClientCardToDetailsHistoryTask(
-                            task.id_task
-                        )
-                    )
-                })) {
-                    HistoryItem(
-                        state = task.state_task,
-                        address = address.toLowerCase(Locale.ROOT).capitalize(Locale.ROOT),
-                        comment = task.comments,
-                        dateCreate = task.dateCreate.substringBeforeLast("T"),
-                        nameMaster = task.name_master,
-                        dateEnd = task.dateEnded.substringBeforeLast("T"),
-                        feedback = task.feedback
-                    )
-                }
-            }
-        }
-    }
-}
-
-
-@Composable
-fun HistoryItem(
-    state: String,
-    address: String,
-    comment: String,
-    dateCreate: String,
-    nameMaster: String,
-    dateEnd: String,
-    feedback: String
-) {
-    Column {
-        Row {
-            Text(
-                text = "Статус: ",
-                color = if (isSystemInDarkTheme()) SecondaryLightColor else MaterialTheme.colors.secondaryVariant
-            )
-            Text(text = state, color = if (isSystemInDarkTheme()) Color.White else Color.Black)
-        }
-        Row {
-            Text(
-                text = "Адрес: ",
-                color = if (isSystemInDarkTheme()) SecondaryLightColor else MaterialTheme.colors.secondaryVariant
-            )
-            Text(text = address, color = if (isSystemInDarkTheme()) Color.White else Color.Black)
-        }
-        Row {
-            Text(
-                text = "Создана: ",
-                color = if (isSystemInDarkTheme()) SecondaryLightColor else MaterialTheme.colors.secondaryVariant
-            )
-            Text(text = dateCreate, color = if (isSystemInDarkTheme()) Color.White else Color.Black)
-        }
-        Row {
-            Text(
-                text = "Назначена на: ",
-                color = if (isSystemInDarkTheme()) SecondaryLightColor else MaterialTheme.colors.secondaryVariant
-            )
-            Text(text = nameMaster, color = if (isSystemInDarkTheme()) Color.White else Color.Black)
-        }
-        Row {
-            Text(
-                text = "Комментарий: ",
-                color = if (isSystemInDarkTheme()) SecondaryLightColor else MaterialTheme.colors.secondaryVariant
-            )
-            Text(
-                text = comment,
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis,
-                color = if (isSystemInDarkTheme()) Color.White else Color.Black
-            )
-        }
-
-        Row {
-            Text(
-                text = "Завершена: ",
-                color = if (isSystemInDarkTheme()) SecondaryLightColor else MaterialTheme.colors.secondaryVariant
-            )
-            Text(text = dateEnd, color = if (isSystemInDarkTheme()) Color.White else Color.Black)
-        }
-        Row {
-            Text(
-                text = "Обратная связь: ",
-                color = if (isSystemInDarkTheme()) SecondaryLightColor else MaterialTheme.colors.secondaryVariant
-            )
-            Text(text = feedback, color = if (isSystemInDarkTheme()) Color.White else Color.Black)
-        }
-        Divider(
-            thickness = 2.dp,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp, end = 8.dp),
-            color = Color.Gray
-        )
-    }
-}
-
-
-private fun returnErrorPortsString(resultCountError: ResultErrorTest?): String {
-    /** Возвращает форматированую строку с колличеством ошибок */
-
-    return if (resultCountError?.dropError != null) {
-        "CRC: ${resultCountError.CRCError} Drop: ${resultCountError.dropError}"
-    } else {
-        ""
-    }
-}
-
-private fun returnCabTestString(resultCableTest: ResultCableTest?, context: Context): String {
-    /** Возвращает форматированую строку с результатом кабель теста */
-
-    val re = Regex("[^A-Za-z0-9 ]")
-    return when (resultCableTest?.state) {
-        true -> {
-            "1/2 ${resultCableTest.pair1}-${
-                re.replace(
-                    resultCableTest.length1!!,
-                    ""
-                )
-            }   3/6 ${resultCableTest.pair2}-${re.replace(resultCableTest.length2!!, "")}"
-        }
-        null -> {
-            ""
-        }
-        else -> {
-            Toast.makeText(context, "Не удачно", Toast.LENGTH_SHORT).show()
-            "Ошибка.."
-        }
-    }
-}
-
-fun returnAddressNode(card: ClientCard?): String {
-    /** Возвращает форматированую стоку с адресом узла */
-
-    return if (card?.street_name != null) {
-        "${card.street_name} ${card.building_number} д. ${card.entrance_node} п. ${card.flor_node} эт."
-    } else {
-        "Не выбран"
-    }
-
-}
-
-fun returnSessionInfo(card: ClientCardBilling?): String {
-    /** Возвращает форматированую строку с информацией о сессии */
-    return "${card?.ip}${returnDateStart(card)}${returnMAC(card)}"
-}
-
-private fun returnDateStart(card: ClientCardBilling?): String {
-    return if (card?.dateStart != "") "\n${card?.dateStart}" else ""
-}
-
-private fun returnMAC(card: ClientCardBilling?): String {
-    return if (card?.mac != "") "\n${card?.mac}" else ""
-}
-
-fun translateState(card: ClientCardBilling?): String {
-    return when (card?.stateAccount.toString()
-    ) {
-        "4" -> "Недостаточно средств"
-        "0" -> "Активна"
-        "10" -> "Отключена"
-        else -> "Ошибка"
-    }
-}
-
-
-
-

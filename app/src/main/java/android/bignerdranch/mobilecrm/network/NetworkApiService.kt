@@ -4,12 +4,17 @@ import android.bignerdranch.mobilecrm.model.modelsDB.*
 import android.bignerdranch.mobilecrm.model.networkModel.*
 import android.bignerdranch.mobilecrm.model.otherModel.TokenFirebase
 import android.bignerdranch.mobilecrm.utilits.helpers.*
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
+import kotlin.time.ExperimentalTime
 
 
 interface NetworkApiService {
@@ -155,6 +160,15 @@ interface NetworkApiService {
                 }
             }
             return dayReturn
+        }
+
+        @ExperimentalTime
+        fun getDateTimeBeta(): String {
+            val systemTZ = TimeZone.currentSystemDefault()
+            val now = Clock.System.now()
+
+            val tomorrow = now.plus(1, DateTimeUnit.DAY, systemTZ)
+            return tomorrow.toString()
         }
     }
 }

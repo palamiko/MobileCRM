@@ -3,7 +3,6 @@ package android.bignerdranch.mobilecrm.ui.activity
 import android.bignerdranch.mobilecrm.R
 import android.bignerdranch.mobilecrm.databinding.ActivityMainBinding
 import android.bignerdranch.mobilecrm.model.otherModel.User
-import android.bignerdranch.mobilecrm.model.viewModels.ClientsViewModel
 import android.bignerdranch.mobilecrm.model.viewModels.TaskViewModel
 import android.bignerdranch.mobilecrm.utilits.helpers.*
 import android.content.SharedPreferences
@@ -28,7 +27,6 @@ import kotlinx.serialization.json.Json
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val clientsViewModel: ClientsViewModel by viewModels()
 
     lateinit var sharedPref: SharedPreferences
     private lateinit var headerVerApp: TextView
@@ -48,13 +46,13 @@ class MainActivity : AppCompatActivity() {
         sendToken()  // Получет личный токен в FB
     }
 
+    @ExperimentalSerializationApi
     override fun onStart() {
         super.onStart()
 
         initNavigationComponent()
         changeListenerNavigateDestination()
         findNavigationView()
-
     }
 
     private fun initNavigationComponent() {

@@ -8,7 +8,7 @@ data class TaskModel (
     @SerialName("id")
     var id_task: String = "",
     @SerialName("id_c")
-    var id_client: String? = "",
+    var id_client: Int = 1,
     @SerialName("phones")
     var phones: String? = "",
     @SerialName("state")

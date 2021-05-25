@@ -19,7 +19,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 
-class ClientCardViewModel: ViewModel() {
+
+class ClientCardViewModel(): ViewModel() {
 
     // Карта абонента из CRM
     private val _clientCard = MutableLiveData<ClientCard>()
@@ -54,8 +55,10 @@ class ClientCardViewModel: ViewModel() {
     val actionTaskList: LiveData<List<ActionTask>> = _actionTaskList
 
 
+
     @ExperimentalSerializationApi
     private val networkApi: NetworkApiService = NetworkModule().networkApiService
+
     @ExperimentalSerializationApi
     private val networkApi2: NetworkApiService = NetworkModule2().networkApiService
 

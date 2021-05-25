@@ -4,7 +4,15 @@ import android.bignerdranch.mobilecrm.R
 import android.bignerdranch.mobilecrm.model.modelsDB.ClientCard
 import android.bignerdranch.mobilecrm.model.modelsDB.ClientCardBilling
 import android.bignerdranch.mobilecrm.model.modelsDB.ClientsEntrance
+import android.bignerdranch.mobilecrm.model.modelsDB.HistoryTask
+import android.bignerdranch.mobilecrm.model.networkModel.ResultCableTest
+import android.bignerdranch.mobilecrm.model.networkModel.ResultErrorTest
 import android.bignerdranch.mobilecrm.model.networkModel.ResultLinkStatus
+import android.bignerdranch.mobilecrm.model.otherModel.ArgumentModel
+import android.bignerdranch.mobilecrm.ui.fragments.clients.ClientCardComposeArgs
+import android.bignerdranch.mobilecrm.ui.fragments.clients.ClientCardComposeDirections
+import android.bignerdranch.mobilecrm.ui.fragments.task.ComposeClientCardArgs
+import android.bignerdranch.mobilecrm.ui.fragments.task.ComposeClientCardDirections
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -12,8 +20,10 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import smartadapter.extension.SmartViewHolderBinder
 import smartadapter.viewevent.model.ViewEvent
@@ -268,13 +278,7 @@ class SwipeRemoveItemBinder(
     }
 }
 
-fun returnDateStart(card: ClientCardBilling): String {
-    return if (card.dateStart != "") "\n${card.dateStart}" else ""
-}
 
-fun returnMAC(card: ClientCardBilling): String {
-    return if (card.mac != "") "\n${card.mac}" else ""
-}
 
 fun translateState(state: String?): String {
     return when (state) {
@@ -293,11 +297,108 @@ fun changeIcon(link: ResultLinkStatus): Int {
     }
 }
 
-fun getAddress(client: ClientCard?, streetName: String, build_number: String) =
+fun getAddress(client: ClientCard?, streetName: String?, build_number: String?) =
     "${client?.street_name ?: streetName} ${client?.building_number ?: build_number}-${client?.flat}".apply {
         toLowerCase(Locale.ROOT)
         capitalize(Locale.ROOT)
     }
+
+fun returnErrorPortsString(resultCountError: ResultErrorTest?): String {
+    /** Возвращает форматированую строку с колличеством ошибок */
+
+    return if (resultCountError?.dropError != null) {
+        "CRC: ${resultCountError.CRCError} Drop: ${resultCountError.dropError}"
+    } else {
+        ""
+    }
+}
+
+fun returnCabTestString(resultCableTest: ResultCableTest?, context: Context): String {
+    /** Возвращает форматированую строку с результатом кабель теста */
+
+    val re = Regex("[^A-Za-z0-9 ]")
+    return when (resultCableTest?.state) {
+        true -> {
+            "1/2 ${resultCableTest.pair1}-${
+                re.replace(
+                    resultCableTest.length1!!,
+                    ""
+                )
+            }   3/6 ${resultCableTest.pair2}-${re.replace(resultCableTest.length2!!, "")}"
+        }
+        null -> {
+            ""
+        }
+        else -> {
+            Toast.makeText(context, "Не удачно", Toast.LENGTH_SHORT).show()
+            "Ошибка.."
+        }
+    }
+}
+
+fun returnAddressNode(card: ClientCard?): String {
+    /** Возвращает форматированую стоку с адресом узла */
+
+    return if (card?.street_name != null) {
+        "${card.street_name} ${card.building_number} д. ${card.entrance_node} п. ${card.flor_node} эт."
+    } else {
+        "Не выбран"
+    }
+
+}
+
+fun returnSessionInfo(card: ClientCardBilling?): String {
+    /** Возвращает форматированую строку с информацией о сессии */
+    return "${card?.ip}${returnDateStart(card)}${
+        returnMAC(
+            card
+        )
+    }"
+}
+
+
+fun returnDateStart(card: ClientCardBilling?): String {
+    return if (card?.dateStart != "") "\n${card?.dateStart}" else ""
+}
+
+
+fun returnMAC(card: ClientCardBilling?): String {
+    return if (card?.mac != "") "\n${card?.mac}" else ""
+}
+
+fun translateState(card: ClientCardBilling?): String {
+    return when (card?.stateAccount.toString()
+    ) {
+        "4" -> "Недостаточно средств"
+        "0" -> "Активна"
+        "10" -> "Отключена"
+        else -> "Ошибка"
+    }
+}
+
+fun navigateToDetailsHistoryTask(navController: NavController, task: HistoryTask) {
+    navController.navigate(
+        ComposeClientCardDirections.actionComposeClientCardToDetailsHistoryTask(
+            task.id_task
+        )
+    )
+}
+
+fun navigateToClientHistoryTask(navController: NavController, task: HistoryTask) {
+    navController.navigate(
+        ClientCardComposeDirections.actionClientCardComposeToClientHistoryTask(
+            idTask = task.id_task
+        )
+    )
+}
+
+fun detectArgType(arg: Any): ArgumentModel {
+    return when (arg) {
+        is ClientCardComposeArgs -> ArgumentModel(arg.idClient, arg.streetName, arg.buildNumber, null)
+        is ComposeClientCardArgs -> ArgumentModel(arg.idClient, null, null, arg.addressClient)
+        else -> TODO()
+    }
+}
 
 
 

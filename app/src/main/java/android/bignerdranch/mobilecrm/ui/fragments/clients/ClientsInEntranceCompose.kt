@@ -236,7 +236,9 @@ class ClientsInEntranceCompose : Fragment() {
         val navController = findNavController()
         navController.navigate(
             ClientsInEntranceComposeDirections.actionClientsInEntranceComposeToClientCardCompose(
-                idClient = clients.id_client, buildNumber = args.buildNumber, streetName = args.streetName
+                idClient = clients.id_client,
+                buildNumber = args.buildNumber,
+                streetName = args.streetName,
             )
         )
     }

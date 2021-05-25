@@ -22,19 +22,19 @@
         android:id="@+id/clientCardFragment"
         android:name="android.bignerdranch.mobilecrm.ui.fragments.task.ClientCardFragment"
         android:label="@string/fragment_title_card_client"
-        tools:layout="@layout/fragment_client_card" >
+        tools:layout="@layout/fragment_client_card">
         <argument
             android:name="id_client"
             app:argType="string"
             app:nullable="true" />
         <argument
             android:name="address_client"
-            app:argType="string"
-            android:defaultValue="-" />
+            android:defaultValue="-"
+            app:argType="string" />
         <argument
             android:name="phone_client"
-            app:argType="string"
             android:defaultValue="-"
+            app:argType="string"
             app:nullable="true" />
     </fragment>
 
@@ -101,7 +101,7 @@
             tools:layout="@layout/fragment_close_task">
             <action
                 android:id="@+id/action_closeTaskFragment_to_taskFragment"
-                app:destination="@id/taskFragment" >
+                app:destination="@id/taskFragment">
                 <argument
                     android:name="resultСloseTask"
                     android:defaultValue="@null" />
@@ -125,9 +125,9 @@
                 app:popExitAnim="@anim/nav_default_pop_exit_anim" />
             <argument
                 android:name="messege"
+                android:defaultValue="@null"
                 app:argType="string"
-                app:nullable="true"
-                android:defaultValue="@null" />
+                app:nullable="true" />
             <action
                 android:id="@+id/action_taskFragment_to_composeClientCard"
                 app:destination="@id/composeClientCard" />
@@ -145,7 +145,7 @@
             android:id="@+id/selectMaterialFragment"
             android:name="android.bignerdranch.mobilecrm.ui.fragments.task.SelectMaterialFragment"
             android:label="@string/fragment_title_select_material"
-            tools:layout="@layout/fragment_select_material" >
+            tools:layout="@layout/fragment_select_material">
             <action
                 android:id="@+id/action_selectMaterialFragment_to_countMaterialFragment"
                 app:destination="@id/countMaterialFragment" />
@@ -155,7 +155,7 @@
             android:id="@+id/countMaterialFragment"
             android:name="android.bignerdranch.mobilecrm.ui.fragments.task.CountMaterialFragment"
             android:label="@string/fragment_title_count_material"
-            tools:layout="@layout/fragment_count_material" >
+            tools:layout="@layout/fragment_count_material">
             <action
                 android:id="@+id/action_countMaterialFragment_to_closeTaskFragment"
                 app:destination="@id/closeTaskFragment"
@@ -165,25 +165,23 @@
         </fragment>
 
 
-
         <fragment
             android:id="@+id/composeClientCard"
             android:name="android.bignerdranch.mobilecrm.ui.fragments.task.ComposeClientCard"
             android:label="@string/fragment_title_card_client"
-            tools:layout="@layout/fragment_compose_client_card" >
+            tools:layout="@layout/fragment_compose_client_card">
             <argument
                 android:name="id_client"
-                app:argType="string"
-                app:nullable="true" />
+                app:argType="integer" />
             <argument
                 android:name="address_client"
-                app:argType="string"
-                android:defaultValue="-" />
+                android:defaultValue="-"
+                app:argType="string" />
             <argument
                 android:name="phone_client"
+                android:defaultValue="-"
                 app:argType="string"
-                app:nullable="true"
-                android:defaultValue="-" />
+                app:nullable="true" />
             <action
                 android:id="@+id/action_composeClientCard_to_detailsHistoryTask"
                 app:destination="@id/detailsHistoryTask" />
@@ -192,19 +190,20 @@
             android:id="@+id/detailsHistoryTask"
             android:name="android.bignerdranch.mobilecrm.ui.fragments.task.DetailsHistoryTask"
             android:label="@string/fragment_title_details_task"
-            tools:layout="@layout/fragment_details_history_task" >
+            tools:layout="@layout/fragment_details_history_task">
             <argument
                 android:name="id_task"
                 app:argType="string" />
         </fragment>
 
     </navigation>
-    <navigation android:id="@+id/navigationClients"
+    <navigation
+        android:id="@+id/navigationClients"
         app:startDestination="@id/districtsCompose">
         <fragment
             android:id="@+id/districtsCompose"
             android:name="android.bignerdranch.mobilecrm.ui.fragments.clients.DistrictsCompose"
-            android:label="@string/fragment_title_district" >
+            android:label="@string/fragment_title_district">
             <action
                 android:id="@+id/action_districtsCompose_to_streetsCompose"
                 app:destination="@id/streetsCompose" />
@@ -224,31 +223,31 @@
         <fragment
             android:id="@+id/homesCompose"
             android:name="android.bignerdranch.mobilecrm.ui.fragments.clients.HomesCompose"
-            android:label="@string/fragment_title_home" >
+            android:label="@string/fragment_title_home">
             <argument
                 android:name="district_id"
-                app:argType="integer"
-                android:defaultValue="1" />
+                android:defaultValue="1"
+                app:argType="integer" />
             <argument
                 android:name="street_id"
-                app:argType="integer"
-                android:defaultValue="1" />
+                android:defaultValue="1"
+                app:argType="integer" />
             <action
                 android:id="@+id/action_homesCompose_to_entranceCompose"
                 app:destination="@id/entranceCompose" />
             <argument
                 android:name="street_name"
-                app:argType="string"
-                android:defaultValue="-" />
+                android:defaultValue="-"
+                app:argType="string" />
         </fragment>
         <fragment
             android:id="@+id/entranceCompose"
             android:name="android.bignerdranch.mobilecrm.ui.fragments.clients.EntranceCompose"
-            android:label="@string/fragment_title_entrance" >
+            android:label="@string/fragment_title_entrance">
             <argument
                 android:name="building_id"
-                app:argType="integer"
-                android:defaultValue="1" />
+                android:defaultValue="1"
+                app:argType="integer" />
             <action
                 android:id="@+id/action_entranceCompose_to_clientsInEntranceCompose"
                 app:destination="@id/clientsInEntranceCompose" />
@@ -262,11 +261,11 @@
         <fragment
             android:id="@+id/clientsInEntranceCompose"
             android:name="android.bignerdranch.mobilecrm.ui.fragments.clients.ClientsInEntranceCompose"
-            android:label="@string/fragment_title_clients_entrance" >
+            android:label="@string/fragment_title_clients_entrance">
             <argument
                 android:name="entrance_id"
-                app:argType="integer"
-                android:defaultValue="1" />
+                android:defaultValue="1"
+                app:argType="integer" />
             <action
                 android:id="@+id/action_clientsInEntranceCompose_to_clientCardCompose"
                 app:destination="@id/clientCardCompose" />
@@ -290,9 +289,22 @@
                 app:argType="integer" />
             <argument
                 android:name="street_name"
-                app:argType="string" />
+                app:argType="string"
+                app:nullable="true" />
             <argument
                 android:name="build_number"
+                app:argType="string"
+                app:nullable="true" />
+            <action
+                android:id="@+id/action_clientCardCompose_to_clientHistoryTask"
+                app:destination="@id/clientHistoryTask" />
+        </fragment>
+        <fragment
+            android:id="@+id/clientHistoryTask"
+            android:name="android.bignerdranch.mobilecrm.ui.fragments.clients.ClientHistoryTask"
+            android:label="ClientHistoryTask" >
+            <argument
+                android:name="id_task"
                 app:argType="string" />
         </fragment>
     </navigation>
