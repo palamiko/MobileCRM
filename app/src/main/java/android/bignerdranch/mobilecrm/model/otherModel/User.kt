@@ -19,3 +19,11 @@ data class TokenFirebase(
     @SerialName("token")
     val value: String
 )
+
+@Serializable
+data class AuthData(
+    @SerialName("login_auth")
+    val login: String,
+    @SerialName("password_auth")
+    val pass: String
+)

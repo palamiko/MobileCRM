@@ -107,9 +107,9 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), OnItemLongClickListen
         if (!bundle.isEmpty) {
             val isFromCloseTask: Boolean = bundle.getBoolean(KEY_IS_CLOSE_FRAGMENT)
             showProgress = !isFromCloseTask
-
         }
-        coroutineScope.launch(exceptionHandler) {
+
+        coroutineScope.launch() {
             if (showProgress) visibleProgressBar()
             taskViewModel.updateTask()
             invisibleProgressBar()
@@ -244,7 +244,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), OnItemLongClickListen
         /** Слушатель динных нажатий RecyclerView */
 
            findNavController().navigate(TaskFragmentDirections
-              .actionTaskFragmentToComposeClientCard(task.id_client, address, task.phones))
+              .actionTaskFragmentToComposeClientCard(task.id_client ?: 1, address, task.phones))
     }
 
     private fun createRecyclerView(dataSet: ArrayList<TaskModel>) {

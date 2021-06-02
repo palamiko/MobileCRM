@@ -2,6 +2,7 @@ package android.bignerdranch.mobilecrm.network
 
 import android.bignerdranch.mobilecrm.model.modelsDB.*
 import android.bignerdranch.mobilecrm.model.networkModel.*
+import android.bignerdranch.mobilecrm.model.otherModel.AuthData
 import android.bignerdranch.mobilecrm.model.otherModel.TokenFirebase
 import android.bignerdranch.mobilecrm.utilits.helpers.*
 import kotlinx.datetime.Clock
@@ -42,11 +43,8 @@ interface NetworkApiService {
 
 
     /** Авторизация на сервере CRM */
-    @GET(GET_AUTHORIZATION)
-    suspend fun getAuthorization(
-        @Query(LOGIN) login: String,
-        @Query(PASSWORD) password: String
-    ): TokenFirebase
+    @POST(GET_AUTHORIZATION)
+    suspend fun getAuthorization(@Body authData: AuthData): TokenFirebase
 
     /** Получить список заявок на данного мастера */
     @GET(GET_TASK_FOR_MASTER)
@@ -111,12 +109,8 @@ interface NetworkApiService {
     suspend fun getActionForTask(@Query(ID_TASK) id_task: String): List<ActionTask>
 
     /** Отправить токен пользователя, его ID и логин */
-    @GET(GET_SEND_TOKEN)
-    suspend fun sendTokenFirebase(
-        @Query(MASTER_ID) id_master: String,
-        @Query(MASTER_LOGIN) login_master: String,
-        @Query(TOKEN_MASTER) token: String
-    ): ResponseOfToken
+    @POST(GET_SEND_TOKEN)
+    suspend fun sendTokenFirebase(@Body userToken: UserToken): ResponseOfToken
 
     companion object {
         /**Параметры запросов*/
@@ -127,9 +121,9 @@ interface NetworkApiService {
         private const val ENTRANCE_ID = "entrance_id"
         private const val LOGIN = "login_auth"
         private const val PASSWORD = "password_auth"
-        private const val MASTER_ID = "master_id"
-        private const val MASTER_LOGIN = "master_login"
-        private const val TOKEN_MASTER = "token_master"
+        const val MASTER_ID = "master_id"
+        const val MASTER_LOGIN = "master_login"
+        const val TOKEN_MASTER = "token_master"
         private const val STATE_TASK = "state_task"
         private const val DATE_MAKING = "date_making"
         private const val ID_CLIENT = "id_client"

@@ -2,6 +2,7 @@ package android.bignerdranch.mobilecrm.ui.activity
 
 import android.bignerdranch.mobilecrm.R
 import android.bignerdranch.mobilecrm.databinding.ActivityMainBinding
+import android.bignerdranch.mobilecrm.model.networkModel.UserToken
 import android.bignerdranch.mobilecrm.model.otherModel.User
 import android.bignerdranch.mobilecrm.model.viewModels.TaskViewModel
 import android.bignerdranch.mobilecrm.utilits.helpers.*
@@ -100,7 +101,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     @ExperimentalSerializationApi
     private fun sendToken() {
 
@@ -125,7 +125,8 @@ class MainActivity : AppCompatActivity() {
     private fun sendTokenToServer(id_master: String, login_master: String, token: String) {
         /** Отправляет данные пользователя на сервер СРМ */
         val taskViewModel: TaskViewModel by viewModels()
-        taskViewModel.sendTokenToServ(id_master, login_master, token)
+        val userToken = UserToken(id_master, login_master, token)
+        taskViewModel.sendTokenToServ(userToken)
     }
 
     private fun getUserFromSharedPref(): User? {

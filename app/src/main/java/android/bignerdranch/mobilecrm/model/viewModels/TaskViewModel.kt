@@ -1,10 +1,8 @@
 package android.bignerdranch.mobilecrm.model.viewModels
 
-import android.bignerdranch.mobilecrm.model.modelsDB.ResponseOfToken
+
 import android.bignerdranch.mobilecrm.model.modelsDB.TaskModel
-import android.bignerdranch.mobilecrm.model.networkModel.DataCloseTask
-import android.bignerdranch.mobilecrm.model.networkModel.MaterialUsed
-import android.bignerdranch.mobilecrm.model.networkModel.ResponseCloseTask
+import android.bignerdranch.mobilecrm.model.networkModel.*
 import android.bignerdranch.mobilecrm.model.otherModel.User
 import android.bignerdranch.mobilecrm.network.NetworkApiService
 import android.bignerdranch.mobilecrm.network.NetworkModule
@@ -12,6 +10,7 @@ import android.bignerdranch.mobilecrm.utilits.helpers.FINISH_OK
 import android.bignerdranch.mobilecrm.utilits.helpers.TASK_APPOINTED
 import android.bignerdranch.mobilecrm.utilits.helpers.TASK_COMPLETED
 import android.bignerdranch.mobilecrm.utilits.helpers.TODAY
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -54,16 +53,16 @@ class TaskViewModel : ViewModel() {
         selectMaterial.value = arrayListOf()  // Инициализируем масив
     }
 
+
     @ExperimentalSerializationApi
     fun sendTokenToServ(
         /** Отправляет токен мастера на сервер */
-        id_master: String,
-        login_master: String,
-        token: String
+        userToken: UserToken
     ) {
+        Log.e("TOKEN_INFO:", userToken.toString())
         viewModelScope.launch {
             resultSendToken.postValue(
-                networkApi.sendTokenFirebase(id_master, login_master, token)
+                networkApi.sendTokenFirebase(userToken)
             )
         }
     }

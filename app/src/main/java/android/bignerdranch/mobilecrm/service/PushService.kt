@@ -1,82 +1,43 @@
 package android.bignerdranch.mobilecrm.service
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.bignerdranch.mobilecrm.R
+import android.bignerdranch.mobilecrm.model.networkModel.UserToken
+import android.bignerdranch.mobilecrm.model.otherModel.User
+import android.bignerdranch.mobilecrm.network.NetworkApiService
+import android.bignerdranch.mobilecrm.network.NetworkModule
+import android.bignerdranch.mobilecrm.ui.activity.MainActivity
+import android.bignerdranch.mobilecrm.utilits.helpers.KEY_USER_DATA
+import android.bignerdranch.mobilecrm.utilits.helpers.SHARED_PREF_NAME
+import android.content.Context
+import android.content.Intent
+import android.media.RingtoneManager
+import android.os.Build
+import android.util.Log
+import androidx.core.app.NotificationCompat
+import com.google.firebase.messaging.FirebaseMessagingService
 import kotlinx.coroutines.*
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
 
-/**
-class MyFirebaseMessagingService : FirebaseMessagingService() {
+
+class PushService : FirebaseMessagingService() {
 
     private fun createCoroutineScope() = CoroutineScope(Job() + Dispatchers.IO)
 
-    override fun onMessageReceived(remoteMessage: RemoteMessage) {
-
-        // TODO(developer): Handle FCM messages here.
-        // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-        Log.d(TAG, "From: ${remoteMessage.from}")
-
-
-        // Check if message contains a data payload.
-        if (remoteMessage.data.isNotEmpty()) {
-            Log.d(TAG, "Message data payload: ${remoteMessage.data}")
-
-
-            handleNow()
-
-        }
-
-        // Check if message contains a notification payload.
-        remoteMessage.notification?.let {
-            Log.d(TAG, "Message Notification Body: ${it.body}")
-        }
-
-        // Also if you intend on generating your own notifications as a result of a received FCM
-        // message, here is where that should be initiated. See sendNotification method below.
-    }
-    // [END receive_message]
-
-    // [START on_new_token]
-    /**
-     * Called if the FCM registration token is updated. This may occur if the security of
-     * the previous token had been compromised. Note that this is called when the
-     * FCM registration token is initially generated so this is where you would retrieve the token.
-     */
-
 
     @ExperimentalSerializationApi
-    override fun onNewToken(token: String) {
+    override fun onNewToken(newToken: String) {
         val coroutineScope = createCoroutineScope()
 
         val user = getUserFromSharedPref()
         if (user != null) coroutineScope.launch {
-            sendTokenToServer(user.id.toString(), user.login, token)
+            sendTokenToServer(user.id.toString(), user.login, newToken)
+            Log.e(TAG, "Токен изменился и отправлен")
         }
     }
-
-
-    /**
-     * Schedule async work using WorkManager.
-
-    private fun scheduleJob() {
-        // [START dispatch_job]
-        val work = OneTimeWorkRequest.Builder(MyWorker::class.java).build()
-        WorkManager.getInstance().beginWith(work).enqueue()
-        // [END dispatch_job]
-    }
-     */
-    /**
-     * Handle time allotted to BroadcastReceivers.
-     */
-    private fun handleNow() {
-        Log.d(TAG, "Short lived task is done.")
-    }
-
-    /**
-     * Persist token to third-party servers.
-     *
-     * Modify this method to associate the user's FCM registration token with any server-side account
-     * maintained by your application.
-     *
-     * @param token The new token.
-     */
 
     private fun getUserFromSharedPref(): User? {
         var user: User? = null
@@ -96,14 +57,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             /** Отправляет данные пользователя на сервер СРМ */
 
             val networkApi: NetworkApiService = NetworkModule().networkApiService
-            networkApi.sendTokenFirebase(id_master, login_master, token)
+            networkApi.sendTokenFirebase(UserToken(id_master, login_master, token))
         }
 
-    /**
-     * Create and show a simple notification containing the received FCM message.
-     *
-     * @param messageBody FCM message body received.
-     */
+
     private fun sendNotification(messageBody: String) {
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -140,11 +97,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     companion object {
 
-        private const val TAG = "MyFirebaseMsgService"
+        private const val TAG = "PushService"
     }
-
-
-
 }
 
- */

@@ -3,6 +3,7 @@ package android.bignerdranch.mobilecrm.ui.fragments.auth
 import android.annotation.SuppressLint
 import android.bignerdranch.mobilecrm.R
 import android.bignerdranch.mobilecrm.databinding.FragmentAuthorizationBinding
+import android.bignerdranch.mobilecrm.model.otherModel.AuthData
 import android.bignerdranch.mobilecrm.model.otherModel.TokenFirebase
 import android.bignerdranch.mobilecrm.model.viewModels.UserViewModel
 import android.bignerdranch.mobilecrm.ui.fragments.BaseFragment
@@ -76,8 +77,11 @@ class AuthorizationFragment : BaseFragment(R.layout.fragment_authorization) {
             visibleProgressBar()
             if (checkTextInput(view, binding?.teUserLogin, binding?.tePassword)) {
                 //  Авторизуемся в срм и получеам токен
-                val token: TokenFirebase =
-                    userViewModel.getAuthorization(binding?.teUserLogin, binding?.tePassword)
+                val login = binding?.teUserLogin?.text.toString()
+                val pass = binding?.tePassword?.text.toString()
+                val authData = AuthData(login, pass)
+                val token: TokenFirebase = userViewModel.getAuthorization(authData)
+
                 //  Авторизуемся в Firebase при помощи токена
                 if (token.value != "0") {
                     val authResult = userViewModel.logInWithToken(token)!!

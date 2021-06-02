@@ -1,11 +1,10 @@
 plugins {
-
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'com.google.gms.google-services'
     id "androidx.navigation.safeargs.kotlin"
-    id 'org.jetbrains.kotlin.plugin.serialization' version('1.5.10')
+    id 'org.jetbrains.kotlin.plugin.serialization' version('1.5.0')
 }
 
 
@@ -24,7 +23,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
-        versionName "0.3.7"
+        versionName "0.3.8"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -98,7 +97,7 @@ dependencies {
 
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:28.0.1')
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.5.0-RC'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.5.0'
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.firebase:firebase-database-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
