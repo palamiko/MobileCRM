@@ -195,6 +195,9 @@
                 android:name="id_task"
                 app:argType="string" />
         </fragment>
+        <action
+            android:id="@+id/action_global_navigationAdmin"
+            app:destination="@id/navigationAdmin" />
 
     </navigation>
     <navigation
@@ -306,6 +309,18 @@
             <argument
                 android:name="id_task"
                 app:argType="string" />
+        </fragment>
+    </navigation>
+    <navigation android:id="@+id/navigationAdmin"
+        app:startDestination="@id/administrativeFragment">
+        <fragment
+            android:id="@+id/administrativeFragment"
+            android:name="android.bignerdranch.mobilecrm.ui.fragments.admin.AdministrativeFragment"
+            android:label="@string/fragment_title_admin_panel" >
+            <argument
+                android:name="activeUser"
+                app:argType="string"
+                android:defaultValue="master" />
         </fragment>
     </navigation>
 

@@ -90,5 +90,7 @@
     <string name="title_drawer_clients">Клиенты</string>
     <string name="fragment_title_entrance">Номер подъезда</string>
     <string name="fragment_title_clients_entrance">Клиенты в подъезде</string>
+    <string name="fragment_title_admin_panel">Tools</string>
+    <string name="drawer_item_admin_tool">Admin tools</string>
 
 </resources>

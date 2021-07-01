@@ -22,6 +22,11 @@
             android:icon="@drawable/ic_drawer_photo_unit_fragment"
             android:title="@string/fragment_title_photo_unit" />
 
+        <item
+            android:id="@+id/navigationAdmin"
+            android:icon="@drawable/ic_settings"
+            android:title="@string/drawer_item_admin_tool" />
+
     </group>
 
     <group

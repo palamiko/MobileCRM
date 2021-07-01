@@ -3,11 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/manager/AndroidStudioProjects/PhotoUnit/app/src/main/res/drawable-anydpi-v26/ic_baseline_autorenew_24.xml" value="0.287109375" />
         <entry key="..\:/Users/manager/AndroidStudioProjects/PhotoUnit/app/src/main/res/drawable-anydpi-v26/ic_launcher_background.xml" value="0.199609375" />
         <entry key="..\:/Users/manager/AndroidStudioProjects/PhotoUnit/app/src/main/res/drawable-anydpi-v26/ic_launcher_foreground.xml" value="0.199609375" />
         <entry key="..\:/Users/manager/AndroidStudioProjects/PhotoUnit/app/src/main/res/drawable/ic_clients.xml" value="0.287109375" />
         <entry key="..\:/Users/manager/AndroidStudioProjects/PhotoUnit/app/src/main/res/drawable/ic_drawer_photo_unit_fragment.xml" value="0.287109375" />
         <entry key="..\:/Users/manager/AndroidStudioProjects/PhotoUnit/app/src/main/res/drawable/ic_drawer_task_fragment.xml" value="0.287109375" />
+        <entry key="..\:/Users/manager/AndroidStudioProjects/PhotoUnit/app/src/main/res/drawable/ic_settings.xml" value="0.28378378378378377" />
+        <entry key="..\:/Users/manager/AndroidStudioProjects/PhotoUnit/app/src/main/res/drawable/ic_tools_admin.xml" value="0.287109375" />
         <entry key="..\:/Users/manager/AndroidStudioProjects/PhotoUnit/app/src/main/res/layout/activity_main.xml" value="0.275" />
         <entry key="..\:/Users/manager/AndroidStudioProjects/PhotoUnit/app/src/main/res/layout/fragment_blank.xml" value="0.187890625" />
         <entry key="..\:/Users/manager/AndroidStudioProjects/PhotoUnit/app/src/main/res/layout/fragment_client_card.xml" value="0.25" />
@@ -24,6 +27,8 @@
         <entry key="..\:/Users/manager/AndroidStudioProjects/PhotoUnit/app/src/main/res/menu/expand.xml" value="0.275" />
         <entry key="..\:/Users/manager/AndroidStudioProjects/PhotoUnit/app/src/main/res/menu/refresh.xml" value="0.275" />
         <entry key="..\:/Users/manager/AndroidStudioProjects/PhotoUnit/app/src/main/res/menu/sorted_menu.xml" value="0.275" />
+        <entry key="..\:/Users/manager/AndroidStudioProjects/PhotoUnit/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.287109375" />
+        <entry key="..\:/Users/manager/AndroidStudioProjects/PhotoUnit/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.287109375" />
         <entry key="..\:/Users/manager/AppData/Local/Android/Sdk/platforms/android-30/data/res/layout/simple_list_item_1.xml" value="0.275" />
       </map>
     </option>
