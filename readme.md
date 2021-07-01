@@ -97,4 +97,4 @@ project
 Примечания:
 * JetPack Compose используется в экспериментальных целях, что бы познакомится с технологией.
 * Проект не соберется без оригинального google-services.json
-* Скачать [apk](crm ver 0.3.9.apk)
+* Скачать [apk](https://github.com/palamiko/MobileCRM/blob/jetpack_composable_branch/crm%20ver%200.3.9.apk)
